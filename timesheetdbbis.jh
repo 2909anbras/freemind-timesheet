@@ -1,0 +1,65 @@
+application {
+  config {
+    baseName freemindTimesheet,
+    applicationType monolith,
+    packageName com.freemind.timesheet,
+    authenticationType jwt,
+    prodDatabaseType postgresql,
+    clientFramework angular
+  }
+  entities *
+}
+
+entity ToolUser {
+	firstName String required minlength(3) maxlength(10),
+	lastName String required minlength(3) maxlength(10),
+    email String required unique pattern(/^[\\w!#$%&’*+/=?`{|}~^-]+(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$/),
+    password String required minlength(3) maxlength(20),
+    enable Boolean required,
+    language Language,
+}
+
+enum Language {
+    FRENCH, ENGLISH, DUTCH, PORTUGUESE, ITALIAN
+}
+enum Role {
+    ADMIN, CUSTOMER_ADMIN, TIMESHEET_USER
+}
+
+enum Status {
+    ACTIVE, NOT_ACTIVE
+}
+
+entity Company {
+ 	name String required unique,
+}
+
+entity Customer{
+	name String required minlength(3),
+    enable Boolean required,
+}
+
+entity Project{
+	name String required minlength(3),
+    enable Boolean required,
+}
+
+entity Job{
+	name String required minlength(3),
+    description String minlength(20),
+    status Status,
+    startDate LocalDate,
+    endDate LocalDate,
+    enable Boolean,
+}
+
+relationship OneToMany {
+  Company to ToolUser
+  Customer to Project
+  Project to Job
+}
+
+relationship ManyToMany{
+Customer to Company 
+ToolUser to Job
+}
