@@ -1,0 +1,62 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="toolUser">
+            <h2><span jhiTranslate="freemindTimesheetApp.toolUser.detail.title">Tool User</span> {{ toolUser.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="freemindTimesheetApp.toolUser.firstName">First Name</span></dt>
+                <dd>
+                    <span>{{ toolUser.firstName }}</span>
+                </dd>
+                <dt><span jhiTranslate="freemindTimesheetApp.toolUser.lastName">Last Name</span></dt>
+                <dd>
+                    <span>{{ toolUser.lastName }}</span>
+                </dd>
+                <dt><span jhiTranslate="freemindTimesheetApp.toolUser.email">Email</span></dt>
+                <dd>
+                    <span>{{ toolUser.email }}</span>
+                </dd>
+                <dt><span jhiTranslate="freemindTimesheetApp.toolUser.password">Password</span></dt>
+                <dd>
+                    <span>{{ toolUser.password }}</span>
+                </dd>
+                <dt><span jhiTranslate="freemindTimesheetApp.toolUser.enable">Enable</span></dt>
+                <dd>
+                    <span>{{ toolUser.enable }}</span>
+                </dd>
+                <dt><span jhiTranslate="freemindTimesheetApp.toolUser.language">Language</span></dt>
+                <dd>
+                    <span jhiTranslate="{{ 'freemindTimesheetApp.Language.' + toolUser.language }}">{{ toolUser.language }}</span>
+                </dd>
+                <dt><span jhiTranslate="freemindTimesheetApp.toolUser.job">Job</span></dt>
+                <dd>
+                    <span *ngFor="let job of toolUser.jobs; let last = last">
+                        <a [routerLink]="['/job', job?.id, 'view']">{{ job.id }}</a>{{ last ? '' : ', ' }}
+                    </span>
+                </dd>
+                <dt><span jhiTranslate="freemindTimesheetApp.toolUser.company">Company</span></dt>
+                <dd>
+                    <div *ngIf="toolUser.company">
+                        <a [routerLink]="['/company', toolUser.company?.id, 'view']">{{ toolUser.company?.id }}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/tool-user', toolUser.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

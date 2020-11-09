@@ -1,0 +1,29 @@
+{
+  "freemindTimesheetApp": {
+    "toolUser": {
+      "home": {
+        "title": "ToolUsers",
+        "createLabel": "Créer un nouveau Tool User",
+        "createOrEditLabel": "Créer ou éditer un Tool User",
+        "notFound": "Aucun Tool User trouvé"
+      },
+      "created": "Un nouveau Tool User a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Tool User avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Tool User avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Tool User {{ id }} ?"
+      },
+      "detail": {
+        "title": "Tool User"
+      },
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "enable": "Enable",
+      "language": "Language",
+      "job": "Job",
+      "company": "Company"
+    }
+  }
+}

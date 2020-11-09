@@ -47,6 +47,18 @@ public class CacheConfiguration {
             createCache(cm, com.freemind.timesheet.domain.User.class.getName());
             createCache(cm, com.freemind.timesheet.domain.Authority.class.getName());
             createCache(cm, com.freemind.timesheet.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.freemind.timesheet.domain.ToolUser.class.getName());
+            createCache(cm, com.freemind.timesheet.domain.ToolUser.class.getName() + ".jobs");
+            createCache(cm, com.freemind.timesheet.domain.Company.class.getName());
+            createCache(cm, com.freemind.timesheet.domain.Company.class.getName() + ".toolUsers");
+            createCache(cm, com.freemind.timesheet.domain.Company.class.getName() + ".customers");
+            createCache(cm, com.freemind.timesheet.domain.Customer.class.getName());
+            createCache(cm, com.freemind.timesheet.domain.Customer.class.getName() + ".projects");
+            createCache(cm, com.freemind.timesheet.domain.Customer.class.getName() + ".companies");
+            createCache(cm, com.freemind.timesheet.domain.Project.class.getName());
+            createCache(cm, com.freemind.timesheet.domain.Project.class.getName() + ".jobs");
+            createCache(cm, com.freemind.timesheet.domain.Job.class.getName());
+            createCache(cm, com.freemind.timesheet.domain.Job.class.getName() + ".toolUsers");
             // jhipster-needle-ehcache-add-entry
         };
     }
