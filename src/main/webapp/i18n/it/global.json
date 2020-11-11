@@ -7,11 +7,6 @@
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entità",
-        "appUser": "App User",
-        "company": "Company",
-        "customer": "Customer",
-        "project": "Project",
-        "job": "Job",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
