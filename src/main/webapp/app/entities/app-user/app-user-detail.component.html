@@ -1,0 +1,46 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="appUser">
+            <h2><span jhiTranslate="freemindTimesheetApp.appUser.detail.title">App User</span> {{ appUser.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="freemindTimesheetApp.appUser.phone">Phone</span></dt>
+                <dd>
+                    <span>{{ appUser.phone }}</span>
+                </dd>
+                <dt><span jhiTranslate="freemindTimesheetApp.appUser.internalUser">Internal User</span></dt>
+                <dd>
+                    {{ appUser.internalUser?.id }}
+                </dd>
+                <dt><span jhiTranslate="freemindTimesheetApp.appUser.job">Job</span></dt>
+                <dd>
+                    <span *ngFor="let job of appUser.jobs; let last = last">
+                        <a [routerLink]="['/job', job?.id, 'view']">{{ job.id }}</a>{{ last ? '' : ', ' }}
+                    </span>
+                </dd>
+                <dt><span jhiTranslate="freemindTimesheetApp.appUser.company">Company</span></dt>
+                <dd>
+                    <div *ngIf="appUser.company">
+                        <a [routerLink]="['/company', appUser.company?.id, 'view']">{{ appUser.company?.id }}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/app-user', appUser.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
