@@ -1,0 +1,55 @@
+entity AppUser {
+	phone Integer
+}
+
+enum Language {
+    FRENCH, ENGLISH, DUTCH, PORTUGUESE, ITALIAN
+}
+
+enum Status {
+    ACTIVE, NOT_ACTIVE
+}
+
+entity Company {
+ 	name String required unique,
+}
+
+entity Customer{
+	name String required minlength(3),
+    enable Boolean required,
+}
+
+entity Project{
+	name String required minlength(3),
+    enable Boolean required,
+}
+
+entity Job{
+	name String required minlength(3),
+    description String minlength(20),
+    status Status,
+    startDate LocalDate,
+    endDate LocalDate,
+    enable Boolean,
+}
+
+relationship OneToOne{
+	AppUser{internalUser} to User
+}
+
+relationship OneToMany {
+  Company to AppUser
+  Customer to Project
+  Project to Job
+}
+
+relationship ManyToMany{
+Customer to Company 
+AppUser to Job
+}
+
+dto * with mapstruct
+paginate * with pagination
+service * with serviceClass
+filter *
+

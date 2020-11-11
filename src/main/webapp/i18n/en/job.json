@@ -1,0 +1,29 @@
+{
+  "freemindTimesheetApp": {
+    "job": {
+      "home": {
+        "title": "Jobs",
+        "createLabel": "Create a new Job",
+        "createOrEditLabel": "Create or edit a Job",
+        "notFound": "No Jobs found"
+      },
+      "created": "A new Job is created with identifier {{ param }}",
+      "updated": "A Job is updated with identifier {{ param }}",
+      "deleted": "A Job is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Job {{ id }}?"
+      },
+      "detail": {
+        "title": "Job"
+      },
+      "name": "Name",
+      "description": "Description",
+      "status": "Status",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "enable": "Enable",
+      "project": "Project",
+      "appUser": "App User"
+    }
+  }
+}
