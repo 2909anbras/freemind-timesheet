@@ -1,0 +1,25 @@
+{
+  "freemindTimesheetApp": {
+    "customer": {
+      "home": {
+        "title": "Customers",
+        "createLabel": "Genera un nuovo Customer",
+        "createOrEditLabel": "Genera o modifica un Customer",
+        "notFound": "No Customers found"
+      },
+      "created": "&Egrave; stato generato un nuovo Customer con identificatore {{ param }}",
+      "updated": "&Egrave; stato aggiornato Customer identificato da {{ param }}",
+      "deleted": "&Egrave; stato eliminato Customer con identificatore {{ param }}",
+      "delete": {
+        "question": "Sei sicuro di volere eliminare Customer {{ id }}?"
+      },
+      "detail": {
+        "title": "Customer"
+      },
+      "name": "Name",
+      "enable": "Enable",
+      "project": "Project",
+      "company": "Company"
+    }
+  }
+}
