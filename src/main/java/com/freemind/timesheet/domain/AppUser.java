@@ -32,7 +32,7 @@ public class AppUser implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JoinTable(
         name = "app_user_job",
-        joinColumns = @JoinColumn(name = "app_user_id", referencedColumnName = "id"),
+        joinColumns = @JoinColumn(name = "app_user_id"),
         inverseJoinColumns = @JoinColumn(name = "job_id", referencedColumnName = "id")
     )
     private Set<Job> jobs = new HashSet<>();
