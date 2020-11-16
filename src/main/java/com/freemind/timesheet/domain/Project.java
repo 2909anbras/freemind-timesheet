@@ -1,15 +1,13 @@
 package com.freemind.timesheet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Project.
@@ -18,7 +16,6 @@ import java.util.Set;
 @Table(name = "project")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Project implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -39,7 +36,7 @@ public class Project implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Job> jobs = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties(value = "projects", allowSetters = true)
     private Customer customer;
 
@@ -115,6 +112,7 @@ public class Project implements Serializable {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override

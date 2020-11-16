@@ -24,7 +24,7 @@ public class AppUser implements Serializable {
     @Column(name = "phone")
     private Integer phone;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @MapsId
     private User internalUser;
 
@@ -37,7 +37,7 @@ public class AppUser implements Serializable {
     )
     private Set<Job> jobs = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties(value = "appUsers", allowSetters = true)
     private Company company;
 
