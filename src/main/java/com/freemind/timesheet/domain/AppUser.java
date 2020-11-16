@@ -22,7 +22,7 @@ public class AppUser implements Serializable {
     private Long id;
 
     @Column(name = "phone")
-    private Integer phone;
+    private String phone;
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @MapsId
@@ -50,16 +50,16 @@ public class AppUser implements Serializable {
         this.id = id;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public AppUser phone(Integer phone) {
+    public AppUser phone(String phone) {
         this.phone = phone;
         return this;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
