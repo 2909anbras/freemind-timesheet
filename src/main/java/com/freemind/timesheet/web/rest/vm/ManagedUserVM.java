@@ -24,6 +24,10 @@ public class ManagedUserVM extends UserDTO {
         return phone;
     }
 
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public String getPassword() {
         return password;
     }
