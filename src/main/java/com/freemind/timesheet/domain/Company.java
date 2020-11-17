@@ -31,8 +31,7 @@ public class Company implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<AppUser> appUsers = new HashSet<>();
 
-    //avant mappedBy companies
-    @ManyToMany(mappedBy = "companies", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "companies", cascade = CascadeType.PERSIST)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnore
     private Set<Customer> customers = new HashSet<>();
@@ -107,6 +106,13 @@ public class Company implements Serializable {
 
     public void setCustomers(Set<Customer> customers) {
         this.customers = customers;
+    }
+
+    @PreRemove
+    public void removeCustomers() {
+        for (Customer c : customers) { //si un customer a + d'une company, on supprime tout.
+            c.removeCompany(this);
+        }
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

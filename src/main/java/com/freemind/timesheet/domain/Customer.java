@@ -1,5 +1,6 @@
 package com.freemind.timesheet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -165,3 +166,6 @@ public class Customer implements Serializable {
             "}";
     }
 }
+//@ManyToMany(mappedBy = "customers",cascade = CascadeType.REFRESH)//vérifier si le nom donné doit être dans liquibase
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+//@JsonIgnore //from company
