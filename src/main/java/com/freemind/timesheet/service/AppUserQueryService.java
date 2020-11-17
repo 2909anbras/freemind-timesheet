@@ -86,7 +86,7 @@ public class AppUserQueryService extends QueryService<AppUser> {
                 specification = specification.and(buildRangeSpecification(criteria.getId(), AppUser_.id));
             }
             if (criteria.getPhone() != null) {
-                //                specification = specification.and(buildRangeSpecification(criteria.getPhone(), AppUser_.phone));
+                specification = specification.and(buildStringSpecification(criteria.getPhone(), AppUser_.phone));
             }
             if (criteria.getInternalUserId() != null) {
                 specification =

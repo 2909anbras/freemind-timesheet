@@ -46,8 +46,6 @@ public class AppUserResourceIT {
     private static final String DEFAULT_PHONE = "AAAAAAAAAA";
     private static final String UPDATED_PHONE = "BBBBBBBBBB";
 
-    //    private static final String SMALLER_PHONE = 1 - 1;
-
     @Autowired
     private AppUserRepository appUserRepository;
 
@@ -257,55 +255,31 @@ public class AppUserResourceIT {
 
     @Test
     @Transactional
-    public void getAllAppUsersByPhoneIsGreaterThanOrEqualToSomething() throws Exception {
+    public void getAllAppUsersByPhoneContainsSomething() throws Exception {
         // Initialize the database
         appUserRepository.saveAndFlush(appUser);
 
-        // Get all the appUserList where phone is greater than or equal to DEFAULT_PHONE
-        defaultAppUserShouldBeFound("phone.greaterThanOrEqual=" + DEFAULT_PHONE);
+        // Get all the appUserList where phone contains DEFAULT_PHONE
+        defaultAppUserShouldBeFound("phone.contains=" + DEFAULT_PHONE);
 
-        // Get all the appUserList where phone is greater than or equal to UPDATED_PHONE
-        defaultAppUserShouldNotBeFound("phone.greaterThanOrEqual=" + UPDATED_PHONE);
+        // Get all the appUserList where phone contains UPDATED_PHONE
+        defaultAppUserShouldNotBeFound("phone.contains=" + UPDATED_PHONE);
     }
-
-    //    @Test
-    //    @Transactional
-    //    public void getAllAppUsersByPhoneIsLessThanOrEqualToSomething() throws Exception {
-    //        // Initialize the database
-    //        appUserRepository.saveAndFlush(appUser);
-    //
-    //        // Get all the appUserList where phone is less than or equal to DEFAULT_PHONE
-    //        defaultAppUserShouldBeFound("phone.lessThanOrEqual=" + DEFAULT_PHONE);
-    //
-    //        // Get all the appUserList where phone is less than or equal to SMALLER_PHONE
-    //        defaultAppUserShouldNotBeFound("phone.lessThanOrEqual=" + SMALLER_PHONE);
-    //    }
 
     @Test
     @Transactional
-    public void getAllAppUsersByPhoneIsLessThanSomething() throws Exception {
+    public void getAllAppUsersByPhoneNotContainsSomething() throws Exception {
         // Initialize the database
         appUserRepository.saveAndFlush(appUser);
 
-        // Get all the appUserList where phone is less than DEFAULT_PHONE
-        defaultAppUserShouldNotBeFound("phone.lessThan=" + DEFAULT_PHONE);
+        // Get all the appUserList where phone does not contain DEFAULT_PHONE
+        defaultAppUserShouldNotBeFound("phone.doesNotContain=" + DEFAULT_PHONE);
 
-        // Get all the appUserList where phone is less than UPDATED_PHONE
-        defaultAppUserShouldBeFound("phone.lessThan=" + UPDATED_PHONE);
+        // Get all the appUserList where phone does not contain UPDATED_PHONE
+        defaultAppUserShouldBeFound("phone.doesNotContain=" + UPDATED_PHONE);
     }
 
-    //    @Test
-    //    @Transactional
-    //    public void getAllAppUsersByPhoneIsGreaterThanSomething() throws Exception {
-    //        // Initialize the database
-    //        appUserRepository.saveAndFlush(appUser);
-    //
-    //        // Get all the appUserList where phone is greater than DEFAULT_PHONE
-    //        defaultAppUserShouldNotBeFound("phone.greaterThan=" + DEFAULT_PHONE);
-    //
-    //        // Get all the appUserList where phone is greater than SMALLER_PHONE
-    //        defaultAppUserShouldBeFound("phone.greaterThan=" + SMALLER_PHONE);
-    //    }
+
 
     @Test
     @Transactional

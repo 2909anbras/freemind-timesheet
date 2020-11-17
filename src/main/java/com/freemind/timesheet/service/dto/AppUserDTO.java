@@ -79,7 +79,7 @@ public class AppUserDTO implements Serializable {
     public String toString() {
         return "AppUserDTO{" +
             "id=" + getId() +
-            ", phone=" + getPhone() +
+            ", phone='" + getPhone() + "'" +
             ", internalUserId=" + getInternalUserId() +
             ", jobs='" + getJobs() + "'" +
             ", companyId=" + getCompanyId() +
