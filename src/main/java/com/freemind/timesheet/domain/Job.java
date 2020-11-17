@@ -48,11 +48,11 @@ public class Job implements Serializable {
     @Column(name = "enable")
     private Boolean enable;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JsonIgnoreProperties(value = "jobs", allowSetters = true)
     private Project project;
 
-    @ManyToMany(mappedBy = "jobs")
+    @ManyToMany(mappedBy = "jobs", cascade = CascadeType.REFRESH)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnore
     private Set<AppUser> appUsers = new HashSet<>();

@@ -33,12 +33,11 @@ public class Customer implements Serializable {
     @Column(name = "enable", nullable = false)
     private Boolean enable;
 
-    //    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Project> projects = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE) //Inverser avec company
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JoinTable(
         name = "customer_company",

@@ -24,7 +24,7 @@ public class AppUser implements Serializable {
     @Column(name = "phone")
     private String phone;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @OneToOne(cascade = CascadeType.MERGE)
     @MapsId
     private User internalUser;
 
