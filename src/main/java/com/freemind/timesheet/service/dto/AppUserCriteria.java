@@ -1,7 +1,5 @@
 package com.freemind.timesheet.service.dto;
 
-import java.io.Serializable;
-import java.util.Objects;
 import io.github.jhipster.service.Criteria;
 import io.github.jhipster.service.filter.BooleanFilter;
 import io.github.jhipster.service.filter.DoubleFilter;
@@ -10,6 +8,8 @@ import io.github.jhipster.service.filter.FloatFilter;
 import io.github.jhipster.service.filter.IntegerFilter;
 import io.github.jhipster.service.filter.LongFilter;
 import io.github.jhipster.service.filter.StringFilter;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Criteria class for the {@link com.freemind.timesheet.domain.AppUser} entity. This class is used
@@ -21,7 +21,6 @@ import io.github.jhipster.service.filter.StringFilter;
  * fix type specific filters.
  */
 public class AppUserCriteria implements Serializable, Criteria {
-
     private static final long serialVersionUID = 1L;
 
     private LongFilter id;
@@ -34,8 +33,7 @@ public class AppUserCriteria implements Serializable, Criteria {
 
     private LongFilter companyId;
 
-    public AppUserCriteria() {
-    }
+    public AppUserCriteria() {}
 
     public AppUserCriteria(AppUserCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
@@ -90,7 +88,6 @@ public class AppUserCriteria implements Serializable, Criteria {
         this.companyId = companyId;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -100,23 +97,18 @@ public class AppUserCriteria implements Serializable, Criteria {
             return false;
         }
         final AppUserCriteria that = (AppUserCriteria) o;
-        return
+        return (
             Objects.equals(id, that.id) &&
             Objects.equals(phone, that.phone) &&
             Objects.equals(internalUserId, that.internalUserId) &&
             Objects.equals(jobId, that.jobId) &&
-            Objects.equals(companyId, that.companyId);
+            Objects.equals(companyId, that.companyId)
+        );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-        id,
-        phone,
-        internalUserId,
-        jobId,
-        companyId
-        );
+        return Objects.hash(id, phone, internalUserId, jobId, companyId);
     }
 
     // prettier-ignore
@@ -130,5 +122,4 @@ public class AppUserCriteria implements Serializable, Criteria {
                 (companyId != null ? "companyId=" + companyId + ", " : "") +
             "}";
     }
-
 }

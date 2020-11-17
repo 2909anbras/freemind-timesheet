@@ -8,17 +8,15 @@ import java.util.Set;
  * A DTO for the {@link com.freemind.timesheet.domain.AppUser} entity.
  */
 public class AppUserDTO implements Serializable {
-    
     private Long id;
 
     private String phone;
-
 
     private Long internalUserId;
     private Set<JobDTO> jobs = new HashSet<>();
 
     private Long companyId;
-    
+
     public Long getId() {
         return id;
     }

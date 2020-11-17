@@ -15,7 +15,9 @@
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+
             <column name="phone" type="varchar(255)">
+
                 <constraints nullable="true" />
             </column>
             <column name="internal_user_id" type="bigint">

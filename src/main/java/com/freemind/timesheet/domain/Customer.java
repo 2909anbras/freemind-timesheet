@@ -1,14 +1,15 @@
 package com.freemind.timesheet.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * A Customer.
@@ -17,7 +18,6 @@ import java.util.Set;
 @Table(name = "customer")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Customer implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,15 +34,17 @@ public class Customer implements Serializable {
     @Column(name = "enable", nullable = false)
     private Boolean enable;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Project> projects = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REFRESH) //Inverser avec company
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JoinTable(name = "customer_company",
-               joinColumns = @JoinColumn(name = "customer_id", referencedColumnName = "id"),
-               inverseJoinColumns = @JoinColumn(name = "company_id", referencedColumnName = "id"))
+    @JoinTable(
+        name = "customer_company",
+        joinColumns = @JoinColumn(name = "customer_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "company_id", referencedColumnName = "id")
+    )
     private Set<Company> companies = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -89,6 +91,12 @@ public class Customer implements Serializable {
         return this;
     }
 
+    public void removeProjects() {
+        for (Project p : this.projects) {
+            //    		p.removeCustomer(this.id);
+        }
+    }
+
     public Customer addProject(Project project) {
         this.projects.add(project);
         project.setCustomer(this);
@@ -129,6 +137,7 @@ public class Customer implements Serializable {
     public void setCompanies(Set<Company> companies) {
         this.companies = companies;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -157,3 +166,6 @@ public class Customer implements Serializable {
             "}";
     }
 }
+//@ManyToMany(mappedBy = "customers",cascade = CascadeType.REFRESH)//vérifier si le nom donné doit être dans liquibase
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+//@JsonIgnore //from company

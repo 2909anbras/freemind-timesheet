@@ -1,15 +1,13 @@
 package com.freemind.timesheet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Company.
@@ -18,7 +16,6 @@ import java.util.Set;
 @Table(name = "company")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Company implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,7 +31,7 @@ public class Company implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<AppUser> appUsers = new HashSet<>();
 
-    @ManyToMany(mappedBy = "companies")
+    @ManyToMany(mappedBy = "companies", cascade = CascadeType.PERSIST)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnore
     private Set<Customer> customers = new HashSet<>();
@@ -110,6 +107,14 @@ public class Company implements Serializable {
     public void setCustomers(Set<Customer> customers) {
         this.customers = customers;
     }
+
+    @PreRemove
+    public void removeCustomers() {
+        for (Customer c : customers) {
+            c.removeCompany(this);
+        }
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override

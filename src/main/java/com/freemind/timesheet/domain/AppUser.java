@@ -28,8 +28,10 @@ public class AppUser implements Serializable {
     @Column(name = "phone")
     private String phone;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @MapsId
+
     private User internalUser;
 
     @ManyToMany
@@ -39,7 +41,7 @@ public class AppUser implements Serializable {
                inverseJoinColumns = @JoinColumn(name = "job_id", referencedColumnName = "id"))
     private Set<Job> jobs = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties(value = "appUsers", allowSetters = true)
     private Company company;
 
@@ -135,10 +137,12 @@ public class AppUser implements Serializable {
 
     // prettier-ignore
     @Override
+    
     public String toString() {
         return "AppUser{" +
-            "id=" + getId() +
-            ", phone='" + getPhone() + "'" +
+
+//            "id=" + getId() +
+            ", phone=" + getPhone() +
             "}";
     }
 }

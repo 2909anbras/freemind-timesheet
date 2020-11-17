@@ -2,18 +2,15 @@ package com.freemind.timesheet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
+import com.freemind.timesheet.domain.enumeration.Status;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.freemind.timesheet.domain.enumeration.Status;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Job.
@@ -22,7 +19,6 @@ import com.freemind.timesheet.domain.enumeration.Status;
 @Table(name = "job")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Job implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -52,11 +48,11 @@ public class Job implements Serializable {
     @Column(name = "enable")
     private Boolean enable;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JsonIgnoreProperties(value = "jobs", allowSetters = true)
     private Project project;
 
-    @ManyToMany(mappedBy = "jobs")
+    @ManyToMany(mappedBy = "jobs", cascade = CascadeType.REFRESH)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnore
     private Set<AppUser> appUsers = new HashSet<>();
@@ -185,6 +181,7 @@ public class Job implements Serializable {
     public void setAppUsers(Set<AppUser> appUsers) {
         this.appUsers = appUsers;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
