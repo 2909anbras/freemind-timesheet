@@ -11,7 +11,7 @@ public class AppUserDTO implements Serializable {
     
     private Long id;
 
-    private Integer phone;
+    private String phone;
 
 
     private Long internalUserId;
@@ -27,11 +27,11 @@ public class AppUserDTO implements Serializable {
         this.id = id;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -81,7 +81,7 @@ public class AppUserDTO implements Serializable {
     public String toString() {
         return "AppUserDTO{" +
             "id=" + getId() +
-            ", phone=" + getPhone() +
+            ", phone='" + getPhone() + "'" +
             ", internalUserId=" + getInternalUserId() +
             ", jobs='" + getJobs() + "'" +
             ", companyId=" + getCompanyId() +

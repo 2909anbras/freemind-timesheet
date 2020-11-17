@@ -3,7 +3,7 @@
   "fields": [
     {
       "fieldName": "phone",
-      "fieldType": "Integer"
+      "fieldType": "String"
     }
   ],
   "relationships": [

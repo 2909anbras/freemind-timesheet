@@ -26,7 +26,7 @@ public class AppUserCriteria implements Serializable, Criteria {
 
     private LongFilter id;
 
-    private IntegerFilter phone;
+    private StringFilter phone;
 
     private LongFilter internalUserId;
 
@@ -58,11 +58,11 @@ public class AppUserCriteria implements Serializable, Criteria {
         this.id = id;
     }
 
-    public IntegerFilter getPhone() {
+    public StringFilter getPhone() {
         return phone;
     }
 
-    public void setPhone(IntegerFilter phone) {
+    public void setPhone(StringFilter phone) {
         this.phone = phone;
     }
 

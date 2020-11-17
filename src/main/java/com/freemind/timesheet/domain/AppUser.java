@@ -1,12 +1,14 @@
 package com.freemind.timesheet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.*;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A AppUser.
@@ -15,26 +17,26 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "app_user")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AppUser implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
     @Column(name = "phone")
-    private Integer phone;
+    private String phone;
 
     @OneToOne
-    @MapsId
+    @JoinColumn(unique = true)
     private User internalUser;
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JoinTable(
-        name = "app_user_job",
-        joinColumns = @JoinColumn(name = "app_user_id"),
-        inverseJoinColumns = @JoinColumn(name = "job_id", referencedColumnName = "id")
-    )
+    @JoinTable(name = "app_user_job",
+               joinColumns = @JoinColumn(name = "app_user_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "job_id", referencedColumnName = "id"))
     private Set<Job> jobs = new HashSet<>();
 
     @ManyToOne
@@ -50,16 +52,16 @@ public class AppUser implements Serializable {
         this.id = id;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public AppUser phone(Integer phone) {
+    public AppUser phone(String phone) {
         this.phone = phone;
         return this;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -113,7 +115,6 @@ public class AppUser implements Serializable {
     public void setCompany(Company company) {
         this.company = company;
     }
-
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -137,7 +138,7 @@ public class AppUser implements Serializable {
     public String toString() {
         return "AppUser{" +
             "id=" + getId() +
-            ", phone=" + getPhone() +
+            ", phone='" + getPhone() + "'" +
             "}";
     }
 }

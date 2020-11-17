@@ -41,13 +41,13 @@ describe('AppUser e2e test', () => {
     await appUserComponentsPage.clickOnCreateButton();
 
     await promise.all([
-      appUserUpdatePage.setPhoneInput('5'),
+      appUserUpdatePage.setPhoneInput('phone'),
       appUserUpdatePage.internalUserSelectLastOption(),
       // appUserUpdatePage.jobSelectLastOption(),
       appUserUpdatePage.companySelectLastOption(),
     ]);
 
-    expect(await appUserUpdatePage.getPhoneInput()).to.eq('5', 'Expected phone value to be equals to 5');
+    expect(await appUserUpdatePage.getPhoneInput()).to.eq('phone', 'Expected Phone value to be equals to phone');
 
     await appUserUpdatePage.save();
     expect(await appUserUpdatePage.getSaveButton().isPresent(), 'Expected save button disappear').to.be.false;
