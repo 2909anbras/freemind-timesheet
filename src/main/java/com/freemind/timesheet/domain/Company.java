@@ -110,7 +110,7 @@ public class Company implements Serializable {
 
     @PreRemove
     public void removeCustomers() {
-        for (Customer c : customers) { //si un customer a + d'une company, on supprime tout.
+        for (Customer c : customers) {
             c.removeCompany(this);
         }
     }

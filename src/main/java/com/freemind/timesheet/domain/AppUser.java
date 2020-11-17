@@ -24,7 +24,7 @@ public class AppUser implements Serializable {
     @Column(name = "phone")
     private String phone;
 
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.ALL)
     @MapsId
     private User internalUser;
 
@@ -134,9 +134,10 @@ public class AppUser implements Serializable {
 
     // prettier-ignore
     @Override
+    
     public String toString() {
         return "AppUser{" +
-            "id=" + getId() +
+//            "id=" + getId() +
             ", phone=" + getPhone() +
             "}";
     }

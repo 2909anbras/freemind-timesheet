@@ -38,7 +38,7 @@ public class Customer implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Project> projects = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.REMOVE) //Inverser avec company
+    @ManyToMany(cascade = CascadeType.REFRESH) //Inverser avec company
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JoinTable(
         name = "customer_company",
