@@ -1,14 +1,12 @@
 package com.freemind.timesheet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A AppUser.
@@ -17,31 +15,28 @@ import java.util.Set;
 @Table(name = "app_user")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AppUser implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
     @Column(name = "phone")
     private String phone;
 
-
     @OneToOne(cascade = CascadeType.ALL)
-    @MapsId
-
+    @MapsId("id")
     private User internalUser;
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JoinTable(name = "app_user_job",
-               joinColumns = @JoinColumn(name = "app_user_id", referencedColumnName = "id"),
-               inverseJoinColumns = @JoinColumn(name = "job_id", referencedColumnName = "id"))
+    @JoinTable(
+        name = "app_user_job",
+        joinColumns = @JoinColumn(name = "app_user_id"),
+        inverseJoinColumns = @JoinColumn(name = "job_id", referencedColumnName = "id")
+    )
     private Set<Job> jobs = new HashSet<>();
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JsonIgnoreProperties(value = "appUsers", allowSetters = true)
     private Company company;
 
@@ -117,6 +112,7 @@ public class AppUser implements Serializable {
     public void setCompany(Company company) {
         this.company = company;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
