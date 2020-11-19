@@ -48,7 +48,9 @@
       "confirmpassword.label": "New password confirmation",
       "confirmpassword.placeholder": "Confirm the new password",
       "email.label": "Email",
-      "email.placeholder": "Your email"
+      "email.placeholder": "Your email",
+      "phone": "phone number",
+      "phone.placeholder": "user phone number"
     },
     "messages": {
       "info": {

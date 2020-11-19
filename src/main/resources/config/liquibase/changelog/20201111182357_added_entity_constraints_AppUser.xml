@@ -17,7 +17,7 @@
         <addForeignKeyConstraint baseColumnNames="app_user_id"
                                  baseTableName="app_user_job"
                                  constraintName="fk_app_user_job_app_user_id"
-                                 referencedColumnNames="id"
+                                 referencedColumnNames="internal_user_id"
                                  referencedTableName="app_user"/>
 
         <addForeignKeyConstraint baseColumnNames="job_id"

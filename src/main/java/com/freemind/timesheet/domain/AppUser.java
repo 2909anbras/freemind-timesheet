@@ -18,20 +18,21 @@ public class AppUser implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @Column(name = "internal_user_id", unique = true, nullable = false)
     private Long id;
 
     @Column(name = "phone")
     private String phone;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @MapsId("id")
+    @MapsId
     private User internalUser;
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JoinTable(
         name = "app_user_job",
-        joinColumns = @JoinColumn(name = "app_user_id"),
+        joinColumns = @JoinColumn(name = "internal_user_id"),
         inverseJoinColumns = @JoinColumn(name = "job_id", referencedColumnName = "id")
     )
     private Set<Job> jobs = new HashSet<>();

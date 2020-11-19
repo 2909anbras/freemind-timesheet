@@ -75,7 +75,7 @@ public class AccountResource {
                     throw new EmailAlreadyUsedException();
                 }
             );
-
+        log.debug("REST request to get User : {}", managedUserVM);
         User user = userService.registerUser(managedUserVM, managedUserVM.getPassword(), managedUserVM.getPhone());
         mailService.sendActivationEmail(user);
     }

@@ -151,6 +151,9 @@ public class UserService {
         AppUser newUserExtra = new AppUser();
         newUserExtra.setInternalUser(newUser);
         newUserExtra.setPhone(phone);
+        //        newUserExtra.setId(newUser.getId());
+        log.debug("Created Information for UserExtra: {}", newUser);
+
         appUserRepository.save(newUserExtra);
         log.debug("Created Information for UserExtra: {}", newUserExtra);
         return newUser;

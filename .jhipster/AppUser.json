@@ -3,7 +3,8 @@
   "fields": [
     {
       "fieldName": "phone",
-      "fieldType": "String"
+      "fieldType": "String",
+	  "fieldValidateRules": ["required", "unique"]
     }
   ],
   "relationships": [
