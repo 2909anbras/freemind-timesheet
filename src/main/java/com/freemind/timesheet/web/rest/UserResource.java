@@ -10,6 +10,7 @@ import com.freemind.timesheet.service.dto.UserDTO;
 import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
 import com.freemind.timesheet.web.rest.errors.EmailAlreadyUsedException;
 import com.freemind.timesheet.web.rest.errors.LoginAlreadyUsedException;
+import com.freemind.timesheet.web.rest.vm.ManagedUserVM;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -91,20 +92,43 @@ public class UserResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the login or email is already in use.
      */
-    @PostMapping("/users")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) throws URISyntaxException {
-        log.debug("REST request to save User : {}", userDTO);
+    //    @PostMapping("/users")
+    //    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    //    public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) throws URISyntaxException {
+    //        log.debug("REST request to save User : {}", userDTO);
+    //
+    //        if (userDTO.getId() != null) {
+    //            throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
+    //            // Lowercase the user login before comparing with database
+    //        } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
+    //            throw new LoginAlreadyUsedException();
+    //        } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
+    //            throw new EmailAlreadyUsedException();
+    //        } else {
+    //            User newUser = userService.createUser(userDTO);
+    //            mailService.sendCreationEmail(newUser);
+    //            return ResponseEntity
+    //                .created(new URI("/api/users/" + newUser.getLogin()))
+    //                .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUser.getLogin()))
+    //                .body(newUser);
+    //        }
+    //    }
 
-        if (userDTO.getId() != null) {
+    @PostMapping("/users")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")") //changed userDTO to manage.
+    public ResponseEntity<User> createUser(@Valid @RequestBody ManagedUserVM managedUserVM) throws URISyntaxException {
+        log.debug("Wouhou");
+        log.debug("REST request to save User : {}", managedUserVM);
+
+        if (managedUserVM.getId() != null) {
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
             // Lowercase the user login before comparing with database
-        } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
+        } else if (userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).isPresent()) {
             throw new LoginAlreadyUsedException();
-        } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
+        } else if (userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).isPresent()) {
             throw new EmailAlreadyUsedException();
         } else {
-            User newUser = userService.createUser(userDTO);
+            User newUser = userService.createUser(managedUserVM, managedUserVM.getPhone(), managedUserVM.getCompanyID());
             mailService.sendCreationEmail(newUser);
             return ResponseEntity
                 .created(new URI("/api/users/" + newUser.getLogin()))
@@ -123,7 +147,7 @@ public class UserResource {
      */
     @PutMapping("/users")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody ManagedUserVM userDTO) {
         log.debug("REST request to update User : {}", userDTO);
         Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
@@ -133,7 +157,7 @@ public class UserResource {
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
             throw new LoginAlreadyUsedException();
         }
-        Optional<UserDTO> updatedUser = userService.updateUser(userDTO);
+        Optional<UserDTO> updatedUser = userService.updateUser(userDTO); //changer le optionnal?
 
         return ResponseUtil.wrapOrNotFound(
             updatedUser,

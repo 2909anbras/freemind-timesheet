@@ -6,10 +6,12 @@ import com.freemind.timesheet.domain.Authority;
 import com.freemind.timesheet.domain.User;
 import com.freemind.timesheet.repository.AppUserRepository;
 import com.freemind.timesheet.repository.AuthorityRepository;
+import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.repository.UserRepository;
 import com.freemind.timesheet.security.AuthoritiesConstants;
 import com.freemind.timesheet.security.SecurityUtils;
 import com.freemind.timesheet.service.dto.UserDTO;
+import com.freemind.timesheet.web.rest.vm.ManagedUserVM;
 import io.github.jhipster.security.RandomUtil;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -37,6 +39,10 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final CompanyRepository companyRepository;
+
+    private final CompanyService companyService;
+
     private final PasswordEncoder passwordEncoder;
 
     private final AuthorityRepository authorityRepository;
@@ -48,13 +54,17 @@ public class UserService {
         AppUserRepository appUserRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        CacheManager cacheManager
+        CacheManager cacheManager,
+        CompanyService companyService,
+        CompanyRepository companyRepository
     ) {
         this.appUserRepository = appUserRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.companyService = companyService;
+        this.companyRepository = companyRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -155,7 +165,6 @@ public class UserService {
         log.debug("Created Information for UserExtra: {}", newUser);
 
         appUserRepository.save(newUserExtra);
-        log.debug("Created Information for UserExtra: {}", newUserExtra);
         return newUser;
     }
 
@@ -169,7 +178,8 @@ public class UserService {
         return true;
     }
 
-    public User createUser(UserDTO userDTO) {
+    public User createUser(UserDTO userDTO, String phone, Long companyId) {
+        log.debug("ICIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII", companyId);
         User user = new User();
         user.setLogin(userDTO.getLogin().toLowerCase());
         user.setFirstName(userDTO.getFirstName());
@@ -201,6 +211,18 @@ public class UserService {
         userRepository.save(user);
         this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
+
+        // create the user
+
+        AppUser newUserExtra = new AppUser();
+        newUserExtra.setInternalUser(user);
+        newUserExtra.setPhone(phone);
+        newUserExtra.setCompany(companyRepository.getOne(companyId));
+
+        log.debug("Created Information for UserExtra: {}", newUserExtra);
+
+        appUserRepository.save(newUserExtra);
+
         return user;
     }
 
@@ -210,7 +232,7 @@ public class UserService {
      * @param userDTO user to update.
      * @return updated user.
      */
-    public Optional<UserDTO> updateUser(UserDTO userDTO) {
+    public Optional<UserDTO> updateUser(ManagedUserVM userDTO) {
         return Optional
             .of(userRepository.findById(userDTO.getId()))
             .filter(Optional::isPresent)
@@ -238,6 +260,17 @@ public class UserService {
                         .forEach(managedAuthorities::add);
                     this.clearUserCaches(user);
                     log.debug("Changed Information for User: {}", user);
+
+                    //test
+
+                    AppUser newUserExtra = appUserRepository.getOne(userDTO.getId());
+                    newUserExtra.setInternalUser(user);
+                    newUserExtra.setPhone(userDTO.getPhone());
+                    newUserExtra.setCompany(companyRepository.getOne(userDTO.getCompanyID()));
+
+                    log.debug("Created Information for UserExtra: {}", newUserExtra);
+
+                    appUserRepository.save(newUserExtra);
                     return user;
                 }
             )

@@ -1,4 +1,6 @@
-export interface IUser {
+import { AppUser, IAppUser } from '../../shared/model/app-user.model';
+
+export interface IUser extends IAppUser {
   id?: any;
   login?: string;
   firstName?: string;
@@ -13,6 +15,7 @@ export interface IUser {
   lastModifiedDate?: Date;
   password?: string;
   phone?: string;
+  companyId?: number;
 }
 
 export class User implements IUser {
@@ -30,6 +33,7 @@ export class User implements IUser {
     public lastModifiedBy?: string,
     public lastModifiedDate?: Date,
     public password?: string,
-    public phone?: string
+    public phone?: string,
+    public companyId?: number
   ) {}
 }

@@ -2,9 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
+import { HttpResponse } from '@angular/common/http';
+
+import { ICompany } from 'app/shared/model/company.model';
+import { CompanyService } from 'app/entities/company/company.service';
+
 import { LANGUAGES } from 'app/core/language/language.constants';
 import { User } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
+
+type SelectableEntity = ICompany; //
 
 @Component({
   selector: 'jhi-user-mgmt-update',
@@ -15,6 +22,7 @@ export class UserManagementUpdateComponent implements OnInit {
   languages = LANGUAGES;
   authorities: string[] = [];
   isSaving = false;
+  companies: ICompany[] = [];
 
   editForm = this.fb.group({
     id: [],
@@ -33,9 +41,16 @@ export class UserManagementUpdateComponent implements OnInit {
     activated: [],
     langKey: [],
     authorities: [],
+    companyId: [],
+    phone: [],
   });
 
-  constructor(private userService: UserService, private route: ActivatedRoute, private fb: FormBuilder) {}
+  constructor(
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    protected companyService: CompanyService
+  ) {}
 
   ngOnInit(): void {
     this.route.data.subscribe(({ user }) => {
@@ -50,6 +65,14 @@ export class UserManagementUpdateComponent implements OnInit {
     this.userService.authorities().subscribe(authorities => {
       this.authorities = authorities;
     });
+    this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
+      this.companies = res.body || [];
+      console.log(this.companies);
+    });
+  }
+
+  trackById(index: number, item: SelectableEntity): any {
+    return item.id;
   }
 
   previousState(): void {
@@ -82,6 +105,8 @@ export class UserManagementUpdateComponent implements OnInit {
       activated: user.activated,
       langKey: user.langKey,
       authorities: user.authorities,
+      phone: user.phone,
+      companyId: user.companyId,
     });
   }
 
@@ -93,6 +118,8 @@ export class UserManagementUpdateComponent implements OnInit {
     user.activated = this.editForm.get(['activated'])!.value;
     user.langKey = this.editForm.get(['langKey'])!.value;
     user.authorities = this.editForm.get(['authorities'])!.value;
+    user.phone = this.editForm.get(['phone'])!.value;
+    user.companyId = this.editForm.get(['companyId'])!.value;
   }
 
   private onSaveSuccess(): void {
