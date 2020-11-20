@@ -21,7 +21,7 @@ public class ManagedUserVM extends UserDTO {
 
     private String phone;
 
-    private Long companyID; //id?
+    private Long companyId;
 
     public ManagedUserVM() {
         // Empty constructor needed for Jackson.
@@ -51,17 +51,17 @@ public class ManagedUserVM extends UserDTO {
         this.jobs = jobs;
     }
 
-    public Long getCompanyID() {
-        return companyID;
+    public Long getCompanyId() {
+        return companyId;
     }
 
-    public void setCompany(Long companyID) {
-        this.companyID = companyID;
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
     // prettier-ignore
     @Override
     public String toString() {
-        return "ManagedUserVM{" + super.toString() + "} ";
+        return "ManagedUserVM{" + super.toString() + "phone:"+this.phone+", companyId:"+this.companyId+"} ";
     }
 }

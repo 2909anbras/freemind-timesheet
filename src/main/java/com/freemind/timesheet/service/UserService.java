@@ -266,7 +266,7 @@ public class UserService {
                     AppUser newUserExtra = appUserRepository.getOne(userDTO.getId());
                     newUserExtra.setInternalUser(user);
                     newUserExtra.setPhone(userDTO.getPhone());
-                    newUserExtra.setCompany(companyRepository.getOne(userDTO.getCompanyID()));
+                    newUserExtra.setCompany(companyRepository.getOne(userDTO.getCompanyId()));
 
                     log.debug("Created Information for UserExtra: {}", newUserExtra);
 

@@ -118,7 +118,7 @@ public class UserResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")") //changed userDTO to manage.
     public ResponseEntity<User> createUser(@Valid @RequestBody ManagedUserVM managedUserVM) throws URISyntaxException {
         log.debug("Wouhou");
-        log.debug("REST request to save User : {}", managedUserVM);
+        log.debug("REST request to save User : {}", managedUserVM.toString());
 
         if (managedUserVM.getId() != null) {
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
@@ -128,7 +128,7 @@ public class UserResource {
         } else if (userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).isPresent()) {
             throw new EmailAlreadyUsedException();
         } else {
-            User newUser = userService.createUser(managedUserVM, managedUserVM.getPhone(), managedUserVM.getCompanyID());
+            User newUser = userService.createUser(managedUserVM, managedUserVM.getPhone(), managedUserVM.getCompanyId());
             mailService.sendCreationEmail(newUser);
             return ResponseEntity
                 .created(new URI("/api/users/" + newUser.getLogin()))
