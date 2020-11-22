@@ -1,14 +1,18 @@
 package com.freemind.timesheet.web.rest;
 
-import com.freemind.timesheet.service.CustomerService;
-import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
-import com.freemind.timesheet.service.dto.CustomerDTO;
-import com.freemind.timesheet.service.dto.CustomerCriteria;
 import com.freemind.timesheet.service.CustomerQueryService;
-
+import com.freemind.timesheet.service.CustomerService;
+import com.freemind.timesheet.service.dto.CustomerCriteria;
+import com.freemind.timesheet.service.dto.CustomerDTO;
+import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,15 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * REST controller for managing {@link com.freemind.timesheet.domain.Customer}.
@@ -32,7 +30,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class CustomerResource {
-
     private final Logger log = LoggerFactory.getLogger(CustomerResource.class);
 
     private static final String ENTITY_NAME = "customer";
@@ -63,7 +60,8 @@ public class CustomerResource {
             throw new BadRequestAlertException("A new customer cannot already have an ID", ENTITY_NAME, "idexists");
         }
         CustomerDTO result = customerService.save(customerDTO);
-        return ResponseEntity.created(new URI("/api/customers/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/customers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
@@ -84,7 +82,8 @@ public class CustomerResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         CustomerDTO result = customerService.save(customerDTO);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, customerDTO.getId().toString()))
             .body(result);
     }
@@ -129,6 +128,18 @@ public class CustomerResource {
         return ResponseUtil.wrapOrNotFound(customerDTO);
     }
 
+    @GetMapping("/customer/{companyId}")
+    public ResponseEntity<List<CustomerDTO>> getCustomersByCompany(
+        @PathVariable Long companyId,
+        CustomerCriteria criteria,
+        Pageable pageable
+    ) {
+        log.debug("REST request to get Customer : {}", companyId);
+        Page<CustomerDTO> page = customerQueryService.findCustomersByCompanyByCriteria(companyId, criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
     /**
      * {@code DELETE  /customers/:id} : delete the "id" customer.
      *
@@ -139,6 +150,9 @@ public class CustomerResource {
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         log.debug("REST request to delete Customer : {}", id);
         customerService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

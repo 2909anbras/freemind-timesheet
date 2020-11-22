@@ -208,6 +208,13 @@ public class UserResource {
         return ResponseUtil.wrapOrNotFound(userService.getUserWithAuthoritiesByLogin(login).map(UserDTO::new));
     }
 
+    //    @GetMapping("/users/{companyId}")//changer pour ajouter un truc.
+    //    public ResponseEntity<List<ManagedUserVM>> getUsersByCompany (@PathVariable Long companyId){
+    //    	final Page<UserDTO> page = userService.getUsersByCompany(companyId);
+    //    	return null;
+    //
+    //    }
+
     /**
      * {@code DELETE /users/:login} : delete the "login" User.
      *

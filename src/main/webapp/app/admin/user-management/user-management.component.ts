@@ -5,12 +5,17 @@ import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { JhiEventManager } from 'ng-jhipster';
 
+import { IAppUser } from 'app/shared/model/app-user.model';
+import { AppUserService } from 'app/entities/app-user/app-user.service';
+
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.model';
 import { UserManagementDeleteDialogComponent } from './user-management-delete-dialog.component';
+
+//donc, ajouter iappuser
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -27,6 +32,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   ascending!: boolean;
 
   constructor(
+    private appUserService: AppUserService,
     private userService: UserService,
     private accountService: AccountService,
     private activatedRoute: ActivatedRoute,
@@ -48,7 +54,15 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   setActive(user: User, isActivated: boolean): void {
-    this.userService.update({ ...user, activated: isActivated }).subscribe(() => this.loadAll());
+    this.appUserService.find(user.id).subscribe((res: HttpResponse<IAppUser>) => {
+      if (res) {
+        const appUser = res.body;
+        this.userService
+          .update({ ...user, activated: isActivated, companyId: appUser?.companyId, phone: appUser?.phone })
+          .subscribe(() => this.loadAll());
+      }
+    });
+    // this.userService.update({ ...user, activated: isActivated }).subscribe(() => this.loadAll());
   }
 
   trackIdentity(index: number, item: User): any {

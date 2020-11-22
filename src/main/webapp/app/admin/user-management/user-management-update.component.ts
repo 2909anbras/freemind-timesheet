@@ -7,6 +7,9 @@ import { HttpResponse } from '@angular/common/http';
 import { ICompany } from 'app/shared/model/company.model';
 import { CompanyService } from 'app/entities/company/company.service';
 
+import { IAppUser } from 'app/shared/model/app-user.model';
+import { AppUserService } from 'app/entities/app-user/app-user.service';
+
 import { LANGUAGES } from 'app/core/language/language.constants';
 import { User } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
@@ -46,6 +49,7 @@ export class UserManagementUpdateComponent implements OnInit {
   });
 
   constructor(
+    private appUserService: AppUserService,
     private userService: UserService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -54,17 +58,27 @@ export class UserManagementUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.data.subscribe(({ user }) => {
+      //?
       if (user) {
         this.user = user;
         if (this.user.id === undefined) {
           this.user.activated = true;
         }
+        this.appUserService.find(user.id).subscribe((res: HttpResponse<IAppUser>) => {
+          const appUser = res.body;
+          if (appUser) {
+            this.user.companyId = appUser.companyId;
+            this.user.phone = appUser.phone;
+          }
+        });
+        console.log(user);
         this.updateForm(user);
       }
     });
     this.userService.authorities().subscribe(authorities => {
       this.authorities = authorities;
     });
+
     this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
       this.companies = res.body || [];
       console.log(this.companies);

@@ -1,9 +1,14 @@
 package com.freemind.timesheet.service;
 
+import com.freemind.timesheet.domain.*; // for static metamodels
+import com.freemind.timesheet.domain.Customer;
+import com.freemind.timesheet.repository.CustomerRepository;
+import com.freemind.timesheet.service.dto.CustomerCriteria;
+import com.freemind.timesheet.service.dto.CustomerDTO;
+import com.freemind.timesheet.service.mapper.CustomerMapper;
+import io.github.jhipster.service.QueryService;
 import java.util.List;
-
 import javax.persistence.criteria.JoinType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -11,15 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import io.github.jhipster.service.QueryService;
-
-import com.freemind.timesheet.domain.Customer;
-import com.freemind.timesheet.domain.*; // for static metamodels
-import com.freemind.timesheet.repository.CustomerRepository;
-import com.freemind.timesheet.service.dto.CustomerCriteria;
-import com.freemind.timesheet.service.dto.CustomerDTO;
-import com.freemind.timesheet.service.mapper.CustomerMapper;
 
 /**
  * Service for executing complex queries for {@link Customer} entities in the database.
@@ -30,7 +26,6 @@ import com.freemind.timesheet.service.mapper.CustomerMapper;
 @Service
 @Transactional(readOnly = true)
 public class CustomerQueryService extends QueryService<Customer> {
-
     private final Logger log = LoggerFactory.getLogger(CustomerQueryService.class);
 
     private final CustomerRepository customerRepository;
@@ -64,8 +59,14 @@ public class CustomerQueryService extends QueryService<Customer> {
     public Page<CustomerDTO> findByCriteria(CustomerCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<Customer> specification = createSpecification(criteria);
-        return customerRepository.findAll(specification, page)
-            .map(customerMapper::toDto);
+        return customerRepository.findAll(specification, page).map(customerMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CustomerDTO> findCustomersByCompanyByCriteria(Long id, CustomerCriteria criteria, Pageable page) {
+        log.debug("find by criteria : {}, page: {}", id, criteria, page);
+        final Specification<Customer> specification = createSpecification(criteria);
+        return customerRepository.findByCompany(id, specification, page).map(customerMapper::toDto);
     }
 
     /**
@@ -98,12 +99,16 @@ public class CustomerQueryService extends QueryService<Customer> {
                 specification = specification.and(buildSpecification(criteria.getEnable(), Customer_.enable));
             }
             if (criteria.getProjectId() != null) {
-                specification = specification.and(buildSpecification(criteria.getProjectId(),
-                    root -> root.join(Customer_.projects, JoinType.LEFT).get(Project_.id)));
+                specification =
+                    specification.and(
+                        buildSpecification(criteria.getProjectId(), root -> root.join(Customer_.projects, JoinType.LEFT).get(Project_.id))
+                    );
             }
             if (criteria.getCompanyId() != null) {
-                specification = specification.and(buildSpecification(criteria.getCompanyId(),
-                    root -> root.join(Customer_.companies, JoinType.LEFT).get(Company_.id)));
+                specification =
+                    specification.and(
+                        buildSpecification(criteria.getCompanyId(), root -> root.join(Customer_.companies, JoinType.LEFT).get(Company_.id))
+                    );
             }
         }
         return specification;

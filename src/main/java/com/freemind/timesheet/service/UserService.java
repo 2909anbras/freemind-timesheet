@@ -281,10 +281,19 @@ public class UserService {
         userRepository
             .findOneByLogin(login)
             .ifPresent(
-                user -> {
+                user -> { // userApp repos=> chercher un appUser (qui existera d'office)=> et le delete
+                    Long id = user.getId();
                     userRepository.delete(user);
                     this.clearUserCaches(user);
                     log.debug("Deleted User: {}", user);
+                    appUserRepository
+                        .findById(id)
+                        .ifPresent(
+                            appUser -> {
+                                appUserRepository.delete(appUser);
+                                log.debug("Deleted AppUser: {}", appUser);
+                            }
+                        );
                 }
             );
     }
@@ -339,6 +348,16 @@ public class UserService {
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
         return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
+    }
+
+    @Transactional
+    public Page<UserDTO> getUsersByCompany(Long companyId) { //ManagedUser
+        //récupérer list de AppUser
+        //récupérer tous les users en lien
+        //2lists => elles ont la même taille=> donc faire selon taille de list.
+        //Faire une list <ManagedUserDTO>
+        // à chaque tour on add un managedUser à partir de User et AppUser
+        return null;
     }
 
     @Transactional(readOnly = true)
