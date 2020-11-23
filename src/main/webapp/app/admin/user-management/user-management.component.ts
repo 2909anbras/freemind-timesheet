@@ -12,7 +12,7 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.model';
+import { User, IUser } from 'app/core/user/user.model';
 import { UserManagementDeleteDialogComponent } from './user-management-delete-dialog.component';
 
 //donc, ajouter iappuser
@@ -43,7 +43,53 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
-    this.userListSubscription = this.eventManager.subscribe('userListModification', () => this.loadAll());
+
+    if (this.accountService.hasAnyAuthority('ROLE_ADMIN'))
+      this.userListSubscription = this.eventManager.subscribe('userListModification', () => this.loadAll());
+    else {
+      this.loadAllCompany();
+      const reqBis = { page: this.page - 1, size: this.itemsPerPage, sort: this.sortAppUser() };
+      if (this.currentAccount) {
+        this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
+          const appUser = res.body;
+          if (this.currentAccount) {
+            if (appUser) {
+              this.currentAccount.companyId = appUser.companyId;
+            }
+          }
+          this.appUserService.findByCompany(this.currentAccount?.companyId, reqBis).subscribe((res: HttpResponse<IAppUser[]>) => {
+            const appUsers = res.body;
+            console.log(appUsers);
+            if (appUsers) {
+              console.log(appUsers);
+              const tmp: number[] = [];
+              appUsers.forEach(element => {
+                element.companyId ? tmp.push(element.companyId) : null;
+              });
+              const req = {
+                page: this.page - 1,
+                size: this.itemsPerPage,
+                sort: this.sort(),
+                ids: tmp,
+              };
+              this.userService.findByIds(tmp, req).subscribe((res: HttpResponse<IUser[]>) => {
+                const users = res.body;
+                let usersShow;
+                if (users && appUsers) {
+                  for (let i = 0; i < appUsers.length; i++) {
+                    users[i].companyId = appUsers[i].companyId;
+                    users[i].phone = appUsers[i].phone;
+                  }
+                  usersShow = users.filter(e => appUsers.some(y => y.id === e.id));
+                  console.log(usersShow);
+                  this.onSuccess(usersShow, res.headers);
+                }
+              });
+            }
+          });
+        });
+      }
+    }
     this.handleNavigation();
   }
 
@@ -91,8 +137,53 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       const sort = (params.get('sort') ?? data['defaultSort']).split(',');
       this.predicate = sort[0];
       this.ascending = sort[1] === 'asc';
-      this.loadAll();
+      this.accountService.hasAnyAuthority('ROLE_ADMIN') ? this.loadAll() : this.loadAllCompany();
+      // this.loadAll();
     }).subscribe();
+  }
+
+  private loadAllCompany(): void {
+    const reqBis = { page: this.page - 1, size: this.itemsPerPage, sort: this.sortAppUser() };
+    if (this.currentAccount) {
+      this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
+        const appUser = res.body;
+        if (this.currentAccount) {
+          if (appUser) {
+            this.currentAccount.companyId = appUser.companyId;
+          }
+        }
+        this.appUserService.findByCompany(this.currentAccount?.companyId, reqBis).subscribe((res: HttpResponse<IAppUser[]>) => {
+          const appUsers = res.body;
+          console.log(appUsers);
+          if (appUsers) {
+            console.log(appUsers);
+            const tmp: number[] = [];
+            appUsers.forEach(element => {
+              element.companyId ? tmp.push(element.companyId) : null;
+            });
+            const req = {
+              page: this.page - 1,
+              size: this.itemsPerPage,
+              sort: this.sort(),
+              ids: tmp,
+            };
+            this.userService.findByIds(tmp, req).subscribe((res: HttpResponse<IUser[]>) => {
+              const users = res.body;
+              let usersShow;
+              if (users && appUsers) {
+                for (let i = 0; i < appUsers.length; i++) {
+                  users[i].companyId = appUsers[i].companyId;
+                  users[i].phone = appUsers[i].phone;
+                }
+                usersShow = users.filter(e => appUsers.some(y => y.id === e.id));
+                console.log(usersShow);
+                this.onSuccess(usersShow, res.headers);
+              }
+            });
+          }
+        });
+      });
+    }
   }
 
   private loadAll(): void {
@@ -103,6 +194,14 @@ export class UserManagementComponent implements OnInit, OnDestroy {
         sort: this.sort(),
       })
       .subscribe((res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers));
+  }
+
+  private sortAppUser(): string[] {
+    const result = ['id' + ',' + (this.ascending ? 'asc' : 'desc')];
+    if (this.predicate !== 'id') {
+      result.push('id');
+    }
+    return result;
   }
 
   private sort(): string[] {

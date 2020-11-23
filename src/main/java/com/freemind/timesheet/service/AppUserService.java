@@ -8,6 +8,7 @@ import com.freemind.timesheet.security.AuthoritiesConstants;
 import com.freemind.timesheet.service.dto.AppUserDTO;
 import com.freemind.timesheet.service.mapper.AppUserMapper;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -59,6 +60,17 @@ public class AppUserService {
         return appUserRepository.findAll(pageable).map(appUserMapper::toDto);
     }
 
+    ////    @Transactional(readOnly= true)
+    //    public Page<AppUserDTO> findByCompany(Long id,Pageable pageable){//disparition
+    //        log.debug("Request to get all AppUsers by company id", id);
+    //        return  appUserRepository.findByCompany(id,pageable).map(appUserMapper::toDto);
+    //    }
+    //
+    //  @Transactional(readOnly= true)
+    //  public Page<AppUserDTO> findByCompanyBis(Long id,Pageable pageable){//disparition
+    //      log.debug("Request to get all AppUsers by company id", id);
+    //      return  appUserRepository.findByCompany(id,pageable).map(appUserMapper::toDto);
+    //  }
     /**
      * Get all the appUsers with eager load of many-to-many relationships.
      *

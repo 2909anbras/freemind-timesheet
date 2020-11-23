@@ -182,6 +182,16 @@ public class UserResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @GetMapping("/users/appUserIds") //changer pour ajouter un truc.
+    public ResponseEntity<List<UserDTO>> getUsersByIds(List<Long> ids, Pageable pageable) {
+        if (!onlyContainsAllowedProperties(pageable)) {
+            return ResponseEntity.badRequest().build();
+        }
+        final Page<UserDTO> page = userService.getUsersByIds(ids, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
     private boolean onlyContainsAllowedProperties(Pageable pageable) {
         return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES::contains);
     }
@@ -207,13 +217,6 @@ public class UserResource {
         log.debug("REST request to get User : {}", login);
         return ResponseUtil.wrapOrNotFound(userService.getUserWithAuthoritiesByLogin(login).map(UserDTO::new));
     }
-
-    //    @GetMapping("/users/{companyId}")//changer pour ajouter un truc.
-    //    public ResponseEntity<List<ManagedUserVM>> getUsersByCompany (@PathVariable Long companyId){
-    //    	final Page<UserDTO> page = userService.getUsersByCompany(companyId);
-    //    	return null;
-    //
-    //    }
 
     /**
      * {@code DELETE /users/:login} : delete the "login" User.

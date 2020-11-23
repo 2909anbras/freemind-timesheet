@@ -130,10 +130,6 @@ public class CustomerResource {
 
     @GetMapping("/customers/company/{test}")
     public ResponseEntity<List<CustomerDTO>> getCustomersByCompany(@PathVariable Long test, CustomerCriteria criteria, Pageable pageable) {
-        log.debug("###################################################################################");
-        log.debug("###################################################################################");
-        log.debug("###################################################################################");
-
         log.debug("REST request to get Customers by company 1 : {}", test);
         Page<CustomerDTO> page = customerQueryService.findCustomersByCompanyByCriteria(test, criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);

@@ -24,6 +24,7 @@ export class CustomerService {
   }
 
   findAllByCompany(req?: any, test?: number | undefined): Observable<EntityArrayResponseType> {
+    console.log(req);
     const options = createRequestOption(req);
     return this.http.get<ICustomer[]>(`${this.resourceUrl + '/company'}/${test}`, { params: options, observe: 'response' });
   }

@@ -23,6 +23,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -262,15 +264,18 @@ public class UserService {
                     log.debug("Changed Information for User: {}", user);
 
                     //test
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    if (!auth.getAuthorities().stream().anyMatch((r -> r.getAuthority().equals("ROLE_ADMIN")))) {
+                        log.debug("INSIIIIIIIIDE NOW {}", auth.getAuthorities());
+                        AppUser newUserExtra = appUserRepository.getOne(userDTO.getId());
+                        newUserExtra.setInternalUser(user);
+                        newUserExtra.setPhone(userDTO.getPhone());
+                        log.debug("INSIIIIIIIIDE {}", auth.getAuthorities());
+                        newUserExtra.setCompany(companyRepository.getOne(userDTO.getCompanyId()));
+                        log.debug("Created Information for UserExtra: {}", newUserExtra);
+                        appUserRepository.save(newUserExtra);
+                    }
 
-                    AppUser newUserExtra = appUserRepository.getOne(userDTO.getId());
-                    newUserExtra.setInternalUser(user);
-                    newUserExtra.setPhone(userDTO.getPhone());
-                    newUserExtra.setCompany(companyRepository.getOne(userDTO.getCompanyId()));
-
-                    log.debug("Created Information for UserExtra: {}", newUserExtra);
-
-                    appUserRepository.save(newUserExtra);
                     return user;
                 }
             )
@@ -351,13 +356,9 @@ public class UserService {
     }
 
     @Transactional
-    public Page<UserDTO> getUsersByCompany(Long companyId) { //ManagedUser
-        //récupérer list de AppUser
-        //récupérer tous les users en lien
-        //2lists => elles ont la même taille=> donc faire selon taille de list.
-        //Faire une list <ManagedUserDTO>
-        // à chaque tour on add un managedUser à partir de User et AppUser
-        return null;
+    public Page<UserDTO> getUsersByIds(List<Long> ids, Pageable pageable) { //ManagedUser
+        return userRepository.findAllByIds(pageable, ids).map(UserDTO::new);
+        //        return null;
     }
 
     @Transactional(readOnly = true)

@@ -29,6 +29,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  account?: Account;
 
   constructor(
     protected appUserService: AppUserService,
@@ -42,42 +43,47 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
-    const tmp: any = this.customerService.findAllByCompany;
-    this.accountService.identity().subscribe(account => {
-      if (account) {
-        this.appUserService.find(account.id).subscribe((res: HttpResponse<IAppUser>) => {
-          const appUser = res.body;
-          if (appUser) {
-            account.companyId = appUser.companyId;
-            console.log(account);
-            this.customerService
-              .findAllByCompany(
-                {
-                  page: pageToLoad - 1,
-                  size: this.itemsPerPage,
-                  sort: this.sort(),
-                },
-                account.companyId
-              )
-              .subscribe(
-                //currentUser.companyId => assigner company à User par la suite. Second step du jour.
-                (res: HttpResponse<ICustomer[]>) => console.log(res.body)
-              );
-          }
-        });
-      }
-    });
-
-    // this.customerService
-    //   .query({
-    //     page: pageToLoad - 1,
-    //     size: this.itemsPerPage,
-    //     sort: this.sort(),
-    //   })
-    //   .subscribe(
-    //     (res: HttpResponse<ICustomer[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-    //     () => this.onError()
-    //   );
+    if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+      this.customerService
+        .query({
+          page: pageToLoad - 1,
+          size: this.itemsPerPage,
+          sort: this.sort(),
+        })
+        .subscribe(
+          (res: HttpResponse<ICustomer[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
+          () => this.onError()
+        );
+    } else {
+      this.accountService.identity().subscribe(account => {
+        if (account) {
+          this.account = account;
+          this.appUserService.find(account.id).subscribe((res: HttpResponse<IAppUser>) => {
+            const appUser = res.body;
+            if (appUser) {
+              account.companyId = appUser.companyId;
+              console.log(account);
+              this.customerService
+                .findAllByCompany(
+                  {
+                    page: pageToLoad - 1,
+                    size: this.itemsPerPage,
+                    sort: this.sort(),
+                  },
+                  account.companyId
+                )
+                .subscribe(
+                  //currentUser.companyId => assigner company à User par la suite. Second step du jour.
+                  (res: HttpResponse<ICustomer[]>) => {
+                    console.log(res.body);
+                    this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate), () => this.onError();
+                  }
+                );
+            }
+          });
+        }
+      });
+    }
   }
 
   ngOnInit(): void {

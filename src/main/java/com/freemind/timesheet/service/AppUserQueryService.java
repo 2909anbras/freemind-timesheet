@@ -62,6 +62,12 @@ public class AppUserQueryService extends QueryService<AppUser> {
         return appUserRepository.findAll(specification, page).map(appUserMapper::toDto);
     }
 
+    public Page<AppUserDTO> findByCompany(Long id, AppUserCriteria criteria, Pageable pageable) {
+        log.debug("Request to get all AppUsers by company id {}", id);
+        final Specification<AppUser> specification = createSpecification(criteria);
+        return appUserRepository.findByCompany(id, specification, pageable).map(appUserMapper::toDto);
+    }
+
     /**
      * Return the number of matching entities in the database.
      * @param criteria The object which holds all the filters, which the entities should match.
