@@ -3,21 +3,44 @@ package com.freemind.timesheet.web.rest;
 import com.freemind.timesheet.domain.User;
 import com.freemind.timesheet.repository.UserRepository;
 import com.freemind.timesheet.security.SecurityUtils;
+import com.freemind.timesheet.service.AppUserQueryService;
+import com.freemind.timesheet.service.AppUserService;
 import com.freemind.timesheet.service.MailService;
 import com.freemind.timesheet.service.UserService;
+import com.freemind.timesheet.service.dto.AppUserCriteria;
+import com.freemind.timesheet.service.dto.AppUserDTO;
+import com.freemind.timesheet.service.dto.AppUserDTO;
 import com.freemind.timesheet.service.dto.PasswordChangeDTO;
 import com.freemind.timesheet.service.dto.UserDTO;
 import com.freemind.timesheet.web.rest.errors.*;
+import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
 import com.freemind.timesheet.web.rest.vm.KeyAndPasswordVM;
 import com.freemind.timesheet.web.rest.vm.ManagedUserVM;
+import io.github.jhipster.web.util.HeaderUtil;
+import io.github.jhipster.web.util.PaginationUtil;
+import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * REST controller for managing the current user's account.
@@ -112,7 +135,7 @@ public class AccountResource {
      * @return the current user.
      * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
      */
-    @GetMapping("/account")
+    @GetMapping("/account") //try to add the current company id
     public UserDTO getAccount() {
         return userService
             .getUserWithAuthorities()

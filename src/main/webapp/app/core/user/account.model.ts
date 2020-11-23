@@ -1,5 +1,6 @@
 export class Account {
   constructor(
+    public id: number,
     public activated: boolean,
     public authorities: string[],
     public email: string,
@@ -7,6 +8,7 @@ export class Account {
     public langKey: string,
     public lastName: string,
     public login: string,
-    public imageUrl: string
+    public imageUrl: string,
+    public companyId?: number //tester
   ) {}
 }

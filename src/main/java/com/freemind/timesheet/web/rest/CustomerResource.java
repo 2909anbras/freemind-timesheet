@@ -128,14 +128,14 @@ public class CustomerResource {
         return ResponseUtil.wrapOrNotFound(customerDTO);
     }
 
-    @GetMapping("/customer/{companyId}")
-    public ResponseEntity<List<CustomerDTO>> getCustomersByCompany(
-        @PathVariable Long companyId,
-        CustomerCriteria criteria,
-        Pageable pageable
-    ) {
-        log.debug("REST request to get Customer : {}", companyId);
-        Page<CustomerDTO> page = customerQueryService.findCustomersByCompanyByCriteria(companyId, criteria, pageable);
+    @GetMapping("/customers/company/{test}")
+    public ResponseEntity<List<CustomerDTO>> getCustomersByCompany(@PathVariable Long test, CustomerCriteria criteria, Pageable pageable) {
+        log.debug("###################################################################################");
+        log.debug("###################################################################################");
+        log.debug("###################################################################################");
+
+        log.debug("REST request to get Customers by company 1 : {}", test);
+        Page<CustomerDTO> page = customerQueryService.findCustomersByCompanyByCriteria(test, criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

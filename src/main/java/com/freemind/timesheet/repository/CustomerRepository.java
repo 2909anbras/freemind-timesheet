@@ -27,7 +27,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSp
     @Query("select customer from Customer customer left join fetch customer.companies where customer.id =:id")
     Optional<Customer> findOneWithEagerRelationships(@Param("id") Long id);
 
-    //test surement foireux
-    @Query("select distinct customer from Customer customer left join fetch customer.companies as c where c.id=:id ")
-    Page<Customer> findByCompany(@Param("id") Long id, Specification<Customer> specification, Pageable page);
+    //test surement foireux @Param("id")
+    @Query("select distinct customer from Customer customer left join customer.companies as c where c.id= ?1 ")
+    Page<Customer> findByCompany(Long id, Specification<Customer> specification, Pageable page);
 }

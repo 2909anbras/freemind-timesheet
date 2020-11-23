@@ -23,6 +23,11 @@ export class CustomerService {
     return this.http.put<ICustomer>(this.resourceUrl, customer, { observe: 'response' });
   }
 
+  findAllByCompany(req?: any, test?: number | undefined): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<ICustomer[]>(`${this.resourceUrl + '/company'}/${test}`, { params: options, observe: 'response' });
+  }
+
   find(id: number): Observable<EntityResponseType> {
     return this.http.get<ICustomer>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }

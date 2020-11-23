@@ -5,11 +5,16 @@ import { Subscription, combineLatest } from 'rxjs';
 import { JhiEventManager } from 'ng-jhipster';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { Account } from 'app/core/user/account.model';
+import { AccountService } from 'app/core/auth/account.service';
+
 import { ICustomer } from 'app/shared/model/customer.model';
 
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { CustomerService } from './customer.service';
 import { CustomerDeleteDialogComponent } from './customer-delete-dialog.component';
+import { AppUserService } from '../app-user/app-user.service';
+import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
 
 @Component({
   selector: 'jhi-customer',
@@ -26,6 +31,8 @@ export class CustomerComponent implements OnInit, OnDestroy {
   ngbPaginationPage = 1;
 
   constructor(
+    protected appUserService: AppUserService,
+    protected accountService: AccountService,
     protected customerService: CustomerService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -35,17 +42,42 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
+    const tmp: any = this.customerService.findAllByCompany;
+    this.accountService.identity().subscribe(account => {
+      if (account) {
+        this.appUserService.find(account.id).subscribe((res: HttpResponse<IAppUser>) => {
+          const appUser = res.body;
+          if (appUser) {
+            account.companyId = appUser.companyId;
+            console.log(account);
+            this.customerService
+              .findAllByCompany(
+                {
+                  page: pageToLoad - 1,
+                  size: this.itemsPerPage,
+                  sort: this.sort(),
+                },
+                account.companyId
+              )
+              .subscribe(
+                //currentUser.companyId => assigner company à User par la suite. Second step du jour.
+                (res: HttpResponse<ICustomer[]>) => console.log(res.body)
+              );
+          }
+        });
+      }
+    });
 
-    this.customerService
-      .query({
-        page: pageToLoad - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
-      .subscribe(
-        (res: HttpResponse<ICustomer[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-        () => this.onError()
-      );
+    // this.customerService
+    //   .query({
+    //     page: pageToLoad - 1,
+    //     size: this.itemsPerPage,
+    //     sort: this.sort(),
+    //   })
+    //   .subscribe(
+    //     (res: HttpResponse<ICustomer[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
+    //     () => this.onError()
+    //   );
   }
 
   ngOnInit(): void {
