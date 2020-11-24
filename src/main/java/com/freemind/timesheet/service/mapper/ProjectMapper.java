@@ -9,15 +9,17 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link Project} and its DTO {@link ProjectDTO}.
  */
-@Mapper(componentModel = "spring", uses = {CustomerMapper.class})
+@Mapper(componentModel = "spring", uses = {CustomerMapper.class, CompanyMapper.class})
 public interface ProjectMapper extends EntityMapper<ProjectDTO, Project> {
 
     @Mapping(source = "customer.id", target = "customerId")
+    @Mapping(source = "company.id", target = "companyId")
     ProjectDTO toDto(Project project);
 
     @Mapping(target = "jobs", ignore = true)
     @Mapping(target = "removeJob", ignore = true)
     @Mapping(source = "customerId", target = "customer")
+    @Mapping(source = "companyId", target = "company")
     Project toEntity(ProjectDTO projectDTO);
 
     default Project fromId(Long id) {

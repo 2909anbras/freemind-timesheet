@@ -26,6 +26,7 @@
                     <th scope="col"  jhiSortBy="name"><span jhiTranslate="freemindTimesheetApp.project.name">Name</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="enable"><span jhiTranslate="freemindTimesheetApp.project.enable">Enable</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="customerId"><span jhiTranslate="freemindTimesheetApp.project.customer">Customer</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="companyId"><span jhiTranslate="freemindTimesheetApp.project.company">Company</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
@@ -37,6 +38,11 @@
                     <td>
                         <div *ngIf="project.customerId">
                             <a [routerLink]="['/customer', project.customerId , 'view']" >{{ project.customerId }}</a>
+                        </div>
+                    </td>
+                    <td>
+                        <div *ngIf="project.companyId">
+                            <a [routerLink]="['/company', project.companyId , 'view']" >{{ project.companyId }}</a>
                         </div>
                     </td>
                     <td class="text-right">

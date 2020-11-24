@@ -1,13 +1,15 @@
 package com.freemind.timesheet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.*;
-import javax.validation.constraints.*;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Project.
@@ -16,6 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "project")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Project implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -32,13 +35,17 @@ public class Project implements Serializable {
     @Column(name = "enable", nullable = false)
     private Boolean enable;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "project")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Job> jobs = new HashSet<>();
 
     @ManyToOne
     @JsonIgnoreProperties(value = "projects", allowSetters = true)
     private Customer customer;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = "projects", allowSetters = true)
+    private Company company;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -113,6 +120,18 @@ public class Project implements Serializable {
         this.customer = customer;
     }
 
+    public Company getCompany() {
+        return company;
+    }
+
+    public Project company(Company company) {
+        this.company = company;
+        return this;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override

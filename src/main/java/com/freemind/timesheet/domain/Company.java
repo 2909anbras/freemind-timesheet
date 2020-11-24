@@ -1,13 +1,14 @@
 package com.freemind.timesheet.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.*;
-import javax.validation.constraints.*;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Company.
@@ -16,6 +17,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "company")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Company implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -31,10 +33,13 @@ public class Company implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<AppUser> appUsers = new HashSet<>();
 
-    @ManyToMany(mappedBy = "companies", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "company")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnore
     private Set<Customer> customers = new HashSet<>();
+
+    @OneToMany(mappedBy = "company")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<Project> projects = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -94,13 +99,13 @@ public class Company implements Serializable {
 
     public Company addCustomer(Customer customer) {
         this.customers.add(customer);
-        customer.getCompanies().add(this);
+        customer.setCompany(this);
         return this;
     }
 
     public Company removeCustomer(Customer customer) {
         this.customers.remove(customer);
-        customer.getCompanies().remove(this);
+        customer.setCompany(null);
         return this;
     }
 
@@ -108,13 +113,30 @@ public class Company implements Serializable {
         this.customers = customers;
     }
 
-    @PreRemove
-    public void removeCustomers() {
-        for (Customer c : customers) {
-            c.removeCompany(this);
-        }
+    public Set<Project> getProjects() {
+        return projects;
     }
 
+    public Company projects(Set<Project> projects) {
+        this.projects = projects;
+        return this;
+    }
+
+    public Company addProject(Project project) {
+        this.projects.add(project);
+        project.setCompany(this);
+        return this;
+    }
+
+    public Company removeProject(Project project) {
+        this.projects.remove(project);
+        project.setCompany(null);
+        return this;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override

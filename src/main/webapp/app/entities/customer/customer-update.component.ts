@@ -22,7 +22,7 @@ export class CustomerUpdateComponent implements OnInit {
     id: [],
     name: [null, [Validators.required, Validators.minLength(3)]],
     enable: [null, [Validators.required]],
-    companies: [],
+    companyId: [],
   });
 
   constructor(
@@ -45,7 +45,7 @@ export class CustomerUpdateComponent implements OnInit {
       id: customer.id,
       name: customer.name,
       enable: customer.enable,
-      companies: customer.companies,
+      companyId: customer.companyId,
     });
   }
 
@@ -69,7 +69,7 @@ export class CustomerUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
       enable: this.editForm.get(['enable'])!.value,
-      companies: this.editForm.get(['companies'])!.value,
+      companyId: this.editForm.get(['companyId'])!.value,
     };
   }
 
@@ -91,16 +91,5 @@ export class CustomerUpdateComponent implements OnInit {
 
   trackById(index: number, item: ICompany): any {
     return item.id;
-  }
-
-  getSelected(selectedVals: ICompany[], option: ICompany): ICompany {
-    if (selectedVals) {
-      for (let i = 0; i < selectedVals.length; i++) {
-        if (option.id === selectedVals[i].id) {
-          return selectedVals[i];
-        }
-      }
-    }
-    return option;
   }
 }

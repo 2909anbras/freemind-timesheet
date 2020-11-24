@@ -15,12 +15,16 @@
       "relationshipName": "appUser"
     },
     {
-      "relationshipType": "many-to-many",
+      "relationshipType": "one-to-many",
       "otherEntityName": "customer",
       "otherEntityRelationshipName": "company",
-      "relationshipName": "customer",
-      "otherEntityField": "id",
-      "ownerSide": false
+      "relationshipName": "customer"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "project",
+      "otherEntityRelationshipName": "company",
+      "relationshipName": "project"
     }
   ],
   "changelogDate": "20201111182457",

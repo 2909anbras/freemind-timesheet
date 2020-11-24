@@ -26,6 +26,13 @@
       "otherEntityRelationshipName": "project",
       "relationshipName": "customer",
       "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "company",
+      "otherEntityRelationshipName": "project",
+      "relationshipName": "company",
+      "otherEntityField": "id"
     }
   ],
   "changelogDate": "20201111182657",

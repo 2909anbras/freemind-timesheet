@@ -19,7 +19,8 @@
       "name": "Name",
       "enable": "Enable",
       "job": "Job",
-      "customer": "Customer"
+      "customer": "Customer",
+      "company": "Company"
     }
   }
 }

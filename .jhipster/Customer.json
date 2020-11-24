@@ -21,12 +21,11 @@
       "relationshipName": "project"
     },
     {
-      "relationshipType": "many-to-many",
+      "relationshipType": "many-to-one",
       "otherEntityName": "company",
       "otherEntityRelationshipName": "customer",
       "relationshipName": "company",
-      "otherEntityField": "id",
-      "ownerSide": true
+      "otherEntityField": "id"
     }
   ],
   "changelogDate": "20201111182557",

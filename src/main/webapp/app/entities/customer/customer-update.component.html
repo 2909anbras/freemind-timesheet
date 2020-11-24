@@ -40,9 +40,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label jhiTranslate="freemindTimesheetApp.customer.company" for="field_companies">Company</label>
-                    <select class="form-control" id="field_companies" multiple name="companies" formControlName="companies">
-                        <option [ngValue]="getSelected(editForm.get('companies')!.value, companyOption)" *ngFor="let companyOption of companies; trackBy: trackById">{{ companyOption.id }}</option>
+                    <label class="form-control-label" jhiTranslate="freemindTimesheetApp.customer.company" for="field_company">Company</label>
+                    <select class="form-control" id="field_company" name="company" formControlName="companyId">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="companyOption.id" *ngFor="let companyOption of companies; trackBy: trackById">{{ companyOption.id }}</option>
                     </select>
                 </div>
             </div>

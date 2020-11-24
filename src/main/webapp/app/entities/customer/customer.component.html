@@ -25,6 +25,7 @@
                     <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="name"><span jhiTranslate="freemindTimesheetApp.customer.name">Name</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="enable"><span jhiTranslate="freemindTimesheetApp.customer.enable">Enable</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="companyId"><span jhiTranslate="freemindTimesheetApp.customer.company">Company</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
@@ -33,6 +34,11 @@
                     <td><a [routerLink]="['/customer', customer.id, 'view']">{{ customer.id }}</a></td>
                     <td>{{ customer.name }}</td>
                     <td>{{ customer.enable }}</td>
+                    <td>
+                        <div *ngIf="customer.companyId">
+                            <a [routerLink]="['/company', customer.companyId , 'view']" >{{ customer.companyId }}</a>
+                        </div>
+                    </td>
                     <td class="text-right">
                         <div class="btn-group">
                             <button type="submit"
