@@ -1,4 +1,5 @@
 import { AppUser, IAppUser } from '../../shared/model/app-user.model';
+import { IJob } from 'app/shared/model/job.model';
 
 export interface IUser extends IAppUser {
   id?: any;
@@ -16,6 +17,7 @@ export interface IUser extends IAppUser {
   password?: string;
   phone?: string;
   companyId?: number;
+  jobs?: IJob[];
 }
 
 export class User implements IUser {
@@ -34,6 +36,7 @@ export class User implements IUser {
     public lastModifiedDate?: Date,
     public password?: string,
     public phone?: string,
-    public companyId?: number
+    public companyId?: number,
+    public jobs?: IJob[]
   ) {}
 }

@@ -62,6 +62,9 @@ public class ManagedUserVM extends UserDTO {
     // prettier-ignore
     @Override
     public String toString() {
-        return "ManagedUserVM{" + super.toString() + "phone:"+this.phone+", companyId:"+this.companyId+"} ";
+        return "ManagedUserVM{" + super.toString() + 
+        		"phone:"+this.phone+", "
+        		+ "companyId:"+this.companyId+", "
+				+"jobs:"+this.jobs+ "} ";
     }
 }

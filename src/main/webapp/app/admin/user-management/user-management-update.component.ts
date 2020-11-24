@@ -7,6 +7,9 @@ import { HttpResponse } from '@angular/common/http';
 import { ICompany } from 'app/shared/model/company.model';
 import { CompanyService } from 'app/entities/company/company.service';
 
+import { IJob } from 'app/shared/model/job.model';
+import { JobService } from 'app/entities/job/job.service';
+
 import { IAppUser } from 'app/shared/model/app-user.model';
 import { AppUserService } from 'app/entities/app-user/app-user.service';
 
@@ -14,7 +17,7 @@ import { LANGUAGES } from 'app/core/language/language.constants';
 import { User } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
 
-type SelectableEntity = ICompany; //
+type SelectableEntity = ICompany | IJob; //
 
 @Component({
   selector: 'jhi-user-mgmt-update',
@@ -26,7 +29,8 @@ export class UserManagementUpdateComponent implements OnInit {
   authorities: string[] = [];
   isSaving = false;
   companies: ICompany[] = [];
-
+  jobs: IJob[] = [];
+  showJobs = false;
   editForm = this.fb.group({
     id: [],
     login: [
@@ -45,6 +49,7 @@ export class UserManagementUpdateComponent implements OnInit {
     langKey: [],
     authorities: [],
     companyId: [],
+    jobs: [],
     phone: [],
   });
 
@@ -53,35 +58,41 @@ export class UserManagementUpdateComponent implements OnInit {
     private userService: UserService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
+    protected jobService: JobService,
     protected companyService: CompanyService
   ) {}
 
   ngOnInit(): void {
     this.route.data.subscribe(({ user }) => {
-      //?
+      this.userService.authorities().subscribe(authorities => {
+        this.authorities = authorities;
+      });
+      this.showJobs = !user.authorities.some((x: string) => x === 'ROLE_ADMIN');
+      console.log(this.showJobs);
+      console.log(user);
+      this.jobService.query().subscribe((res: HttpResponse<IJob[]>) => (this.jobs = res.body || []));
+      this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
+        this.companies = res.body || [];
+        console.log(this.companies);
+      });
       if (user) {
         this.user = user;
         if (this.user.id === undefined) {
           this.user.activated = true;
         }
-        this.appUserService.find(user.id).subscribe((res: HttpResponse<IAppUser>) => {
-          const appUser = res.body;
-          if (appUser) {
-            this.user.companyId = appUser.companyId;
-            this.user.phone = appUser.phone;
-          }
-        });
-        console.log(user);
-        this.updateForm(user);
+        if (this.showJobs) {
+          this.appUserService.find(user.id).subscribe((res: HttpResponse<IAppUser>) => {
+            const appUser = res.body;
+            if (appUser) {
+              this.user.companyId = appUser.companyId;
+              this.user.phone = appUser.phone;
+              this.user.jobs = appUser.jobs;
+            }
+            this.updateForm(user);
+          });
+        }
+        // this.updateForm(user);
       }
-    });
-    this.userService.authorities().subscribe(authorities => {
-      this.authorities = authorities;
-    });
-
-    this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
-      this.companies = res.body || [];
-      console.log(this.companies);
     });
   }
 
@@ -103,6 +114,7 @@ export class UserManagementUpdateComponent implements OnInit {
       );
     } else {
       this.userService.create(this.user).subscribe(
+        //this.user.jobs
         () => this.onSaveSuccess(),
         () => this.onSaveError()
       );
@@ -110,6 +122,8 @@ export class UserManagementUpdateComponent implements OnInit {
   }
 
   private updateForm(user: User): void {
+    //ici biding
+    console.log(user);
     this.editForm.patchValue({
       id: user.id,
       login: user.login,
@@ -120,6 +134,7 @@ export class UserManagementUpdateComponent implements OnInit {
       langKey: user.langKey,
       authorities: user.authorities,
       phone: user.phone,
+      jobs: user.jobs,
       companyId: user.companyId,
     });
   }
@@ -134,6 +149,7 @@ export class UserManagementUpdateComponent implements OnInit {
     user.authorities = this.editForm.get(['authorities'])!.value;
     user.phone = this.editForm.get(['phone'])!.value;
     user.companyId = this.editForm.get(['companyId'])!.value;
+    user.jobs = this.editForm.get(['jobs'])!.value;
   }
 
   private onSaveSuccess(): void {
@@ -143,5 +159,16 @@ export class UserManagementUpdateComponent implements OnInit {
 
   private onSaveError(): void {
     this.isSaving = false;
+  }
+
+  getSelected(selectedVals: IJob[], option: IJob): IJob {
+    if (selectedVals) {
+      for (let i = 0; i < selectedVals.length; i++) {
+        if (option.id === selectedVals[i].id) {
+          return selectedVals[i];
+        }
+      }
+    }
+    return option;
   }
 }

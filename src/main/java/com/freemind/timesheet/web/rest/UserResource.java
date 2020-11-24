@@ -6,6 +6,7 @@ import com.freemind.timesheet.repository.UserRepository;
 import com.freemind.timesheet.security.AuthoritiesConstants;
 import com.freemind.timesheet.service.MailService;
 import com.freemind.timesheet.service.UserService;
+import com.freemind.timesheet.service.dto.JobDTO;
 import com.freemind.timesheet.service.dto.UserDTO;
 import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
 import com.freemind.timesheet.web.rest.errors.EmailAlreadyUsedException;
@@ -92,32 +93,10 @@ public class UserResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the login or email is already in use.
      */
-    //    @PostMapping("/users")
-    //    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    //    public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) throws URISyntaxException {
-    //        log.debug("REST request to save User : {}", userDTO);
-    //
-    //        if (userDTO.getId() != null) {
-    //            throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
-    //            // Lowercase the user login before comparing with database
-    //        } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
-    //            throw new LoginAlreadyUsedException();
-    //        } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
-    //            throw new EmailAlreadyUsedException();
-    //        } else {
-    //            User newUser = userService.createUser(userDTO);
-    //            mailService.sendCreationEmail(newUser);
-    //            return ResponseEntity
-    //                .created(new URI("/api/users/" + newUser.getLogin()))
-    //                .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUser.getLogin()))
-    //                .body(newUser);
-    //        }
-    //    }
 
     @PostMapping("/users")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")") //changed userDTO to manage.
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\"+\"," + AuthoritiesConstants.CUSTOMER_ADMIN + "\")") //changed userDTO to manage.
     public ResponseEntity<User> createUser(@Valid @RequestBody ManagedUserVM managedUserVM) throws URISyntaxException {
-        log.debug("Wouhou");
         log.debug("REST request to save User : {}", managedUserVM.toString());
 
         if (managedUserVM.getId() != null) {
@@ -146,8 +125,9 @@ public class UserResource {
      * @throws LoginAlreadyUsedException {@code 400 (Bad Request)} if the login is already in use.
      */
     @PutMapping("/users")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\"+\"," + AuthoritiesConstants.CUSTOMER_ADMIN + "\")")
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody ManagedUserVM userDTO) {
+        log.debug("Wouhou", userDTO.getJobs());
         log.debug("REST request to update User : {}", userDTO);
         Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
@@ -201,7 +181,7 @@ public class UserResource {
      * @return a string list of all roles.
      */
     @GetMapping("/users/authorities")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\"+\"," + AuthoritiesConstants.CUSTOMER_ADMIN + "\")")
     public List<String> getAuthorities() {
         return userService.getAuthorities();
     }
@@ -225,7 +205,7 @@ public class UserResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\"+\"," + AuthoritiesConstants.CUSTOMER_ADMIN + "\")")
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUser(login);

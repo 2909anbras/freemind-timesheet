@@ -80,7 +80,8 @@ public class AppUserResource {
         if (appUserDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        AppUserDTO result = appUserService.save(appUserDTO);
+        //        AppUserDTO result = appUserService.save(appUserDTO);
+        AppUserDTO result = appUserService.update(appUserDTO);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, appUserDTO.getId().toString()))

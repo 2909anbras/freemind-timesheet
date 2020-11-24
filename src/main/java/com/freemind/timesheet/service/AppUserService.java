@@ -4,6 +4,7 @@ import com.freemind.timesheet.domain.AppUser;
 import com.freemind.timesheet.domain.Authority;
 import com.freemind.timesheet.domain.User;
 import com.freemind.timesheet.repository.AppUserRepository;
+import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.security.AuthoritiesConstants;
 import com.freemind.timesheet.service.dto.AppUserDTO;
 import com.freemind.timesheet.service.mapper.AppUserMapper;
@@ -15,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,12 +30,13 @@ public class AppUserService {
     private final Logger log = LoggerFactory.getLogger(AppUserService.class);
 
     private final AppUserRepository appUserRepository;
-
+    private final CompanyRepository companyRepository;
     private final AppUserMapper appUserMapper;
 
-    public AppUserService(AppUserRepository appUserRepository, AppUserMapper appUserMapper) {
+    public AppUserService(AppUserRepository appUserRepository, CompanyRepository companyRepository, AppUserMapper appUserMapper) {
         this.appUserRepository = appUserRepository;
         this.appUserMapper = appUserMapper;
+        this.companyRepository = companyRepository;
     }
 
     /**
@@ -41,11 +45,24 @@ public class AppUserService {
      * @param appUserDTO the entity to save.
      * @return the persisted entity.
      */
+    @Transactional
     public AppUserDTO save(AppUserDTO appUserDTO) {
         log.debug("Request to save AppUser : {}", appUserDTO);
         AppUser appUser = appUserMapper.toEntity(appUserDTO);
         appUser = appUserRepository.save(appUser);
         return appUserMapper.toDto(appUser);
+    }
+
+    @Transactional
+    public AppUserDTO update(AppUserDTO appUserDTO) {
+        AppUser newUserExtra = appUserRepository.getOne(appUserDTO.getId());
+        newUserExtra.setPhone(appUserDTO.getPhone());
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        newUserExtra = appUserMapper.toEntity(appUserDTO);
+        //        if (auth.getAuthorities().stream().anyMatch((r -> r.getAuthority().equals("ROLE_ADMIN"))))
+        log.debug("Created Information for UserExtra: {}", newUserExtra);
+        appUserRepository.save(newUserExtra);
+        return appUserMapper.toDto(newUserExtra);
     }
 
     /**

@@ -10,7 +10,9 @@ import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.repository.UserRepository;
 import com.freemind.timesheet.security.AuthoritiesConstants;
 import com.freemind.timesheet.security.SecurityUtils;
+import com.freemind.timesheet.service.dto.JobDTO;
 import com.freemind.timesheet.service.dto.UserDTO;
+import com.freemind.timesheet.service.mapper.JobMapper;
 import com.freemind.timesheet.web.rest.vm.ManagedUserVM;
 import io.github.jhipster.security.RandomUtil;
 import java.time.Instant;
@@ -40,6 +42,7 @@ public class UserService {
     private final AppUserRepository appUserRepository;
 
     private final UserRepository userRepository;
+    private final JobMapper jobMapper;
 
     private final CompanyRepository companyRepository;
 
@@ -58,7 +61,8 @@ public class UserService {
         AuthorityRepository authorityRepository,
         CacheManager cacheManager,
         CompanyService companyService,
-        CompanyRepository companyRepository
+        CompanyRepository companyRepository,
+        JobMapper jobMapper
     ) {
         this.appUserRepository = appUserRepository;
         this.userRepository = userRepository;
@@ -67,6 +71,7 @@ public class UserService {
         this.cacheManager = cacheManager;
         this.companyService = companyService;
         this.companyRepository = companyRepository;
+        this.jobMapper = jobMapper;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -181,7 +186,6 @@ public class UserService {
     }
 
     public User createUser(UserDTO userDTO, String phone, Long companyId) {
-        log.debug("ICIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII", companyId);
         User user = new User();
         user.setLogin(userDTO.getLogin().toLowerCase());
         user.setFirstName(userDTO.getFirstName());
@@ -215,11 +219,12 @@ public class UserService {
         log.debug("Created Information for User: {}", user);
 
         // create the user
-
+        JobMapper jM;
         AppUser newUserExtra = new AppUser();
         newUserExtra.setInternalUser(user);
         newUserExtra.setPhone(phone);
         newUserExtra.setCompany(companyRepository.getOne(companyId));
+        //        newUserExtra.setJobs(jM.toEntity(jobs));
 
         log.debug("Created Information for UserExtra: {}", newUserExtra);
 
@@ -262,19 +267,20 @@ public class UserService {
                         .forEach(managedAuthorities::add);
                     this.clearUserCaches(user);
                     log.debug("Changed Information for User: {}", user);
-
                     //test
                     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                    if (!auth.getAuthorities().stream().anyMatch((r -> r.getAuthority().equals("ROLE_ADMIN")))) {
-                        log.debug("INSIIIIIIIIDE NOW {}", auth.getAuthorities());
-                        AppUser newUserExtra = appUserRepository.getOne(userDTO.getId());
-                        newUserExtra.setInternalUser(user);
-                        newUserExtra.setPhone(userDTO.getPhone());
-                        log.debug("INSIIIIIIIIDE {}", auth.getAuthorities());
-                        newUserExtra.setCompany(companyRepository.getOne(userDTO.getCompanyId()));
-                        log.debug("Created Information for UserExtra: {}", newUserExtra);
-                        appUserRepository.save(newUserExtra);
-                    }
+                    //                    if (!auth.getAuthorities().stream().anyMatch((r -> r.getAuthority().equals("ROLE_ADMIN")))) {    //cé fo
+                    AppUser newUserExtra = appUserRepository.getOne(userDTO.getId());
+                    newUserExtra.setInternalUser(user);
+                    newUserExtra.setPhone(userDTO.getPhone());
+                    newUserExtra.setCompany(companyRepository.getOne(userDTO.getCompanyId()));
+
+                    newUserExtra.setJobs(userDTO.getJobs().stream().map(e -> jobMapper.toEntity(e)).collect(Collectors.toSet()));
+                    log.debug("#############################################################################", userDTO.getJobs());
+
+                    log.debug("Created Information for UserExtra: {}", newUserExtra);
+                    appUserRepository.save(newUserExtra);
+                    //                    }
 
                     return user;
                 }

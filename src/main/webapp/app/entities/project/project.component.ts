@@ -5,6 +5,8 @@ import { Subscription, combineLatest } from 'rxjs';
 import { JhiEventManager } from 'ng-jhipster';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { Account } from 'app/core/user/account.model';
+import { AccountService } from 'app/core/auth/account.service';
 import { IProject } from 'app/shared/model/project.model';
 
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
@@ -24,8 +26,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  currentAccount: Account | null = null;
 
   constructor(
+    protected accountService: AccountService,
     protected projectService: ProjectService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -35,17 +39,29 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
-
-    this.projectService
-      .query({
-        page: pageToLoad - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
-      .subscribe(
-        (res: HttpResponse<IProject[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-        () => this.onError()
-      );
+    const req = { page: pageToLoad - 1, size: this.itemsPerPage, sort: this.sort() };
+    this.accountService.identity().subscribe(e => {
+      e ? (this.currentAccount = e) : null;
+    });
+    if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+      this.projectService
+        .query({
+          page: pageToLoad - 1,
+          size: this.itemsPerPage,
+          sort: this.sort(),
+        })
+        .subscribe(
+          (res: HttpResponse<IProject[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
+          () => this.onError()
+        );
+    } else {
+      this.currentAccount
+        ? this.projectService.getProjectByCompanyId(this.currentAccount.companyId, req).subscribe(
+            (res: HttpResponse<IProject[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
+            () => this.onError()
+          )
+        : null;
+    }
   }
 
   ngOnInit(): void {
