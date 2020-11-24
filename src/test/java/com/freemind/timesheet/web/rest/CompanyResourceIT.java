@@ -4,6 +4,7 @@ import com.freemind.timesheet.FreemindTimesheetApp;
 import com.freemind.timesheet.domain.Company;
 import com.freemind.timesheet.domain.AppUser;
 import com.freemind.timesheet.domain.Customer;
+import com.freemind.timesheet.domain.Project;
 import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.service.CompanyService;
 import com.freemind.timesheet.service.dto.CompanyDTO;
@@ -309,6 +310,26 @@ public class CompanyResourceIT {
 
         // Get all the companyList where customer equals to customerId + 1
         defaultCompanyShouldNotBeFound("customerId.equals=" + (customerId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllCompaniesByProjectIsEqualToSomething() throws Exception {
+        // Initialize the database
+        companyRepository.saveAndFlush(company);
+        Project project = ProjectResourceIT.createEntity(em);
+        em.persist(project);
+        em.flush();
+        company.addProject(project);
+        companyRepository.saveAndFlush(company);
+        Long projectId = project.getId();
+
+        // Get all the companyList where project equals to projectId
+        defaultCompanyShouldBeFound("projectId.equals=" + projectId);
+
+        // Get all the companyList where project equals to projectId + 1
+        defaultCompanyShouldNotBeFound("projectId.equals=" + (projectId + 1));
     }
 
     /**

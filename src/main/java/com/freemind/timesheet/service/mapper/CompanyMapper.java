@@ -17,6 +17,8 @@ public interface CompanyMapper extends EntityMapper<CompanyDTO, Company> {
     @Mapping(target = "removeAppUser", ignore = true)
     @Mapping(target = "customers", ignore = true)
     @Mapping(target = "removeCustomer", ignore = true)
+    @Mapping(target = "projects", ignore = true)
+    @Mapping(target = "removeProject", ignore = true)
     Company toEntity(CompanyDTO companyDTO);
 
     default Company fromId(Long id) {

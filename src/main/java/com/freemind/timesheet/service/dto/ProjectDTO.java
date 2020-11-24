@@ -19,6 +19,8 @@ public class ProjectDTO implements Serializable {
 
 
     private Long customerId;
+
+    private Long companyId;
     
     public Long getId() {
         return id;
@@ -52,6 +54,14 @@ public class ProjectDTO implements Serializable {
         this.customerId = customerId;
     }
 
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -77,6 +87,7 @@ public class ProjectDTO implements Serializable {
             ", name='" + getName() + "'" +
             ", enable='" + isEnable() + "'" +
             ", customerId=" + getCustomerId() +
+            ", companyId=" + getCompanyId() +
             "}";
     }
 }

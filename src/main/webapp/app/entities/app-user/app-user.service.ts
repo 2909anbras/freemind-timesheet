@@ -27,12 +27,6 @@ export class AppUserService {
     return this.http.get<IAppUser>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  findByCompany(id?: number, req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    console.log(req);
-    return this.http.get<IAppUser[]>(`${this.resourceUrl + '/company'}/${id}`, { params: options, observe: 'response' });
-  }
-
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<IAppUser[]>(this.resourceUrl, { params: options, observe: 'response' });

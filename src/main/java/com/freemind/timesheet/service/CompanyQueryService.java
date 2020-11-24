@@ -102,6 +102,10 @@ public class CompanyQueryService extends QueryService<Company> {
                 specification = specification.and(buildSpecification(criteria.getCustomerId(),
                     root -> root.join(Company_.customers, JoinType.LEFT).get(Customer_.id)));
             }
+            if (criteria.getProjectId() != null) {
+                specification = specification.and(buildSpecification(criteria.getProjectId(),
+                    root -> root.join(Company_.projects, JoinType.LEFT).get(Project_.id)));
+            }
         }
         return specification;
     }

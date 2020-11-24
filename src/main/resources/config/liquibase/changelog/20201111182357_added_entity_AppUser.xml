@@ -12,17 +12,15 @@
     -->
     <changeSet id="20201111182357-1" author="jhipster">
         <createTable tableName="app_user">
-            <column name="internal_user_id" type="bigint">
+            <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-
             <column name="phone" type="varchar(255)">
-
                 <constraints nullable="true" />
             </column>
-           <!--   <column name="internal_user_id" type="bigint">
-                <constraints unique="true" nullable="false" uniqueConstraintName="ux_app_user_internal_user_id" />
-            </column>-->
+            <column name="internal_user_id" type="bigint">
+                <constraints unique="true" nullable="true" uniqueConstraintName="ux_app_user_internal_user_id" />
+            </column>
             <column name="company_id" type="bigint">
                 <constraints nullable="true" />
             </column>
@@ -36,12 +34,12 @@
             <column name="job_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="internal_user_id" type="bigint">
+            <column name="app_user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
-        <addPrimaryKey columnNames="internal_user_id, job_id" tableName="app_user_job"/>
+        <addPrimaryKey columnNames="app_user_id, job_id" tableName="app_user_job"/>
         
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->

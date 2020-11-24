@@ -32,6 +32,8 @@ public class CompanyCriteria implements Serializable, Criteria {
 
     private LongFilter customerId;
 
+    private LongFilter projectId;
+
     public CompanyCriteria() {
     }
 
@@ -40,6 +42,7 @@ public class CompanyCriteria implements Serializable, Criteria {
         this.name = other.name == null ? null : other.name.copy();
         this.appUserId = other.appUserId == null ? null : other.appUserId.copy();
         this.customerId = other.customerId == null ? null : other.customerId.copy();
+        this.projectId = other.projectId == null ? null : other.projectId.copy();
     }
 
     @Override
@@ -79,6 +82,14 @@ public class CompanyCriteria implements Serializable, Criteria {
         this.customerId = customerId;
     }
 
+    public LongFilter getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(LongFilter projectId) {
+        this.projectId = projectId;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -93,7 +104,8 @@ public class CompanyCriteria implements Serializable, Criteria {
             Objects.equals(id, that.id) &&
             Objects.equals(name, that.name) &&
             Objects.equals(appUserId, that.appUserId) &&
-            Objects.equals(customerId, that.customerId);
+            Objects.equals(customerId, that.customerId) &&
+            Objects.equals(projectId, that.projectId);
     }
 
     @Override
@@ -102,7 +114,8 @@ public class CompanyCriteria implements Serializable, Criteria {
         id,
         name,
         appUserId,
-        customerId
+        customerId,
+        projectId
         );
     }
 
@@ -114,6 +127,7 @@ public class CompanyCriteria implements Serializable, Criteria {
                 (name != null ? "name=" + name + ", " : "") +
                 (appUserId != null ? "appUserId=" + appUserId + ", " : "") +
                 (customerId != null ? "customerId=" + customerId + ", " : "") +
+                (projectId != null ? "projectId=" + projectId + ", " : "") +
             "}";
     }
 

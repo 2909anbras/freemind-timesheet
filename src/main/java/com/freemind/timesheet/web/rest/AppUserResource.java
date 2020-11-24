@@ -1,17 +1,14 @@
 package com.freemind.timesheet.web.rest;
 
-import com.freemind.timesheet.service.AppUserQueryService;
 import com.freemind.timesheet.service.AppUserService;
-import com.freemind.timesheet.service.dto.AppUserCriteria;
-import com.freemind.timesheet.service.dto.AppUserDTO;
 import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
+import com.freemind.timesheet.service.dto.AppUserDTO;
+import com.freemind.timesheet.service.dto.AppUserCriteria;
+import com.freemind.timesheet.service.AppUserQueryService;
+
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +16,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * REST controller for managing {@link com.freemind.timesheet.domain.AppUser}.
@@ -29,6 +31,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/api")
 public class AppUserResource {
+
     private final Logger log = LoggerFactory.getLogger(AppUserResource.class);
 
     private static final String ENTITY_NAME = "appUser";
@@ -59,8 +62,7 @@ public class AppUserResource {
             throw new BadRequestAlertException("A new appUser cannot already have an ID", ENTITY_NAME, "idexists");
         }
         AppUserDTO result = appUserService.save(appUserDTO);
-        return ResponseEntity
-            .created(new URI("/api/app-users/" + result.getId()))
+        return ResponseEntity.created(new URI("/api/app-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
@@ -81,8 +83,7 @@ public class AppUserResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         AppUserDTO result = appUserService.save(appUserDTO);
-        return ResponseEntity
-            .ok()
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, appUserDTO.getId().toString()))
             .body(result);
     }
@@ -100,17 +101,6 @@ public class AppUserResource {
         Page<AppUserDTO> page = appUserQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
-    @GetMapping("/app-users/company/{testId}") //tayo
-    public ResponseEntity<List<AppUserDTO>> getAllAppUsersByCompany(
-        @PathVariable Long testId,
-        AppUserCriteria criteria,
-        Pageable pageable
-    ) {
-        log.debug("REST request to get AppUsers by company id: {}", testId);
-        Page<AppUserDTO> page = appUserQueryService.findByCompany(testId, criteria, pageable);
-        return ResponseEntity.ok().body(page.getContent());
     }
 
     /**
@@ -148,9 +138,6 @@ public class AppUserResource {
     public ResponseEntity<Void> deleteAppUser(@PathVariable Long id) {
         log.debug("REST request to delete AppUser : {}", id);
         appUserService.delete(id);
-        return ResponseEntity
-            .noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-            .build();
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

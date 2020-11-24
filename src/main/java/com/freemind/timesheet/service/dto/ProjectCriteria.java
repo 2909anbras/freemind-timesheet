@@ -34,6 +34,8 @@ public class ProjectCriteria implements Serializable, Criteria {
 
     private LongFilter customerId;
 
+    private LongFilter companyId;
+
     public ProjectCriteria() {
     }
 
@@ -43,6 +45,7 @@ public class ProjectCriteria implements Serializable, Criteria {
         this.enable = other.enable == null ? null : other.enable.copy();
         this.jobId = other.jobId == null ? null : other.jobId.copy();
         this.customerId = other.customerId == null ? null : other.customerId.copy();
+        this.companyId = other.companyId == null ? null : other.companyId.copy();
     }
 
     @Override
@@ -90,6 +93,14 @@ public class ProjectCriteria implements Serializable, Criteria {
         this.customerId = customerId;
     }
 
+    public LongFilter getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(LongFilter companyId) {
+        this.companyId = companyId;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -105,7 +116,8 @@ public class ProjectCriteria implements Serializable, Criteria {
             Objects.equals(name, that.name) &&
             Objects.equals(enable, that.enable) &&
             Objects.equals(jobId, that.jobId) &&
-            Objects.equals(customerId, that.customerId);
+            Objects.equals(customerId, that.customerId) &&
+            Objects.equals(companyId, that.companyId);
     }
 
     @Override
@@ -115,7 +127,8 @@ public class ProjectCriteria implements Serializable, Criteria {
         name,
         enable,
         jobId,
-        customerId
+        customerId,
+        companyId
         );
     }
 
@@ -128,6 +141,7 @@ public class ProjectCriteria implements Serializable, Criteria {
                 (enable != null ? "enable=" + enable + ", " : "") +
                 (jobId != null ? "jobId=" + jobId + ", " : "") +
                 (customerId != null ? "customerId=" + customerId + ", " : "") +
+                (companyId != null ? "companyId=" + companyId + ", " : "") +
             "}";
     }
 

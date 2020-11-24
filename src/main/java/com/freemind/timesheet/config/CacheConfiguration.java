@@ -59,6 +59,7 @@ public class CacheConfiguration {
             createCache(cm, com.freemind.timesheet.domain.Project.class.getName() + ".jobs");
             createCache(cm, com.freemind.timesheet.domain.Job.class.getName());
             createCache(cm, com.freemind.timesheet.domain.Job.class.getName() + ".appUsers");
+            createCache(cm, com.freemind.timesheet.domain.Company.class.getName() + ".projects");
             // jhipster-needle-ehcache-add-entry
         };
     }

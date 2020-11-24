@@ -12,10 +12,12 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring", uses = {CompanyMapper.class})
 public interface CustomerMapper extends EntityMapper<CustomerDTO, Customer> {
 
+    @Mapping(source = "company.id", target = "companyId")
+    CustomerDTO toDto(Customer customer);
 
     @Mapping(target = "projects", ignore = true)
     @Mapping(target = "removeProject", ignore = true)
-    @Mapping(target = "removeCompany", ignore = true)
+    @Mapping(source = "companyId", target = "company")
     Customer toEntity(CustomerDTO customerDTO);
 
     default Customer fromId(Long id) {

@@ -6,10 +6,18 @@ export interface IProject {
   enable?: boolean;
   jobs?: IJob[];
   customerId?: number;
+  companyId?: number;
 }
 
 export class Project implements IProject {
-  constructor(public id?: number, public name?: string, public enable?: boolean, public jobs?: IJob[], public customerId?: number) {
+  constructor(
+    public id?: number,
+    public name?: string,
+    public enable?: boolean,
+    public jobs?: IJob[],
+    public customerId?: number,
+    public companyId?: number
+  ) {
     this.enable = this.enable || false;
   }
 }

@@ -9,6 +9,10 @@ import { IProject, Project } from 'app/shared/model/project.model';
 import { ProjectService } from './project.service';
 import { ICustomer } from 'app/shared/model/customer.model';
 import { CustomerService } from 'app/entities/customer/customer.service';
+import { ICompany } from 'app/shared/model/company.model';
+import { CompanyService } from 'app/entities/company/company.service';
+
+type SelectableEntity = ICustomer | ICompany;
 
 @Component({
   selector: 'jhi-project-update',
@@ -17,17 +21,20 @@ import { CustomerService } from 'app/entities/customer/customer.service';
 export class ProjectUpdateComponent implements OnInit {
   isSaving = false;
   customers: ICustomer[] = [];
+  companies: ICompany[] = [];
 
   editForm = this.fb.group({
     id: [],
     name: [null, [Validators.required, Validators.minLength(3)]],
     enable: [null, [Validators.required]],
     customerId: [],
+    companyId: [],
   });
 
   constructor(
     protected projectService: ProjectService,
     protected customerService: CustomerService,
+    protected companyService: CompanyService,
     protected activatedRoute: ActivatedRoute,
     private fb: FormBuilder
   ) {}
@@ -37,6 +44,8 @@ export class ProjectUpdateComponent implements OnInit {
       this.updateForm(project);
 
       this.customerService.query().subscribe((res: HttpResponse<ICustomer[]>) => (this.customers = res.body || []));
+
+      this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => (this.companies = res.body || []));
     });
   }
 
@@ -46,6 +55,7 @@ export class ProjectUpdateComponent implements OnInit {
       name: project.name,
       enable: project.enable,
       customerId: project.customerId,
+      companyId: project.companyId,
     });
   }
 
@@ -70,6 +80,7 @@ export class ProjectUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       enable: this.editForm.get(['enable'])!.value,
       customerId: this.editForm.get(['customerId'])!.value,
+      companyId: this.editForm.get(['companyId'])!.value,
     };
   }
 
@@ -89,7 +100,7 @@ export class ProjectUpdateComponent implements OnInit {
     this.isSaving = false;
   }
 
-  trackById(index: number, item: ICustomer): any {
+  trackById(index: number, item: SelectableEntity): any {
     return item.id;
   }
 }

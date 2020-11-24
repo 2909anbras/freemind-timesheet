@@ -1,14 +1,9 @@
 package com.freemind.timesheet.service;
 
-import com.freemind.timesheet.domain.*; // for static metamodels
-import com.freemind.timesheet.domain.AppUser;
-import com.freemind.timesheet.repository.AppUserRepository;
-import com.freemind.timesheet.service.dto.AppUserCriteria;
-import com.freemind.timesheet.service.dto.AppUserDTO;
-import com.freemind.timesheet.service.mapper.AppUserMapper;
-import io.github.jhipster.service.QueryService;
 import java.util.List;
+
 import javax.persistence.criteria.JoinType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,6 +11,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import io.github.jhipster.service.QueryService;
+
+import com.freemind.timesheet.domain.AppUser;
+import com.freemind.timesheet.domain.*; // for static metamodels
+import com.freemind.timesheet.repository.AppUserRepository;
+import com.freemind.timesheet.service.dto.AppUserCriteria;
+import com.freemind.timesheet.service.dto.AppUserDTO;
+import com.freemind.timesheet.service.mapper.AppUserMapper;
 
 /**
  * Service for executing complex queries for {@link AppUser} entities in the database.
@@ -26,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class AppUserQueryService extends QueryService<AppUser> {
+
     private final Logger log = LoggerFactory.getLogger(AppUserQueryService.class);
 
     private final AppUserRepository appUserRepository;
@@ -59,13 +64,8 @@ public class AppUserQueryService extends QueryService<AppUser> {
     public Page<AppUserDTO> findByCriteria(AppUserCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<AppUser> specification = createSpecification(criteria);
-        return appUserRepository.findAll(specification, page).map(appUserMapper::toDto);
-    }
-
-    public Page<AppUserDTO> findByCompany(Long id, AppUserCriteria criteria, Pageable pageable) {
-        log.debug("Request to get all AppUsers by company id {}", id);
-        final Specification<AppUser> specification = createSpecification(criteria);
-        return appUserRepository.findByCompany(id, specification, pageable).map(appUserMapper::toDto);
+        return appUserRepository.findAll(specification, page)
+            .map(appUserMapper::toDto);
     }
 
     /**
@@ -95,25 +95,16 @@ public class AppUserQueryService extends QueryService<AppUser> {
                 specification = specification.and(buildStringSpecification(criteria.getPhone(), AppUser_.phone));
             }
             if (criteria.getInternalUserId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(
-                            criteria.getInternalUserId(),
-                            root -> root.join(AppUser_.internalUser, JoinType.LEFT).get(User_.id)
-                        )
-                    );
+                specification = specification.and(buildSpecification(criteria.getInternalUserId(),
+                    root -> root.join(AppUser_.internalUser, JoinType.LEFT).get(User_.id)));
             }
             if (criteria.getJobId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(criteria.getJobId(), root -> root.join(AppUser_.jobs, JoinType.LEFT).get(Job_.id))
-                    );
+                specification = specification.and(buildSpecification(criteria.getJobId(),
+                    root -> root.join(AppUser_.jobs, JoinType.LEFT).get(Job_.id)));
             }
             if (criteria.getCompanyId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(criteria.getCompanyId(), root -> root.join(AppUser_.company, JoinType.LEFT).get(Company_.id))
-                    );
+                specification = specification.and(buildSpecification(criteria.getCompanyId(),
+                    root -> root.join(AppUser_.company, JoinType.LEFT).get(Company_.id)));
             }
         }
         return specification;

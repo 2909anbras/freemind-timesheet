@@ -22,6 +22,12 @@
                         <a [routerLink]="['/customer', project.customerId, 'view']">{{ project.customerId }}</a>
                     </div>
                 </dd>
+                <dt><span jhiTranslate="freemindTimesheetApp.project.company">Company</span></dt>
+                <dd>
+                    <div *ngIf="project.companyId">
+                        <a [routerLink]="['/company', project.companyId, 'view']">{{ project.companyId }}</a>
+                    </div>
+                </dd>
             </dl>
 
             <button type="submit"

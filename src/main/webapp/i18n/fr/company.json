@@ -18,7 +18,8 @@
       },
       "name": "Name",
       "appUser": "App User",
-      "customer": "Customer"
+      "customer": "Customer",
+      "project": "Project"
     }
   }
 }

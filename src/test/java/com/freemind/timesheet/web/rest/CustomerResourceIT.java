@@ -13,25 +13,18 @@ import com.freemind.timesheet.service.CustomerQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -39,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link CustomerResource} REST controller.
  */
 @SpringBootTest(classes = FreemindTimesheetApp.class)
-@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 public class CustomerResourceIT {
@@ -53,14 +45,8 @@ public class CustomerResourceIT {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Mock
-    private CustomerRepository customerRepositoryMock;
-
     @Autowired
     private CustomerMapper customerMapper;
-
-    @Mock
-    private CustomerService customerServiceMock;
 
     @Autowired
     private CustomerService customerService;
@@ -201,26 +187,6 @@ public class CustomerResourceIT {
             .andExpect(jsonPath("$.[*].enable").value(hasItem(DEFAULT_ENABLE.booleanValue())));
     }
     
-    @SuppressWarnings({"unchecked"})
-    public void getAllCustomersWithEagerRelationshipsIsEnabled() throws Exception {
-        when(customerServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-
-        restCustomerMockMvc.perform(get("/api/customers?eagerload=true"))
-            .andExpect(status().isOk());
-
-        verify(customerServiceMock, times(1)).findAllWithEagerRelationships(any());
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public void getAllCustomersWithEagerRelationshipsIsNotEnabled() throws Exception {
-        when(customerServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-
-        restCustomerMockMvc.perform(get("/api/customers?eagerload=true"))
-            .andExpect(status().isOk());
-
-        verify(customerServiceMock, times(1)).findAllWithEagerRelationships(any());
-    }
-
     @Test
     @Transactional
     public void getCustomer() throws Exception {
@@ -414,7 +380,7 @@ public class CustomerResourceIT {
         Company company = CompanyResourceIT.createEntity(em);
         em.persist(company);
         em.flush();
-        customer.addCompany(company);
+        customer.setCompany(company);
         customerRepository.saveAndFlush(customer);
         Long companyId = company.getId();
 

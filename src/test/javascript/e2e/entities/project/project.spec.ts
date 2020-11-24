@@ -40,7 +40,11 @@ describe('Project e2e test', () => {
 
     await projectComponentsPage.clickOnCreateButton();
 
-    await promise.all([projectUpdatePage.setNameInput('name'), projectUpdatePage.customerSelectLastOption()]);
+    await promise.all([
+      projectUpdatePage.setNameInput('name'),
+      projectUpdatePage.customerSelectLastOption(),
+      projectUpdatePage.companySelectLastOption(),
+    ]);
 
     expect(await projectUpdatePage.getNameInput()).to.eq('name', 'Expected Name value to be equals to name');
     const selectedEnable = projectUpdatePage.getEnableInput();

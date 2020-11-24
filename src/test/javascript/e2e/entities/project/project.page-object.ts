@@ -33,6 +33,7 @@ export class ProjectUpdatePage {
   enableInput = element(by.id('field_enable'));
 
   customerSelect = element(by.id('field_customer'));
+  companySelect = element(by.id('field_company'));
 
   async getPageTitle(): Promise<string> {
     return this.pageTitle.getAttribute('jhiTranslate');
@@ -64,6 +65,22 @@ export class ProjectUpdatePage {
 
   async getCustomerSelectedOption(): Promise<string> {
     return await this.customerSelect.element(by.css('option:checked')).getText();
+  }
+
+  async companySelectLastOption(): Promise<void> {
+    await this.companySelect.all(by.tagName('option')).last().click();
+  }
+
+  async companySelectOption(option: string): Promise<void> {
+    await this.companySelect.sendKeys(option);
+  }
+
+  getCompanySelect(): ElementFinder {
+    return this.companySelect;
+  }
+
+  async getCompanySelectedOption(): Promise<string> {
+    return await this.companySelect.element(by.css('option:checked')).getText();
   }
 
   async save(): Promise<void> {
