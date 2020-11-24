@@ -101,4 +101,9 @@ public class AppUserService {
         log.debug("Request to delete AppUser : {}", id);
         appUserRepository.deleteById(id);
     }
+
+    public List<Long> findIdsByCompany(Long companyId) {
+        // TODO Auto-generated method stub
+        return appUserRepository.findAllIdsByCompany(companyId);
+    }
 }

@@ -22,6 +22,9 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long>, JpaSpec
     )
     Page<AppUser> findAllWithEagerRelationships(Pageable pageable);
 
+    @Query("select appUser.id from AppUser appUser where appUser.company.id=?1")
+    List<Long> findAllIdsByCompany(Long id);
+
     @Query("select distinct appUser from AppUser appUser left join fetch appUser.jobs")
     List<AppUser> findAllWithEagerRelationships();
 

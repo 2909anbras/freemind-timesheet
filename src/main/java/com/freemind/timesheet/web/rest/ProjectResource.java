@@ -1,14 +1,18 @@
 package com.freemind.timesheet.web.rest;
 
-import com.freemind.timesheet.service.ProjectService;
-import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
-import com.freemind.timesheet.service.dto.ProjectDTO;
-import com.freemind.timesheet.service.dto.ProjectCriteria;
 import com.freemind.timesheet.service.ProjectQueryService;
-
+import com.freemind.timesheet.service.ProjectService;
+import com.freemind.timesheet.service.dto.ProjectCriteria;
+import com.freemind.timesheet.service.dto.ProjectDTO;
+import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,15 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * REST controller for managing {@link com.freemind.timesheet.domain.Project}.
@@ -32,7 +30,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class ProjectResource {
-
     private final Logger log = LoggerFactory.getLogger(ProjectResource.class);
 
     private static final String ENTITY_NAME = "project";
@@ -63,7 +60,8 @@ public class ProjectResource {
             throw new BadRequestAlertException("A new project cannot already have an ID", ENTITY_NAME, "idexists");
         }
         ProjectDTO result = projectService.save(projectDTO);
-        return ResponseEntity.created(new URI("/api/projects/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/projects/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
@@ -84,7 +82,8 @@ public class ProjectResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         ProjectDTO result = projectService.save(projectDTO);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, projectDTO.getId().toString()))
             .body(result);
     }
@@ -100,6 +99,18 @@ public class ProjectResource {
     public ResponseEntity<List<ProjectDTO>> getAllProjects(ProjectCriteria criteria, Pageable pageable) {
         log.debug("REST request to get Projects by criteria: {}", criteria);
         Page<ProjectDTO> page = projectQueryService.findByCriteria(criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/projects/company/{companyId}")
+    public ResponseEntity<List<ProjectDTO>> getAllProjectsByCompany(
+        @PathVariable Long companyId,
+        ProjectCriteria criteria,
+        Pageable pageable
+    ) {
+        log.debug("REST request to get Projects by criteria: {}", companyId);
+        Page<ProjectDTO> page = projectQueryService.findByCompany(companyId, criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -139,6 +150,9 @@ public class ProjectResource {
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         log.debug("REST request to delete Project : {}", id);
         projectService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

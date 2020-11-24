@@ -1,9 +1,14 @@
 package com.freemind.timesheet.service;
 
+import com.freemind.timesheet.domain.*; // for static metamodels
+import com.freemind.timesheet.domain.Project;
+import com.freemind.timesheet.repository.ProjectRepository;
+import com.freemind.timesheet.service.dto.ProjectCriteria;
+import com.freemind.timesheet.service.dto.ProjectDTO;
+import com.freemind.timesheet.service.mapper.ProjectMapper;
+import io.github.jhipster.service.QueryService;
 import java.util.List;
-
 import javax.persistence.criteria.JoinType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -11,15 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import io.github.jhipster.service.QueryService;
-
-import com.freemind.timesheet.domain.Project;
-import com.freemind.timesheet.domain.*; // for static metamodels
-import com.freemind.timesheet.repository.ProjectRepository;
-import com.freemind.timesheet.service.dto.ProjectCriteria;
-import com.freemind.timesheet.service.dto.ProjectDTO;
-import com.freemind.timesheet.service.mapper.ProjectMapper;
 
 /**
  * Service for executing complex queries for {@link Project} entities in the database.
@@ -30,6 +26,9 @@ import com.freemind.timesheet.service.mapper.ProjectMapper;
 @Service
 @Transactional(readOnly = true)
 public class ProjectQueryService extends QueryService<Project> {
+    private final AppUserService appUserService;
+
+    private final JobService jobService;
 
     private final Logger log = LoggerFactory.getLogger(ProjectQueryService.class);
 
@@ -37,9 +36,16 @@ public class ProjectQueryService extends QueryService<Project> {
 
     private final ProjectMapper projectMapper;
 
-    public ProjectQueryService(ProjectRepository projectRepository, ProjectMapper projectMapper) {
+    public ProjectQueryService(
+        ProjectRepository projectRepository,
+        ProjectMapper projectMapper,
+        AppUserService appUserService,
+        JobService jobService
+    ) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
+        this.appUserService = appUserService;
+        this.jobService = jobService;
     }
 
     /**
@@ -54,6 +60,24 @@ public class ProjectQueryService extends QueryService<Project> {
         return projectMapper.toDto(projectRepository.findAll(specification));
     }
 
+    @Transactional(readOnly = true)
+    public Page<ProjectDTO> findByCompany(Long companyId, ProjectCriteria criteria, Pageable pageable) {
+        // TODO Auto-generated method stub
+        //getAppUsersIdByCompany
+        //getJobsByAppUsers
+        //GetProjectByJobs
+        log.debug("find by criteria : {}", criteria);
+        final Specification<Project> specification = createSpecification(criteria);
+        List<Long> appUsersId = this.appUserService.findIdsByCompany(companyId);
+        log.debug("AppUsersId : {}", appUsersId);
+        List<Long> projectsId = this.jobService.findProjectsByAppUsersId(appUsersId);
+        log.debug("projectsId : {}", projectsId);
+        return projectRepository.findByIds(projectsId, specification, pageable).map(projectMapper::toDto);
+        //        List<Long> jobsId=this.jobService.findByUsersId(appUsersId);
+        //        log.debug(" jobsIds : {}", jobsId);
+        //        return projectRepository.findByJobsId(jobsId, specification,pageable).map(projectMapper::toDto);
+    }
+
     /**
      * Return a {@link Page} of {@link ProjectDTO} which matches the criteria from the database.
      * @param criteria The object which holds all the filters, which the entities should match.
@@ -64,8 +88,7 @@ public class ProjectQueryService extends QueryService<Project> {
     public Page<ProjectDTO> findByCriteria(ProjectCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<Project> specification = createSpecification(criteria);
-        return projectRepository.findAll(specification, page)
-            .map(projectMapper::toDto);
+        return projectRepository.findAll(specification, page).map(projectMapper::toDto);
     }
 
     /**
@@ -98,12 +121,16 @@ public class ProjectQueryService extends QueryService<Project> {
                 specification = specification.and(buildSpecification(criteria.getEnable(), Project_.enable));
             }
             if (criteria.getJobId() != null) {
-                specification = specification.and(buildSpecification(criteria.getJobId(),
-                    root -> root.join(Project_.jobs, JoinType.LEFT).get(Job_.id)));
+                specification =
+                    specification.and(
+                        buildSpecification(criteria.getJobId(), root -> root.join(Project_.jobs, JoinType.LEFT).get(Job_.id))
+                    );
             }
             if (criteria.getCustomerId() != null) {
-                specification = specification.and(buildSpecification(criteria.getCustomerId(),
-                    root -> root.join(Project_.customer, JoinType.LEFT).get(Customer_.id)));
+                specification =
+                    specification.and(
+                        buildSpecification(criteria.getCustomerId(), root -> root.join(Project_.customer, JoinType.LEFT).get(Customer_.id))
+                    );
             }
         }
         return specification;
