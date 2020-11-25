@@ -30,6 +30,8 @@ public class ProjectQueryService extends QueryService<Project> {
 
     private final JobService jobService;
 
+    private final CustomerService customerService;
+
     private final Logger log = LoggerFactory.getLogger(ProjectQueryService.class);
 
     private final ProjectRepository projectRepository;
@@ -40,12 +42,14 @@ public class ProjectQueryService extends QueryService<Project> {
         ProjectRepository projectRepository,
         ProjectMapper projectMapper,
         AppUserService appUserService,
-        JobService jobService
+        JobService jobService,
+        CustomerService customerService
     ) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.appUserService = appUserService;
         this.jobService = jobService;
+        this.customerService = customerService;
     }
 
     /**
@@ -77,6 +81,21 @@ public class ProjectQueryService extends QueryService<Project> {
         //        log.debug(" jobsIds : {}", jobsId);
         //        return projectRepository.findByJobsId(jobsId, specification,pageable).map(projectMapper::toDto);
     }
+
+    //    @Transactional(readOnly = true)
+    //    public Page<ProjectDTO> findByCompany(Long companyId, ProjectCriteria criteria, Pageable pageable) {
+    //        // TODO Auto-generated method stub
+    //        //getAppUsersIdByCompany
+    //        //getJobsByAppUsers
+    //        //GetProjectByJobs
+    //        log.debug("find by criteria : {}", criteria);
+    //        final Specification<Project> specification = createSpecification(criteria);
+    ////        List<Long> projectIds = this.customerService.findProjectIdsByCustomerWithCompany(companyId);
+    //        log.debug("AppUsersId : {}", projectIds);
+    //        List<Long> projectsId = this.jobService.findProjectsByAppUsersId(appUsersId);
+    //        log.debug("projectsId : {}", projectsId);
+    //        return projectRepository.findByIds(projectsId, specification, pageable).map(projectMapper::toDto);
+    //    }
 
     /**
      * Return a {@link Page} of {@link ProjectDTO} which matches the criteria from the database.

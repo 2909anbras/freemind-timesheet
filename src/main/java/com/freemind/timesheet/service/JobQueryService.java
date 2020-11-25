@@ -1,9 +1,14 @@
 package com.freemind.timesheet.service;
 
+import com.freemind.timesheet.domain.*; // for static metamodels
+import com.freemind.timesheet.domain.Job;
+import com.freemind.timesheet.repository.JobRepository;
+import com.freemind.timesheet.service.dto.JobCriteria;
+import com.freemind.timesheet.service.dto.JobDTO;
+import com.freemind.timesheet.service.mapper.JobMapper;
+import io.github.jhipster.service.QueryService;
 import java.util.List;
-
 import javax.persistence.criteria.JoinType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -11,15 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import io.github.jhipster.service.QueryService;
-
-import com.freemind.timesheet.domain.Job;
-import com.freemind.timesheet.domain.*; // for static metamodels
-import com.freemind.timesheet.repository.JobRepository;
-import com.freemind.timesheet.service.dto.JobCriteria;
-import com.freemind.timesheet.service.dto.JobDTO;
-import com.freemind.timesheet.service.mapper.JobMapper;
 
 /**
  * Service for executing complex queries for {@link Job} entities in the database.
@@ -30,7 +26,6 @@ import com.freemind.timesheet.service.mapper.JobMapper;
 @Service
 @Transactional(readOnly = true)
 public class JobQueryService extends QueryService<Job> {
-
     private final Logger log = LoggerFactory.getLogger(JobQueryService.class);
 
     private final JobRepository jobRepository;
@@ -64,8 +59,13 @@ public class JobQueryService extends QueryService<Job> {
     public Page<JobDTO> findByCriteria(JobCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<Job> specification = createSpecification(criteria);
-        return jobRepository.findAll(specification, page)
-            .map(jobMapper::toDto);
+        return jobRepository.findAll(specification, page).map(jobMapper::toDto);
+    }
+
+    public Page<JobDTO> findByCcompany(Long companyId, JobCriteria criteria, Pageable pageable) {
+        log.debug("find by criteria : {}, page: {}", criteria, pageable, companyId);
+        final Specification<Job> specification = createSpecification(criteria);
+        return jobRepository.findByCompany(companyId, specification, pageable);
     }
 
     /**
@@ -110,12 +110,16 @@ public class JobQueryService extends QueryService<Job> {
                 specification = specification.and(buildSpecification(criteria.getEnable(), Job_.enable));
             }
             if (criteria.getProjectId() != null) {
-                specification = specification.and(buildSpecification(criteria.getProjectId(),
-                    root -> root.join(Job_.project, JoinType.LEFT).get(Project_.id)));
+                specification =
+                    specification.and(
+                        buildSpecification(criteria.getProjectId(), root -> root.join(Job_.project, JoinType.LEFT).get(Project_.id))
+                    );
             }
             if (criteria.getAppUserId() != null) {
-                specification = specification.and(buildSpecification(criteria.getAppUserId(),
-                    root -> root.join(Job_.appUsers, JoinType.LEFT).get(AppUser_.id)));
+                specification =
+                    specification.and(
+                        buildSpecification(criteria.getAppUserId(), root -> root.join(Job_.appUsers, JoinType.LEFT).get(AppUser_.id))
+                    );
             }
         }
         return specification;

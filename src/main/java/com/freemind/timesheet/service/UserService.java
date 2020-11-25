@@ -3,6 +3,7 @@ package com.freemind.timesheet.service;
 import com.freemind.timesheet.config.Constants;
 import com.freemind.timesheet.domain.AppUser;
 import com.freemind.timesheet.domain.Authority;
+import com.freemind.timesheet.domain.Job;
 import com.freemind.timesheet.domain.User;
 import com.freemind.timesheet.repository.AppUserRepository;
 import com.freemind.timesheet.repository.AuthorityRepository;
@@ -185,7 +186,7 @@ public class UserService {
         return true;
     }
 
-    public User createUser(UserDTO userDTO, String phone, Long companyId) {
+    public User createUser(UserDTO userDTO, String phone, Long companyId, Set<JobDTO> jobs) {
         User user = new User();
         user.setLogin(userDTO.getLogin().toLowerCase());
         user.setFirstName(userDTO.getFirstName());
@@ -219,12 +220,16 @@ public class UserService {
         log.debug("Created Information for User: {}", user);
 
         // create the user
-        JobMapper jM;
-        AppUser newUserExtra = new AppUser();
+        //        JobMapper jM;
+        //        AppUser newUserExtra = new AppUser();
+        //        newUserExtra.setInternalUser(user);
+        //        newUserExtra.setPhone(phone);
+        //        newUserExtra.setCompany(companyRepository.getOne(companyId));
+        AppUser newUserExtra = appUserRepository.getOne(userDTO.getId());
         newUserExtra.setInternalUser(user);
         newUserExtra.setPhone(phone);
         newUserExtra.setCompany(companyRepository.getOne(companyId));
-        //        newUserExtra.setJobs(jM.toEntity(jobs));
+        newUserExtra.setJobs(jobs.stream().map(e -> jobMapper.toEntity(e)).collect(Collectors.toSet()));
 
         log.debug("Created Information for UserExtra: {}", newUserExtra);
 

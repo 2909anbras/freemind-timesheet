@@ -1,14 +1,18 @@
 package com.freemind.timesheet.web.rest;
 
-import com.freemind.timesheet.service.JobService;
-import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
-import com.freemind.timesheet.service.dto.JobDTO;
-import com.freemind.timesheet.service.dto.JobCriteria;
 import com.freemind.timesheet.service.JobQueryService;
-
+import com.freemind.timesheet.service.JobService;
+import com.freemind.timesheet.service.dto.JobCriteria;
+import com.freemind.timesheet.service.dto.JobDTO;
+import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,15 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * REST controller for managing {@link com.freemind.timesheet.domain.Job}.
@@ -32,7 +30,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class JobResource {
-
     private final Logger log = LoggerFactory.getLogger(JobResource.class);
 
     private static final String ENTITY_NAME = "job";
@@ -63,7 +60,8 @@ public class JobResource {
             throw new BadRequestAlertException("A new job cannot already have an ID", ENTITY_NAME, "idexists");
         }
         JobDTO result = jobService.save(jobDTO);
-        return ResponseEntity.created(new URI("/api/jobs/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/jobs/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
@@ -84,7 +82,8 @@ public class JobResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         JobDTO result = jobService.save(jobDTO);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, jobDTO.getId().toString()))
             .body(result);
     }
@@ -100,6 +99,14 @@ public class JobResource {
     public ResponseEntity<List<JobDTO>> getAllJobs(JobCriteria criteria, Pageable pageable) {
         log.debug("REST request to get Jobs by criteria: {}", criteria);
         Page<JobDTO> page = jobQueryService.findByCriteria(criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/jobs/company/{companyId}")
+    public ResponseEntity<List<JobDTO>> getAllJobsbyCompany(@PathVariable Long companyId, JobCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Jobs by company: {}", companyId);
+        Page<JobDTO> page = jobQueryService.findByCcompany(companyId, criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -139,6 +146,9 @@ public class JobResource {
     public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
         log.debug("REST request to delete Job : {}", id);
         jobService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

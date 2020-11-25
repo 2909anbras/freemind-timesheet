@@ -107,7 +107,12 @@ public class UserResource {
         } else if (userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).isPresent()) {
             throw new EmailAlreadyUsedException();
         } else {
-            User newUser = userService.createUser(managedUserVM, managedUserVM.getPhone(), managedUserVM.getCompanyId());
+            User newUser = userService.createUser(
+                managedUserVM,
+                managedUserVM.getPhone(),
+                managedUserVM.getCompanyId(),
+                managedUserVM.getJobs()
+            );
             mailService.sendCreationEmail(newUser);
             return ResponseEntity
                 .created(new URI("/api/users/" + newUser.getLogin()))
