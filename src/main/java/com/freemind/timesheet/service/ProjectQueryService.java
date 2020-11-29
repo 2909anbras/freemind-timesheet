@@ -2,6 +2,7 @@ package com.freemind.timesheet.service;
 
 import com.freemind.timesheet.domain.*; // for static metamodels
 import com.freemind.timesheet.domain.Project;
+import com.freemind.timesheet.repository.CustomerRepository;
 import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.service.dto.ProjectCriteria;
 import com.freemind.timesheet.service.dto.ProjectDTO;
@@ -30,7 +31,7 @@ public class ProjectQueryService extends QueryService<Project> {
 
     private final JobService jobService;
 
-    private final CustomerService customerService;
+    private final CustomerRepository customerRepository;
 
     private final Logger log = LoggerFactory.getLogger(ProjectQueryService.class);
 
@@ -43,13 +44,13 @@ public class ProjectQueryService extends QueryService<Project> {
         ProjectMapper projectMapper,
         AppUserService appUserService,
         JobService jobService,
-        CustomerService customerService
+        CustomerRepository customerRepository
     ) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.appUserService = appUserService;
         this.jobService = jobService;
-        this.customerService = customerService;
+        this.customerRepository = customerRepository;
     }
 
     /**
@@ -66,10 +67,6 @@ public class ProjectQueryService extends QueryService<Project> {
 
     @Transactional(readOnly = true)
     public Page<ProjectDTO> findByCompany(Long companyId, ProjectCriteria criteria, Pageable pageable) {
-        // TODO Auto-generated method stub
-        //getAppUsersIdByCompany
-        //getJobsByAppUsers
-        //GetProjectByJobs
         log.debug("find by criteria : {}", criteria);
         final Specification<Project> specification = createSpecification(criteria);
         List<Long> appUsersId = this.appUserService.findIdsByCompany(companyId);
@@ -77,9 +74,16 @@ public class ProjectQueryService extends QueryService<Project> {
         List<Long> projectsId = this.jobService.findProjectsByAppUsersId(appUsersId);
         log.debug("projectsId : {}", projectsId);
         return projectRepository.findByIds(projectsId, specification, pageable).map(projectMapper::toDto);
-        //        List<Long> jobsId=this.jobService.findByUsersId(appUsersId);
-        //        log.debug(" jobsIds : {}", jobsId);
-        //        return projectRepository.findByJobsId(jobsId, specification,pageable).map(projectMapper::toDto);
+        //
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProjectDTO> findByCustomers(Long companyId, ProjectCriteria criteria, Pageable pageable) {
+        log.debug("find by criteria : {}", criteria);
+        final Specification<Project> specification = createSpecification(criteria);
+        List<Long> customersId = this.customerRepository.findCustomersIdByCompany(companyId);
+        log.debug("AppUsersId : {}", customersId);
+        return projectRepository.findByCustomersId(customersId, specification, pageable).map(projectMapper::toDto);
     }
 
     //    @Transactional(readOnly = true)

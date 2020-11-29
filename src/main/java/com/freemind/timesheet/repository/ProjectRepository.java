@@ -19,4 +19,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpec
 
     @Query("select project from Project project where project.id in ?1")
     Page<Project> findByIds(List<Long> projectsId, Specification<Project> specification, Pageable pageable);
+
+    @Query("select project from Project project where project.customer.id in ?1")
+    Page<Project> findByCustomersId(List<Long> customersId, Specification<Project> specification, Pageable pageable);
 }

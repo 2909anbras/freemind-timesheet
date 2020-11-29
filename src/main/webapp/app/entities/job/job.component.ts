@@ -6,6 +6,10 @@ import { JhiEventManager } from 'ng-jhipster';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { IJob } from 'app/shared/model/job.model';
+import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
+import { AppUserService } from '../app-user/app-user.service';
+import { Account } from 'app/core/user/account.model';
+import { AccountService } from 'app/core/auth/account.service';
 
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { JobService } from './job.service';
@@ -24,8 +28,11 @@ export class JobComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  currentAccount: Account | null = null;
 
   constructor(
+    protected appUserService: AppUserService,
+    protected accountService: AccountService,
     protected jobService: JobService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -35,17 +42,36 @@ export class JobComponent implements OnInit, OnDestroy {
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
+    const req = { page: pageToLoad - 1, size: this.itemsPerPage, sort: this.sort() };
+    this.accountService.identity().subscribe(e => {
+      e ? (this.currentAccount = e) : null;
+      console.log(this.currentAccount);
+    });
 
-    this.jobService
-      .query({
-        page: pageToLoad - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
-      .subscribe(
+    if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+      this.jobService.query(req).subscribe(
         (res: HttpResponse<IJob[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
         () => this.onError()
       );
+    } else {
+      if (this.currentAccount) {
+        this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
+          const appUser = res.body;
+          if (appUser) {
+            this.currentAccount!.companyId = appUser.companyId;
+            console.log(this.currentAccount);
+            this.jobService.getJobByCompanyId(this.currentAccount!.companyId, req).subscribe((res: HttpResponse<IJob[]>) => {
+              const tmp = [...new Set(res.body)];
+              const body: IJob[] | undefined = res.body?.filter(function (elem, index, self): boolean {
+                return index === self.indexOf(elem);
+              });
+              console.log(tmp);
+              body ? this.onSuccess(body, res.headers, pageToLoad, !dontNavigate) : null, () => this.onError();
+            });
+          }
+        });
+      }
+    }
   }
 
   ngOnInit(): void {

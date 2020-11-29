@@ -37,7 +37,7 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/timesheetTool
+    url: jdbc:postgresql://localhost:5432/test
     username: postgres
     password: admin
     hikari:

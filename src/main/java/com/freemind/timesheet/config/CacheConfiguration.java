@@ -54,7 +54,7 @@ public class CacheConfiguration {
             createCache(cm, com.freemind.timesheet.domain.Company.class.getName() + ".customers");
             createCache(cm, com.freemind.timesheet.domain.Customer.class.getName());
             createCache(cm, com.freemind.timesheet.domain.Customer.class.getName() + ".projects");
-            createCache(cm, com.freemind.timesheet.domain.Customer.class.getName() + ".companies");
+            //            createCache(cm, com.freemind.timesheet.domain.Customer.class.getName() + ".companies");
             createCache(cm, com.freemind.timesheet.domain.Project.class.getName());
             createCache(cm, com.freemind.timesheet.domain.Project.class.getName() + ".jobs");
             createCache(cm, com.freemind.timesheet.domain.Job.class.getName());

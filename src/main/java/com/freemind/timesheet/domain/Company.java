@@ -31,10 +31,10 @@ public class Company implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<AppUser> appUsers = new HashSet<>();
 
-    @ManyToMany(mappedBy = "companies", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.PERSIST) //mappedBy = "company_customer",
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnore
-    private Set<Customer> customers = new HashSet<>();
+    //    @JsonIgnore
+    private Set<Customer> customers;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -87,32 +87,30 @@ public class Company implements Serializable {
         return customers;
     }
 
-    public Company customers(Set<Customer> customers) {
-        this.customers = customers;
+    public Company customers(Set<Customer> customer) {
+        this.customers = customer;
         return this;
     }
 
     public Company addCustomer(Customer customer) {
         this.customers.add(customer);
-        customer.getCompanies().add(this);
+        customer.setCompany(this);
         return this;
     }
 
     public Company removeCustomer(Customer customer) {
         this.customers.remove(customer);
-        customer.getCompanies().remove(this);
+        customer.setCompany(null);
         return this;
     }
 
-    public void setCustomers(Set<Customer> customers) {
-        this.customers = customers;
+    public void setCustomer(Set<Customer> customer) {
+        this.customers = customer;
     }
 
     @PreRemove
-    public void removeCustomers() {
-        for (Customer c : customers) {
-            c.removeCompany(this);
-        }
+    public void removeCustomer() {
+        this.customers = null;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

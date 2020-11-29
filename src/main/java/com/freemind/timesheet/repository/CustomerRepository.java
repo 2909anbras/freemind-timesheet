@@ -15,18 +15,21 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSpecificationExecutor<Customer> {
-    @Query(
-        value = "select distinct customer from Customer customer left join fetch customer.companies",
-        countQuery = "select count(distinct customer) from Customer customer"
-    )
-    Page<Customer> findAllWithEagerRelationships(Pageable pageable);
+    //    @Query(
+    ////        value = "select distinct customer from Customer customer left join fetch customer.companies",
+    ////        countQuery = "select count(distinct customer) from Customer customer"
+    //    )
+    //    Page<Customer> findAllWithEagerRelationships(Pageable pageable);
+    //
+    ////    @Query("select distinct customer from Customer customer left join fetch customer.companies")
+    //    List<Customer> findAllWithEagerRelationships();
+    //
+    ////    @Query("select customer from Customer customer left join fetch customer.companies where customer.id =:id")
+    //    Optional<Customer> findOneWithEagerRelationships(@Param("id") Long id);
 
-    @Query("select distinct customer from Customer customer left join fetch customer.companies")
-    List<Customer> findAllWithEagerRelationships();
+    @Query("select distinct customer.id from Customer customer where customer.company.id= ?1 ")
+    List<Long> findCustomersIdByCompany(Long id);
 
-    @Query("select customer from Customer customer left join fetch customer.companies where customer.id =:id")
-    Optional<Customer> findOneWithEagerRelationships(@Param("id") Long id);
-
-    @Query("select distinct customer from Customer customer left join customer.companies as c where c.id= ?1 ")
-    Page<Customer> findByCompany(Long id, Specification<Customer> specification, Pageable page);
+    @Query("select distinct customer from Customer customer where customer.company.id=?1")
+    Page findByCompany(Long id, Specification<Customer> specification, Pageable page);
 }

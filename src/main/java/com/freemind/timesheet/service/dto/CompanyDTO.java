@@ -1,25 +1,33 @@
 package com.freemind.timesheet.service.dto;
 
-import javax.validation.constraints.*;
 import java.io.Serializable;
+import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link com.freemind.timesheet.domain.Company} entity.
  */
 public class CompanyDTO implements Serializable {
-    
     private Long id;
 
     @NotNull
     private String name;
 
-    
+    private Long customerId;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getCustomerId() {
+        return this.customerId;
+    }
+
+    public void setCustomerId(Long id) {
+        customerId = id;
     }
 
     public String getName() {
@@ -52,7 +60,9 @@ public class CompanyDTO implements Serializable {
     public String toString() {
         return "CompanyDTO{" +
             "id=" + getId() +
-            ", name='" + getName() + "'" +
+            ", name='" + getName() +
+            ", customerId:"+getCustomerId()+
+            "'" +
             "}";
     }
 }

@@ -6,8 +6,10 @@ import com.freemind.timesheet.repository.JobRepository;
 import com.freemind.timesheet.service.dto.JobCriteria;
 import com.freemind.timesheet.service.dto.JobDTO;
 import com.freemind.timesheet.service.mapper.JobMapper;
+import com.freemind.timesheet.service.mapper.JobMapperImpl;
 import io.github.jhipster.service.QueryService;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.criteria.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +32,9 @@ public class JobQueryService extends QueryService<Job> {
 
     private final JobRepository jobRepository;
 
-    private final JobMapper jobMapper;
+    private final JobMapperImpl jobMapper;
 
-    public JobQueryService(JobRepository jobRepository, JobMapper jobMapper) {
+    public JobQueryService(JobRepository jobRepository, JobMapperImpl jobMapper) {
         this.jobRepository = jobRepository;
         this.jobMapper = jobMapper;
     }
@@ -65,7 +67,16 @@ public class JobQueryService extends QueryService<Job> {
     public Page<JobDTO> findByCcompany(Long companyId, JobCriteria criteria, Pageable pageable) {
         log.debug("find by criteria : {}, page: {}", criteria, pageable, companyId);
         final Specification<Job> specification = createSpecification(criteria);
-        return jobRepository.findByCompany(companyId, specification, pageable);
+        log.debug("########################################################################################################");
+        List<Long> appUsers = this.jobRepository.findJobsIdByCompany(companyId);
+
+        log.debug("AppUsers {}", appUsers);
+
+        return jobRepository.findByJobsId(appUsers, specification, pageable).map(jobMapper::toDto);
+        //        Page<Job> jobs= jobRepository.findJobsIdByCompany(companyId, specification, pageable);
+        //        return jobRepository.findJobsIdByCompany(companyId,specification,  pageable).map(jobMapper::toDto);
+
+        //        return jobRepository.findByJobsId(jobsId, specification, pageable).map(jobMapper::toDto);//à tester
     }
 
     /**

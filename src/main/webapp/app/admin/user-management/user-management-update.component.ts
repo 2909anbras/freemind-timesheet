@@ -31,6 +31,7 @@ export class UserManagementUpdateComponent implements OnInit {
   companies: ICompany[] = [];
   jobs: IJob[] = [];
   showJobs = false;
+  isNew = false;
   editForm = this.fb.group({
     id: [],
     login: [
@@ -67,20 +68,25 @@ export class UserManagementUpdateComponent implements OnInit {
       this.userService.authorities().subscribe(authorities => {
         this.authorities = authorities;
       });
-      this.showJobs = !user.authorities.some((x: string) => x === 'ROLE_ADMIN');
-      console.log(this.showJobs);
-      console.log(user);
       this.jobService.query().subscribe((res: HttpResponse<IJob[]>) => (this.jobs = res.body || []));
       this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
         this.companies = res.body || [];
         console.log(this.companies);
       });
+      console.log(user);
+      this.isNew = user.id === undefined;
+      if (this.isNew) {
+        this.showJobs = true;
+      } else this.showJobs = !user.authorities.some((x: string) => x === 'ROLE_ADMIN');
+
+      console.log(this.showJobs);
+
       if (user) {
         this.user = user;
         if (this.user.id === undefined) {
           this.user.activated = true;
         }
-        if (this.showJobs) {
+        if (this.showJobs && !this.isNew) {
           this.appUserService.find(user.id).subscribe((res: HttpResponse<IAppUser>) => {
             const appUser = res.body;
             if (appUser) {
@@ -88,10 +94,10 @@ export class UserManagementUpdateComponent implements OnInit {
               this.user.phone = appUser.phone;
               this.user.jobs = appUser.jobs;
             }
-            this.updateForm(user);
+            // this.updateForm(user);
           });
         }
-        // this.updateForm(user);
+        this.updateForm(user);
       }
     });
   }

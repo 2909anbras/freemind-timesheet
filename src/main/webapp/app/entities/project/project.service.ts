@@ -33,6 +33,7 @@ export class ProjectService {
   }
 
   getProjectByCompanyId(companyId?: number, req?: any): Observable<EntityArrayResponseType> {
+    console.log(companyId);
     const options = createRequestOption(req);
     return this.http.get<IProject[]>(`${this.resourceUrl + '/company'}/${companyId}`, { params: options, observe: 'response' });
   }

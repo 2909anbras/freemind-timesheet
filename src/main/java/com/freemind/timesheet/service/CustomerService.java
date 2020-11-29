@@ -60,7 +60,8 @@ public class CustomerService {
      * @return the list of entities.
      */
     public Page<CustomerDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return customerRepository.findAllWithEagerRelationships(pageable).map(customerMapper::toDto);
+        //        return customerRepository.findAllWithEagerRelationships(pageable).map(customerMapper::toDto);
+        return null;
     }
 
     /**
@@ -72,7 +73,7 @@ public class CustomerService {
     @Transactional(readOnly = true)
     public Optional<CustomerDTO> findOne(Long id) {
         log.debug("Request to get Customer : {}", id);
-        return customerRepository.findOneWithEagerRelationships(id).map(customerMapper::toDto);
+        return customerRepository.findById(id).map(r -> customerMapper.toDto(r));
     }
 
     /**
@@ -82,8 +83,8 @@ public class CustomerService {
      */
     public void delete(Long id) { //test
         log.debug("Request to delete Customer : {}", id);
-        Customer customer = customerRepository.findOneWithEagerRelationships(id).get();
-        customer.removeProjects();
-        customerRepository.deleteById(id);
+        //        Customer customer = customerRepository.findOneWithEagerRelationships(id).get();
+        //        customer.removeProjects();
+        //        customerRepository.deleteById(id);
     }
 }

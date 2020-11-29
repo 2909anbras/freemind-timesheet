@@ -66,7 +66,7 @@ public class CustomerQueryService extends QueryService<Customer> {
     public Page<CustomerDTO> findCustomersByCompanyByCriteria(Long id, CustomerCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", id, criteria, page);
         final Specification<Customer> specification = createSpecification(criteria);
-        return customerRepository.findByCompany(id, specification, page).map(customerMapper::toDto);
+        return customerRepository.findByCompany(id, specification, page).map(r -> customerMapper.toDto((Customer) r));
     }
 
     /**

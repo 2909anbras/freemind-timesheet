@@ -16,15 +16,17 @@ export class CustomerService {
   constructor(protected http: HttpClient) {}
 
   create(customer: ICustomer): Observable<EntityResponseType> {
+    console.log(customer);
     return this.http.post<ICustomer>(this.resourceUrl, customer, { observe: 'response' });
   }
 
   update(customer: ICustomer): Observable<EntityResponseType> {
+    console.log(customer);
     return this.http.put<ICustomer>(this.resourceUrl, customer, { observe: 'response' });
   }
 
   findAllByCompany(req?: any, test?: number | undefined): Observable<EntityArrayResponseType> {
-    console.log(req);
+    console.log(test);
     const options = createRequestOption(req);
     return this.http.get<ICustomer[]>(`${this.resourceUrl + '/company'}/${test}`, { params: options, observe: 'response' });
   }

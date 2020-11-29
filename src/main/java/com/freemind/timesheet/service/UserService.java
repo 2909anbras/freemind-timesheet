@@ -225,12 +225,12 @@ public class UserService {
         //        newUserExtra.setInternalUser(user);
         //        newUserExtra.setPhone(phone);
         //        newUserExtra.setCompany(companyRepository.getOne(companyId));
-        AppUser newUserExtra = appUserRepository.getOne(userDTO.getId());
+        AppUser newUserExtra = new AppUser();
         newUserExtra.setInternalUser(user);
         newUserExtra.setPhone(phone);
         newUserExtra.setCompany(companyRepository.getOne(companyId));
         newUserExtra.setJobs(jobs.stream().map(e -> jobMapper.toEntity(e)).collect(Collectors.toSet()));
-
+        newUserExtra.setId(user.getId());
         log.debug("Created Information for UserExtra: {}", newUserExtra);
 
         appUserRepository.save(newUserExtra);
@@ -279,8 +279,9 @@ public class UserService {
                     newUserExtra.setInternalUser(user);
                     newUserExtra.setPhone(userDTO.getPhone());
                     newUserExtra.setCompany(companyRepository.getOne(userDTO.getCompanyId()));
+                    newUserExtra.setJobs(userDTO.getJobs().stream().map(jobMapper::toEntity).collect(Collectors.toSet()));
 
-                    newUserExtra.setJobs(userDTO.getJobs().stream().map(e -> jobMapper.toEntity(e)).collect(Collectors.toSet()));
+                    //                    newUserExtra.setJobs(userDTO.getJobs().stream().map(e -> jobMapper.toEntity(e)).collect(Collectors.toSet()));
                     log.debug("#############################################################################", userDTO.getJobs());
 
                     log.debug("Created Information for UserExtra: {}", newUserExtra);

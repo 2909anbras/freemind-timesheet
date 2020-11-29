@@ -13,6 +13,9 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { ProjectService } from './project.service';
 import { ProjectDeleteDialogComponent } from './project-delete-dialog.component';
 
+import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
+import { AppUserService } from '../app-user/app-user.service';
+
 @Component({
   selector: 'jhi-project',
   templateUrl: './project.component.html',
@@ -29,6 +32,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   currentAccount: Account | null = null;
 
   constructor(
+    protected appUserService: AppUserService,
     protected accountService: AccountService,
     protected projectService: ProjectService,
     protected activatedRoute: ActivatedRoute,
@@ -42,6 +46,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     const req = { page: pageToLoad - 1, size: this.itemsPerPage, sort: this.sort() };
     this.accountService.identity().subscribe(e => {
       e ? (this.currentAccount = e) : null;
+      console.log(this.currentAccount);
     });
     if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
       this.projectService
@@ -55,12 +60,21 @@ export class ProjectComponent implements OnInit, OnDestroy {
           () => this.onError()
         );
     } else {
-      this.currentAccount
-        ? this.projectService.getProjectByCompanyId(this.currentAccount.companyId, req).subscribe(
-            (res: HttpResponse<IProject[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-            () => this.onError()
-          )
-        : null;
+      if (this.currentAccount) {
+        this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
+          const appUser = res.body;
+          if (appUser) {
+            this.currentAccount!.companyId = appUser.companyId;
+            console.log(this.currentAccount);
+            this.projectService.getProjectByCompanyId(this.currentAccount!.companyId, req).subscribe(
+              (res: HttpResponse<IProject[]>) => {
+                this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate);
+              },
+              () => this.onError()
+            );
+          }
+        });
+      }
     }
   }
 

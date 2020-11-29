@@ -18,8 +18,8 @@
                 </dd>
                 <dt><span jhiTranslate="freemindTimesheetApp.customer.company">Company</span></dt>
                 <dd>
-                    <span *ngFor="let company of customer.companies; let last = last">
-                        <a [routerLink]="['/company', company?.id, 'view']">{{ company.id }}</a>{{ last ? '' : ', ' }}
+                    <span *ngIf="customer.companyId">
+                        <a [routerLink]="['/company', customer.companyId, 'view']">{{ customer.companyId }}</a>
                     </span>
                 </dd>
             </dl>

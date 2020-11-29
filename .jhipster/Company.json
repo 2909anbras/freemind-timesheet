@@ -15,7 +15,7 @@
       "relationshipName": "appUser"
     },
     {
-      "relationshipType": "many-to-many",
+      "relationshipType": "one-to-one",
       "otherEntityName": "customer",
       "otherEntityRelationshipName": "company",
       "relationshipName": "customer",

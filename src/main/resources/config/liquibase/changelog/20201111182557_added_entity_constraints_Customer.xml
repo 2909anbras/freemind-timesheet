@@ -7,8 +7,14 @@
         Added the constraints for entity Customer.
     -->
     <changeSet id="20201111182557-2" author="jhipster">
+    
+            <addForeignKeyConstraint baseColumnNames="company_id"
+                                 baseTableName="customer"
+                                 constraintName="fk_customer_company_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="company"/>
         
-        <addForeignKeyConstraint baseColumnNames="customer_id"
+       <!-- <addForeignKeyConstraint baseColumnNames="customer_id"
                                  baseTableName="customer_company"
                                  constraintName="fk_customer_company_customer_id"
                                  referencedColumnNames="id"
@@ -18,7 +24,7 @@
                                  baseTableName="customer_company"
                                  constraintName="fk_customer_company_company_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="company"/>
+                                 referencedTableName="company"/>-->
         
     </changeSet>
 </databaseChangeLog>

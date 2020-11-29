@@ -21,13 +21,16 @@
             <column name="enable" type="boolean">
                 <constraints nullable="false" />
             </column>
+            <column name="company_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
     </changeSet>
 
     <changeSet id="20201111182557-1-relations" author="jhipster">
 
-        <createTable tableName="customer_company">
+     <!--    <createTable tableName="customer_company">
             <column name="company_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -36,7 +39,7 @@
             </column>
         </createTable>
 
-        <addPrimaryKey columnNames="customer_id, company_id" tableName="customer_company"/>
+        <addPrimaryKey columnNames="customer_id, company_id" tableName="customer_company"/>-->
         
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->

@@ -123,7 +123,7 @@ public class ProjectResource {
         Pageable pageable
     ) {
         log.debug("REST request to get Projects by criteria: {}", companyId);
-        Page<ProjectDTO> page = projectQueryService.findByCompany(companyId, criteria, pageable);
+        Page<ProjectDTO> page = projectQueryService.findByCustomers(companyId, criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

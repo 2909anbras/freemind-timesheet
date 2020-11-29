@@ -21,7 +21,7 @@
       "relationshipName": "project"
     },
     {
-      "relationshipType": "many-to-many",
+      "relationshipType": "one-to-one",
       "otherEntityName": "company",
       "otherEntityRelationshipName": "customer",
       "relationshipName": "company",

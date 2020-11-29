@@ -1,5 +1,6 @@
 package com.freemind.timesheet.repository;
 
+import com.freemind.timesheet.domain.AppUser;
 import com.freemind.timesheet.domain.Job;
 import com.freemind.timesheet.domain.Project;
 import com.freemind.timesheet.service.dto.JobCriteria;
@@ -21,6 +22,15 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
     @Query("select distinct job.project.id from Job job left join job.appUsers where job.appUsers In ?1 ")
     List<Long> findProjectsByUsersId(List<Long> appUsersId);
 
-    @Query("select distinct job from Job job left join job.appUsers where job.appUsers.companyId = ?1 ")
-    Page<JobDTO> findByCompany(Long companyId, Specification specification, Pageable pageable);
+    @Query("select  appUser.jobs from AppUser appUser left join appUser.jobs where appUser.company.id = ?1 ")
+    Page<Job> findJobsIdByCompany(Long companyId, Specification<Job> specification, Pageable pageable);
+
+    @Query("select  appUser.jobs from AppUser appUser left join appUser.jobs where appUser.company.id = ?1 ")
+    Page<Job> findJobsIdByCompany(Long companyId, Pageable pageable);
+
+    @Query("select distinct appUser.id from AppUser appUser left join appUser.jobs ap where appUser.company.id = ?1 ")
+    List<Long> findJobsIdByCompany(Long companyId);
+
+    @Query("select distinct job from Job job left join job.appUsers ap where ap.id IN ?1 ") //deg mais à tester
+    Page<Job> findByJobsId(List<Long> appUsersId, Specification specification, Pageable pageable);
 }

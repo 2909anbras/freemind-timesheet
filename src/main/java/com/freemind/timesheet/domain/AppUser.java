@@ -138,7 +138,7 @@ public class AppUser implements Serializable {
     public String toString() {
         return "AppUser{" +
 
-//            "id=" + getId() +
+            "id=" + getId() +
             ", phone=" + getPhone() +
             "}";
     }

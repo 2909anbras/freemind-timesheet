@@ -38,14 +38,9 @@ public class Customer implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Project> projects = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.REFRESH) //Inverser avec company
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JoinTable(
-        name = "customer_company",
-        joinColumns = @JoinColumn(name = "customer_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "company_id", referencedColumnName = "id")
-    )
-    private Set<Company> companies = new HashSet<>();
+    @ManyToOne(cascade = CascadeType.REFRESH) //tester
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE) //pas sûr
+    private Company company;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -113,29 +108,29 @@ public class Customer implements Serializable {
         this.projects = projects;
     }
 
-    public Set<Company> getCompanies() {
-        return companies;
+    public Company getCompany() {
+        return company;
     }
 
-    public Customer companies(Set<Company> companies) {
-        this.companies = companies;
+    public Customer company(Company company) {
+        this.company = company;
         return this;
     }
 
     public Customer addCompany(Company company) {
-        this.companies.add(company);
-        company.getCustomers().add(this);
-        return this;
+        //        this.companies.add(company);
+        //        company.getCustomers().add(this);
+        return null;
     }
 
     public Customer removeCompany(Company company) {
-        this.companies.remove(company);
-        company.getCustomers().remove(this);
-        return this;
+        //        this.companies.remove(company);
+        //        company.getCustomers().remove(this);
+        return null;
     }
 
-    public void setCompanies(Set<Company> companies) {
-        this.companies = companies;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
