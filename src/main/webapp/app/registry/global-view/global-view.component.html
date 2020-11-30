@@ -1,0 +1,117 @@
+<div >
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 jhiTranslate="registry.globale_view.companies">Company</h4>
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered table-condensed table-responsive">
+                <thead>
+                <tr>
+                    <th style="width: 15%">
+                        <div class="input-group">
+                            <!--<input type="text" (keyup)="applyCompanyFilter($event.target.value)"></p>-->
+                            <div class="input-group-addon"><span jhiTranslate="registry.globale_view.company_filter">COMPANY</span></div>
+                            <input autofocus type="text" class="form-control" [(ngModel)]="searchCompany" placeholder="*">
+                            <select class="form-control statusOptionsAddon" [(ngModel)]="searchCompanyState" >
+                                <option value=""></option>
+	                        	<option $ngFor="let item of enabledStateList" [value]="{{item}}">{{ item | translate }}</option>
+	                        </select>
+                        </div>
+                    </th>
+                    <th style="width: 20%">
+                        <div class="input-group">
+                            <div class="input-group-addon"><span jhiTranslate="registry.globale_view.customer_filter">CUSTOMER</span></div>
+                            <input type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">                            
+                             <select class="form-control statusOptionsAddon"  [(ngModel)]="searchCustomerState" >
+	                        	<option *ngFor="let item of enabledStateList" [value]="item" >{{ item.label | translate }}</option>
+	                        </select>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="input-group">
+                            <div class="input-group-addon"><span data-translate="registry.globale_view.project_filter">PROJECT</span></div>
+                            <input type="text" class="form-control" [(ngModel)]="searchProject" placeholder="*">                       
+                             <select  class="form-control statusOptionsAddon"  [(ngModel)]="searchProjectState" >
+	                        	<option  *ngFor="let item of enabledStateList" [value]="item">{{ item.label | translate }}</option>
+	                        </select>                          
+                          </div>
+                    </th>
+                    <th>
+                        <div class="input-group">
+                            <div class="input-group-addon"><span jhiTranslate="registry.globale_view.job_filter">JOB</span></div>
+                            <input type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">                   
+                            <select class="form-control statusOptionsAddon"  [(ngModel)]="searchJobState" ><!--| orderBy:'name' [selected]="jobState === item.name" -->
+	                        	<option *ngFor="let item of status " [value]="item">{{ ('REGISTRY_JOB_LABEL_STATE_' + item.name) | translate }}</option>
+	                   			<option value="">*</option>
+	                         </select>                       
+                        </div>
+                        
+                    </th>
+                </tr>
+                </thead>
+                <tbody><!--| filter: {name: search.company, enabled: search.companyState}-->
+                <tr class="hidden"
+                    *ngFor="let company of companies | filter:{name:searchCompany, enabled:searchCompanyState}"></tr>
+                <tr style="cursor: pointer; background-color: #cacaca">
+                    <td style="border-right: none!important;"><!-- changer ng-click & ng-class -->
+                        <i class="fa"
+                           (click)="company.$hidden = !company.$hidden"
+                           *ngClass="{'fa-chevron-down': !companyHidden, 'fa-chevron-right': companyHidden}"
+                           hidden="company.customers"></i>
+                        &nbsp;<a [routerLink]="['./', company.id, 'view']">{{ company.name }}</a>
+                    </td>
+                    <!-- change ng-show or ngHide by [hidden]="var"-->
+                    <td colspan="3" style="border-left: none!important;"><!-- revoir le routerLink for create. Authority=> the admin & the Customer_Admin-->
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" hidden="! (searchCustomer.length > 0 )" class="btn btn-sm btn-default" [routerLink]="['/customer', customer, 'add']" title="{{ 'NEW_CUSTOMER' | translate }}" > <!-- add router link avec company name et customer name & project name-->
+                            <i class="fa fa-plus"></i></button>
+                    </td>
+                </tr>
+                <tr class="hidden"
+                    *ngFor="let customer of company.customers  | filter:{name:searchCustomer, enabled:searchCustomerState"></tr>
+                    <!-- change by [hidden]-->
+                <tr hidden="!companyHidden">
+                    <td style="border: none!important;"></td>
+                    <td style="background-color: #f6f6f6;cursor: pointer; border-right: none!important;">
+                        <i class="fa"
+                           (click)="customerHidden = !customerHidden"
+                           hidden="customer.projects"
+                           *ngClass="{'fa-chevron-down': !customerhidden, 'fa-chevron-right': customerHidden}"></i>
+                        &nbsp;<a ></a><!--routerlink data to send customer & company-->
+                    </td>
+                    <td colspan="2" style="background-color: #f6f6f6; border-left: none!important;">
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']"hidden="!(searchProject.length > 0 )" class="btn btn-sm btn-default" title="{{ 'NEW_PROJECT' | translate }}" >
+                            <i class="fa fa-plus"></i></button>
+                    </td>
+                </tr>
+
+                <tr class="hidden"
+                *ngFor=" let project of customer.projects| filter: {name: searchProject, enabled: searchProjectState}"></tr>
+                <tr hidden="!companyHidden && !customerHidden">
+                    <td style="border: none!important;" colspan="2"></td>
+                    <td style="border-bottom: none!important;">
+                        <a  ></a> <!-- add router link avec company name et customer name & project name-->
+                    </td><!-- job.lenght?-->
+                    <td><button *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" hidden="! (searchJob.length > 0 )" class="btn btn-sm btn-default"  title="{{'NEW_JOB' | translate}}" ><!--jhiautohrity-->
+                        <i class="fa fa-plus"></i></button></td> <!--routerLink send company id & customer id & project id-->
+                </tr>
+
+                <tr *ngFor="let job of project.jobs | filter: {name: searchJob, jobState: searchJobState}"
+                    hidden="!customerHidden && !companyHidden">
+                    <td colspan="2" style="border: none!important;"></td>
+                    <td style="border-bottom: none!important; border-top: none!important;"></td>
+                    <td><a ></a></td><!-- add router link-->
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr *jhiHasAnyAuthority="['ROLE_ADMIN']">
+                    <td colspan="4">
+                    	<button class="btn btn-default" (click)="newCompany" title="{{ 'NEW_COMPANY' | translate }}">
+                    		<i class="fa fa-plus">&nbsp; {{ 'NEW_COMPANY' | translate }}</i>
+                    	</button>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
