@@ -136,4 +136,6 @@ export class GlobalViewComponent implements OnInit {
       this.showCompanies = this.allCompanies?.filter(c => c.name?.toLowerCase().includes(filterValueLower));
     }
   }
+
+  newCompany(): any {}
 }

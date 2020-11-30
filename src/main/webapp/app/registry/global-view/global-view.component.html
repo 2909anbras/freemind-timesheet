@@ -49,9 +49,9 @@
                     </th>
                 </tr>
                 </thead>
-                <tbody><!--| filter: {name: search.company, enabled: search.companyState}-->
+                <tbody><!--| filter: {name: search.company, enabled: search.companyState} filter:{name:searchCompany, enabled:searchCompanyState}-->
                 <tr class="hidden"
-                    *ngFor="let company of companies | filter:{name:searchCompany, enabled:searchCompanyState}"></tr>
+                    *ngFor="let company of companies | companyFilter: searchCompany: searchCompanyState"></tr>
                 <tr style="cursor: pointer; background-color: #cacaca">
                     <td style="border-right: none!important;"><!-- changer ng-click & ng-class -->
                         <i class="fa"
@@ -67,7 +67,7 @@
                     </td>
                 </tr>
                 <tr class="hidden"
-                    *ngFor="let customer of company.customers  | filter:{name:searchCustomer, enabled:searchCustomerState"></tr>
+                    *ngFor="let customer of company.customers  | customerFilter: searchCustomer: searchCustomerState"></tr>
                     <!-- change by [hidden]-->
                 <tr hidden="!companyHidden">
                     <td style="border: none!important;"></td>
@@ -76,7 +76,7 @@
                            (click)="customerHidden = !customerHidden"
                            hidden="customer.projects"
                            *ngClass="{'fa-chevron-down': !customerhidden, 'fa-chevron-right': customerHidden}"></i>
-                        &nbsp;<a ></a><!--routerlink data to send customer & company-->
+                        &nbsp;<a >{{customer.name}}</a><!--routerlink data to send customer & company-->
                     </td>
                     <td colspan="2" style="background-color: #f6f6f6; border-left: none!important;">
                         <button *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']"hidden="!(searchProject.length > 0 )" class="btn btn-sm btn-default" title="{{ 'NEW_PROJECT' | translate }}" >
@@ -85,7 +85,7 @@
                 </tr>
 
                 <tr class="hidden"
-                *ngFor=" let project of customer.projects| filter: {name: searchProject, enabled: searchProjectState}"></tr>
+                *ngFor=" let project of customer.projects| projectFilter: searchProject: searchProjectState"></tr>
                 <tr hidden="!companyHidden && !customerHidden">
                     <td style="border: none!important;" colspan="2"></td>
                     <td style="border-bottom: none!important;">
@@ -95,17 +95,17 @@
                         <i class="fa fa-plus"></i></button></td> <!--routerLink send company id & customer id & project id-->
                 </tr>
 
-                <tr *ngFor="let job of project.jobs | filter: {name: searchJob, jobState: searchJobState}"
+                <tr *ngFor="let job of project.jobs | jobFilter: searchJob: searchJobState"
                     hidden="!customerHidden && !companyHidden">
                     <td colspan="2" style="border: none!important;"></td>
                     <td style="border-bottom: none!important; border-top: none!important;"></td>
-                    <td><a ></a></td><!-- add router link-->
+                    <td><a >{{job.name}}</a></td><!-- add router link-->
                 </tr>
                 </tbody>
                 <tfoot>
                 <tr *jhiHasAnyAuthority="['ROLE_ADMIN']">
                     <td colspan="4">
-                    	<button class="btn btn-default" (click)="newCompany" title="{{ 'NEW_COMPANY' | translate }}">
+                    	<button class="btn btn-default" (click)="newCompany()" title="{{ 'NEW_COMPANY' | translate }}">
                     		<i class="fa fa-plus">&nbsp; {{ 'NEW_COMPANY' | translate }}</i>
                     	</button>
                     </td>
