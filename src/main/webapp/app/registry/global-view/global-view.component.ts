@@ -23,19 +23,12 @@ import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
+  selector: 'jhi-global-view',
   templateUrl: './global-view.component.html',
 })
 export class GlobalViewComponent implements OnInit {
-  showCustomers?: ICustomer[];
-  allCustomers?: ICustomer[];
-  showCompanies?: ICompany[];
-  allCompanies?: ICompany[];
-  showJobs?: IJob[];
-  allJobs?: IJob[];
-  showProjects?: IProject[];
-  allProjects?: IProject[];
-
-  // status:Status;
+  showCompanies: ICompany[] = [];
+  allCompanies: ICompany[] = [];
 
   companyHidden = false;
   customerHidden = false;
@@ -50,6 +43,7 @@ export class GlobalViewComponent implements OnInit {
   searchCustomerState = '';
   searchProjectState = '';
   searchJobState = '';
+  searchCompanyState = '';
 
   enabledStateList = ['Enable', 'Disabled', 'All'];
 
@@ -64,7 +58,7 @@ export class GlobalViewComponent implements OnInit {
   ngbPaginationPage = 1;
 
   constructor(
-    protected status: Status,
+    public status: Status,
     protected projectService: ProjectService,
     protected jobService: JobService,
     protected companyService: CompanyService,
@@ -76,13 +70,25 @@ export class GlobalViewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    //get currentAccount
     this.setCurrentAccount();
     if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+      this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
+        if (res.body) {
+          this.showCompanies = res.body;
+          this.allCompanies = res.body;
+          console.log(this.showCompanies);
+        }
+      });
       //set and show the full company list.
-      this.fillTheFullTable();
+      // this.fillTheFullTable();
     } else {
-      this.setCompanyForTheCurrentAccount();
+      if (this.currentAccount?.companyId)
+        this.companyService.find(this.currentAccount?.companyId).subscribe((res: HttpResponse<ICompany>) => {
+          res.body ? this.allCompanies?.push(res.body) : null;
+          this.showCompanies = this.allCompanies;
+          console.log(this.showCompanies);
+        });
+      // this.setCompanyForTheCurrentAccount();
     }
   }
 
@@ -137,5 +143,5 @@ export class GlobalViewComponent implements OnInit {
     }
   }
 
-  newCompany(): any {}
+  public newCompany(): void {}
 }

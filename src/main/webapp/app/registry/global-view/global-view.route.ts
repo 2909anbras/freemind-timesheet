@@ -6,6 +6,6 @@ export const GlobalViewRoute: Route = {
   path: '',
   component: GlobalViewComponent,
   data: {
-    pageTitle: 'drop.title',
+    pageTitle: 'global-view.title',
   },
 };

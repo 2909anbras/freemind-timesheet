@@ -25,6 +25,13 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
           path: 'account',
           loadChildren: () => import('./account/account.module').then(m => m.AccountModule),
         },
+        {
+          path: 'registry',
+          data: {
+            authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
+          },
+          loadChildren: () => import('./registry/registry-routing.module').then(m => m.RegistryRoutingModule),
+        },
         ...LAYOUT_ROUTES,
       ],
       { enableTracing: DEBUG_INFO_ENABLED }
