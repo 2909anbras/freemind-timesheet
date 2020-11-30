@@ -51,7 +51,7 @@
                 </thead>
                 <tbody><!--| filter: {name: search.company, enabled: search.companyState} filter:{name:searchCompany, enabled:searchCompanyState}-->
                 <tr class="hidden"
-                    *ngFor="let company of companies | companyFilter: searchCompany: searchCompanyState"></tr>
+                    *ngFor="let company of showCompanies | companyFilter: searchCompany: searchCompanyState"></tr>
                 <tr style="cursor: pointer; background-color: #cacaca">
                     <td style="border-right: none!important;"><!-- changer ng-click & ng-class -->
                         <i class="fa"
@@ -62,8 +62,8 @@
                     </td>
                     <!-- change ng-show or ngHide by [hidden]="var"-->
                     <td colspan="3" style="border-left: none!important;"><!-- revoir le routerLink for create. Authority=> the admin & the Customer_Admin-->
-                        <button *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" hidden="! (searchCustomer.length > 0 )" class="btn btn-sm btn-default" [routerLink]="['/customer', customer, 'add']" title="{{ 'NEW_CUSTOMER' | translate }}" > <!-- add router link avec company name et customer name & project name-->
-                            <i class="fa fa-plus"></i></button>
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" hidden="! (searchCustomer.length > 0 )" class="btn btn-sm btn-default" [routerLink]="['/customer', customer, 'add']"  > <!-- add router link avec company name et customer name & project name-->
+                            <i class="fa fa-plus" jhiTranslate="globale_view.button.add_customer"></i></button>
                     </td>
                 </tr>
                 <tr class="hidden"
@@ -79,8 +79,8 @@
                         &nbsp;<a >{{customer.name}}</a><!--routerlink data to send customer & company-->
                     </td>
                     <td colspan="2" style="background-color: #f6f6f6; border-left: none!important;">
-                        <button *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']"hidden="!(searchProject.length > 0 )" class="btn btn-sm btn-default" title="{{ 'NEW_PROJECT' | translate }}" >
-                            <i class="fa fa-plus"></i></button>
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']"hidden="!(searchProject.length > 0 )" class="btn btn-sm btn-default"  >
+                            <i class="fa fa-plus" jhiTranslate="globale_view.button.add_project"></i></button>
                     </td>
                 </tr>
 
@@ -91,8 +91,8 @@
                     <td style="border-bottom: none!important;">
                         <a  ></a> <!-- add router link avec company name et customer name & project name-->
                     </td><!-- job.lenght?-->
-                    <td><button *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" hidden="! (searchJob.length > 0 )" class="btn btn-sm btn-default"  title="{{'NEW_JOB' | translate}}" ><!--jhiautohrity-->
-                        <i class="fa fa-plus"></i></button></td> <!--routerLink send company id & customer id & project id-->
+                    <td><button *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" hidden="! (searchJob.length > 0 )" class="btn btn-sm btn-default" >
+                        <i class="fa fa-plus" jhiTranslate="globale_view.button.add_job"></i></button></td> <!--routerLink send company id & customer id & project id-->
                 </tr>
 
                 <tr *ngFor="let job of project.jobs | jobFilter: searchJob: searchJobState"
@@ -105,8 +105,8 @@
                 <tfoot>
                 <tr *jhiHasAnyAuthority="['ROLE_ADMIN']">
                     <td colspan="4">
-                    	<button class="btn btn-default" (click)="newCompany()" title="{{ 'NEW_COMPANY' | translate }}">
-                    		<i class="fa fa-plus">&nbsp; {{ 'NEW_COMPANY' | translate }}</i>
+                    	<button class="btn btn-default" (click)="newCompany()">
+                    		<i class="fa fa-plus" jhiTranslate="globale_view.button.new_company">&nbsp; new company</i>
                     	</button>
                     </td>
                 </tr>
