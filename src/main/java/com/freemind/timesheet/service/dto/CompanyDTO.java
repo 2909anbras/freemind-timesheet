@@ -1,6 +1,8 @@
 package com.freemind.timesheet.service.dto;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.validation.constraints.*;
 
 /**
@@ -12,7 +14,9 @@ public class CompanyDTO implements Serializable {
     @NotNull
     private String name;
 
-    private Long customerId;
+    private Set<CustomerDTO> customers = new HashSet<>();
+
+    //    private Long customerId;
 
     public Long getId() {
         return id;
@@ -22,12 +26,12 @@ public class CompanyDTO implements Serializable {
         this.id = id;
     }
 
-    public Long getCustomerId() {
-        return this.customerId;
+    public Set<CustomerDTO> getCustomers() {
+        return this.customers;
     }
 
-    public void setCustomerId(Long id) {
-        customerId = id;
+    public void setCustomers(Set<CustomerDTO> customers) {
+        customers = customers;
     }
 
     public String getName() {
@@ -61,7 +65,7 @@ public class CompanyDTO implements Serializable {
         return "CompanyDTO{" +
             "id=" + getId() +
             ", name='" + getName() +
-            ", customerId:"+getCustomerId()+
+            ", customers:"+getCustomers()+
             "'" +
             "}";
     }

@@ -10,6 +10,10 @@ import { RouterModule } from '@angular/router';
         path: 'global-view',
         loadChildren: () => import('./global-view/global-view.module').then(m => m.GlobalViewModule),
       },
+      {
+        path: 'full-view',
+        loadChildren: () => import('./full-view/full-view.module').then(m => m.FullViewModule),
+      },
     ]),
   ],
 })

@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 import { HttpResponse, HttpHeaders } from '@angular/common/http';
 
@@ -65,7 +64,6 @@ export class GlobalViewComponent implements OnInit {
     protected customerService: CustomerService,
     protected appUserService: AppUserService,
     protected accountService: AccountService,
-    protected activeModal: NgbActiveModal,
     protected eventManager: JhiEventManager
   ) {}
 
