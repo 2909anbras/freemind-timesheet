@@ -1,6 +1,7 @@
 package com.freemind.timesheet.web.rest.vm;
 
 import com.freemind.timesheet.service.dto.JobDTO;
+import com.freemind.timesheet.service.dto.PerformanceDTO;
 import com.freemind.timesheet.service.dto.UserDTO;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +19,8 @@ public class ManagedUserVM extends UserDTO {
     private String password;
 
     private Set<JobDTO> jobs = new HashSet<>();
+
+    private Set<PerformanceDTO> performances = new HashSet<>();
 
     private String phone;
 
@@ -49,6 +52,14 @@ public class ManagedUserVM extends UserDTO {
 
     public void setJobs(Set<JobDTO> jobs) {
         this.jobs = jobs;
+    }
+
+    public Set<PerformanceDTO> getPerformances() {
+        return performances;
+    }
+
+    public void setPerformances(Set<PerformanceDTO> performances) {
+        this.performances = performances;
     }
 
     public Long getCompanyId() {

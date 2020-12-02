@@ -14,6 +14,6 @@ import org.springframework.stereotype.Repository;
 //@SuppressWarnings("unused")
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpecificationExecutor<Company> {
-    @Query("select company from Company company left join company.customers")
+    @Query("select distinct company from Company company left join company.customers")
     Page<Company> findAllWithEagerRelationships(Specification specification, Pageable pageable);
 }

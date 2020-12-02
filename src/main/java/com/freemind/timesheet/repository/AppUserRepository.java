@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppUserRepository extends JpaRepository<AppUser, Long>, JpaSpecificationExecutor<AppUser> {
     @Query(
-        value = "select distinct appUser from AppUser appUser left join fetch appUser.jobs",
+        value = "select distinct appUser from AppUser appUser " + "left join fetch appUser.jobs " + "left join appUser.performances ",
         countQuery = "select count(distinct appUser) from AppUser appUser"
     )
     Page<AppUser> findAllWithEagerRelationships(Pageable pageable);
@@ -28,7 +28,12 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long>, JpaSpec
     @Query("select distinct appUser from AppUser appUser left join fetch appUser.jobs")
     List<AppUser> findAllWithEagerRelationships();
 
-    @Query("select appUser from AppUser appUser left join fetch appUser.jobs where appUser.id =:id")
+    @Query(
+        "select appUser from AppUser appUser " +
+        "left join fetch appUser.jobs " +
+        "left join appUser.performances " +
+        " where appUser.id =:id"
+    )
     Optional<AppUser> findOneWithEagerRelationships(@Param("id") Long id);
 
     @Query("select appUser from AppUser appUser where appUser.company.id=?1")

@@ -7,6 +7,7 @@ import com.freemind.timesheet.security.AuthoritiesConstants;
 import com.freemind.timesheet.service.MailService;
 import com.freemind.timesheet.service.UserService;
 import com.freemind.timesheet.service.dto.JobDTO;
+import com.freemind.timesheet.service.dto.PerformanceDTO;
 import com.freemind.timesheet.service.dto.UserDTO;
 import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
 import com.freemind.timesheet.web.rest.errors.EmailAlreadyUsedException;
@@ -132,7 +133,6 @@ public class UserResource {
     @PutMapping("/users")
     @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\"+\"," + AuthoritiesConstants.CUSTOMER_ADMIN + "\")")
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody ManagedUserVM userDTO) {
-        log.debug("Wouhou", userDTO.getJobs());
         log.debug("REST request to update User : {}", userDTO);
         Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
@@ -147,6 +147,19 @@ public class UserResource {
         return ResponseUtil.wrapOrNotFound(
             updatedUser,
             HeaderUtil.createAlert(applicationName, "userManagement.updated", userDTO.getLogin())
+        );
+    }
+
+    @PutMapping("/users/performance/{userId}")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.USER + "\")")
+    public ResponseEntity<ManagedUserVM> addPerformance(@PathVariable Long id, @Valid @RequestBody PerformanceDTO performanceDTO) {
+        log.debug("REST request to add Performance : {}", performanceDTO);
+
+        Optional<ManagedUserVM> updatedUser = userService.addPerformance(id, performanceDTO);
+
+        return ResponseUtil.wrapOrNotFound(
+            updatedUser,
+            HeaderUtil.createAlert(applicationName, "userManagement.addPerformance", updatedUser.get().getLogin())
         );
     }
 

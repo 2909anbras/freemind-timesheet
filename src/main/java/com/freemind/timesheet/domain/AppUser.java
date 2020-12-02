@@ -41,6 +41,10 @@ public class AppUser implements Serializable {
     @JsonIgnoreProperties(value = "appUsers", allowSetters = true)
     private Company company;
 
+    @OneToMany(mappedBy = "appUser")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<Performance> performances = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
@@ -114,6 +118,31 @@ public class AppUser implements Serializable {
         this.company = company;
     }
 
+    public Set<Performance> getPerformances() {
+        return this.performances;
+    }
+
+    public AppUser performances(Set<Performance> performances) {
+        this.performances = performances;
+        return this;
+    }
+
+    public AppUser addPerformance(Performance performance) {
+        this.performances.add(performance);
+        performance.setAppUser(this);
+        return this;
+    }
+
+    public AppUser removePerformance(Performance performance) {
+        this.performances.remove(performance);
+        performance.setAppUser(null);
+        return this;
+    }
+
+    public void setPerformances(Set<Performance> performances) {
+        this.performances = performances;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -140,6 +169,7 @@ public class AppUser implements Serializable {
 
             "id=" + getId() +
             ", phone=" + getPhone() +
+            ", customers= "+ getPerformances()+ "'"+
             "}";
     }
 }

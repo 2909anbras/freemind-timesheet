@@ -1,0 +1,102 @@
+<div >
+    <h4 jhiTranslate="global-view.companies">Company</h4>
+</div>
+<table>
+    <thead>
+        <th style="border-color: black!important;">
+            
+            <label jhiTranslate="global-view.company-filter">COMPANY</label>
+            <input  type="text" class="form-control" [(ngModel)]="searchCompany" placeholder="*">
+            <label >Enable?</label>
+            <select class="form-control" [(ngModel)]="searchCompanyState" >
+                <option [ngValue]=""></option>
+                <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
+            </select>
+            
+        </th>
+        <th style="border-color: black!important;;">
+
+            <label jhiTranslate="global-view.customer-filter">CUSTOMER</label>
+            <input  type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">
+            <label >Enable?</label>
+            <select class="form-control" [(ngModel)]="searchCustomerState" >
+                <option [ngValue]=""></option>
+                <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
+            </select>
+
+        </th>
+        <th style="border-color: black!important;;">
+            <label jhiTranslate="global-view.project-filter">PROJECT</label>
+            <input  type="text" class="form-control" [(ngModel)]="searchProject" placeholder="*">
+            <label >Enable?</label>
+            <select class="form-control" [(ngModel)]="searchProjectState" >
+                <option [ngValue]=""></option>
+                <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
+            </select>
+        </th>
+        <th style="border-color: black!important;;">
+
+            <label jhiTranslate="global-view.job-filter">PROJECT</label>
+            <input  type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
+            <label >Enable?</label>
+            <select class="form-control" [(ngModel)]="searchJobState" >
+                <option [ngValue]=""></option>
+                <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
+            </select>
+
+        </th>
+    </thead>
+    <tbody>
+        <!-- company container-->
+        <ng-container *ngFor="let company of showCompanies | companyFilter: searchCompany: searchCompanyState">
+          <!-- <tr></tr> -->
+            <tr > 
+                <td >
+                    <a [routerLink]="['/company', company.id, 'edit']">{{ company.name }}</a>
+                </td>
+            </tr>
+            <!-- customer container-->
+            <ng-container  *ngFor="let customer of company.customers | customerFilter: searchCustomer: searchCustomerState">
+                <!-- <tr ></tr> -->
+                <tr >
+                    <td colspan="1"></td>
+                    <td >
+                        <a [routerLink]="['/customer', customer.id, 'edit']">{{customer.name}}</a>
+                    </td>
+                </tr>
+
+                <!-- project container -->
+                <ng-container *ngFor=" let project of customer.projects| projectFilter: searchProject: searchProjectState">
+                    <!-- <tr ></tr> -->
+                    <tr >
+                        <td colspan="2"></td>
+                        <td >
+                            <a [routerLink]="['/project', project.id, 'edit']">   {{project.name}}</a>
+                        </td>
+                    </tr>
+                    <!-- job container, pas obligé -->
+                    <ng-container *ngFor=" let job of project.jobs| jobFilter: searchJob: searchJobState">
+                        <!-- <tr >
+                        </tr> -->
+                        <tr>
+                            <td colspan="3"></td>
+                            <td>
+                                <a [routerLink]="['/project', project.id, 'edit']">   {{job.name}}</a>
+                            </td>
+                        </tr>
+                        <!-- fin job container -->
+                    </ng-container>
+                    <!-- end project -->
+                
+                </ng-container>
+                <!-- end customer -->
+            
+            </ng-container>
+            <!-- end company -->
+        
+        </ng-container>
+    </tbody>
+    <tfoot>
+
+    </tfoot>
+</table>

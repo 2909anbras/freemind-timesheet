@@ -14,7 +14,7 @@ public class AppUserDTO implements Serializable {
 
     private Long internalUserId;
     private Set<JobDTO> jobs = new HashSet<>();
-
+    private Set<PerformanceDTO> performances = new HashSet<>();
     private Long companyId;
 
     public Long getId() {
@@ -47,6 +47,14 @@ public class AppUserDTO implements Serializable {
 
     public void setJobs(Set<JobDTO> jobs) {
         this.jobs = jobs;
+    }
+
+    public Set<PerformanceDTO> getPerformances() {
+        return performances;
+    }
+
+    public void setPerformances(Set<PerformanceDTO> performances) {
+        this.performances = performances;
     }
 
     public Long getCompanyId() {
@@ -82,6 +90,7 @@ public class AppUserDTO implements Serializable {
             ", phone='" + getPhone() + "'" +
             ", internalUserId=" + getInternalUserId() +
             ", jobs='" + getJobs() + "'" +
+            ", performances='" + getPerformances() + "'" +
             ", companyId=" + getCompanyId() +
             "}";
     }

@@ -4,6 +4,7 @@ import com.freemind.timesheet.config.Constants;
 import com.freemind.timesheet.domain.AppUser;
 import com.freemind.timesheet.domain.Authority;
 import com.freemind.timesheet.domain.Job;
+import com.freemind.timesheet.domain.Performance;
 import com.freemind.timesheet.domain.User;
 import com.freemind.timesheet.repository.AppUserRepository;
 import com.freemind.timesheet.repository.AuthorityRepository;
@@ -12,14 +13,17 @@ import com.freemind.timesheet.repository.UserRepository;
 import com.freemind.timesheet.security.AuthoritiesConstants;
 import com.freemind.timesheet.security.SecurityUtils;
 import com.freemind.timesheet.service.dto.JobDTO;
+import com.freemind.timesheet.service.dto.PerformanceDTO;
 import com.freemind.timesheet.service.dto.UserDTO;
 import com.freemind.timesheet.service.mapper.JobMapper;
+import com.freemind.timesheet.service.mapper.PerformanceMapper;
 import com.freemind.timesheet.web.rest.vm.ManagedUserVM;
 import io.github.jhipster.security.RandomUtil;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -43,7 +47,10 @@ public class UserService {
     private final AppUserRepository appUserRepository;
 
     private final UserRepository userRepository;
+
     private final JobMapper jobMapper;
+
+    private final PerformanceMapper performanceMapper;
 
     private final CompanyRepository companyRepository;
 
@@ -63,7 +70,8 @@ public class UserService {
         CacheManager cacheManager,
         CompanyService companyService,
         CompanyRepository companyRepository,
-        JobMapper jobMapper
+        JobMapper jobMapper,
+        PerformanceMapper performanceMapper
     ) {
         this.appUserRepository = appUserRepository;
         this.userRepository = userRepository;
@@ -73,6 +81,7 @@ public class UserService {
         this.companyService = companyService;
         this.companyRepository = companyRepository;
         this.jobMapper = jobMapper;
+        this.performanceMapper = performanceMapper;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -415,5 +424,30 @@ public class UserService {
         if (user.getEmail() != null) {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(user.getEmail());
         }
+    }
+
+    public Optional<ManagedUserVM> addPerformance(Long id, @Valid PerformanceDTO performanceDTO) {
+        //récup le user et le AppUser
+        //add au appUser la performance
+        //new managedUserVM
+        //set all data with user & appUser
+
+        User user = userRepository.getOne(id);
+        AppUser appUser = appUserRepository.findOneWithEagerRelationships(id).get(); //rajouter les performances dans query
+        log.debug("add Performance: {}", appUser.getPerformances());
+        appUser.addPerformance(performanceMapper.toEntity(performanceDTO));
+        log.debug("Performance added: {}", appUser.getPerformances());
+        appUserRepository.save(appUser);
+        Set<PerformanceDTO> tmpList = new HashSet();
+        ManagedUserVM userVM = new ManagedUserVM();
+        userVM.setCompanyId(user.getId());
+        userVM.setCompanyId(appUser.getCompany().getId());
+        userVM.setLogin(user.getLogin());
+        userVM.setFirstName(user.getFirstName());
+        for (Performance p : appUser.getPerformances()) tmpList.add(performanceMapper.toDto(p));
+        userVM.setPerformances(tmpList);
+        Optional<ManagedUserVM> opt = Optional.empty();
+        opt.of(userVM);
+        return opt;
     }
 }

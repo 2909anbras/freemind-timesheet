@@ -4,7 +4,7 @@
     {
       "fieldName": "phone",
       "fieldType": "String",
-	  "fieldValidateRules": ["required", "unique"]
+      "fieldValidateRules": ["required", "unique"]
     }
   ],
   "relationships": [
