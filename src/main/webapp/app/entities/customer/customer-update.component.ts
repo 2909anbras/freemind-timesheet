@@ -5,6 +5,12 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 
+import { Account } from 'app/core/user/account.model';
+import { AccountService } from 'app/core/auth/account.service';
+
+import { AppUserService } from '../app-user/app-user.service';
+import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
+
 import { ICustomer, Customer } from 'app/shared/model/customer.model';
 import { CustomerService } from './customer.service';
 import { ICompany } from 'app/shared/model/company.model';
@@ -18,6 +24,8 @@ export class CustomerUpdateComponent implements OnInit {
   isSaving = false;
   companies: ICompany[] = [];
 
+  account?: Account;
+
   editForm = this.fb.group({
     id: [],
     name: [null, [Validators.required, Validators.minLength(3)]],
@@ -26,6 +34,8 @@ export class CustomerUpdateComponent implements OnInit {
   });
 
   constructor(
+    protected appUserService: AppUserService,
+    protected accountService: AccountService,
     protected customerService: CustomerService,
     protected companyService: CompanyService,
     protected activatedRoute: ActivatedRoute,
@@ -35,8 +45,25 @@ export class CustomerUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ customer }) => {
       this.updateForm(customer);
-
-      this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => (this.companies = res.body || []));
+      if (this.accountService.hasAnyAuthority('ROLE_ADMIN'))
+        this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => (this.companies = res.body || []));
+      else {
+        this.accountService.identity().subscribe(account => {
+          if (account) {
+            this.account = account;
+            this.appUserService.find(account.id).subscribe((res: HttpResponse<IAppUser>) => {
+              const appUser = res.body;
+              if (appUser) {
+                account.companyId = appUser.companyId;
+                console.log(account);
+                this.companyService.find(account.companyId).subscribe((res: HttpResponse<ICompany>) => {
+                  res.body ? (this.companies = [res.body]) : null;
+                });
+              }
+            });
+          }
+        });
+      }
     });
   }
 

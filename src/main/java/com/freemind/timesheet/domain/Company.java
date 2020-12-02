@@ -137,6 +137,7 @@ public class Company implements Serializable {
         return "Company{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
+            ", customers= "+ getCustomers().size()+ "'"+
             "}";
     }
 }

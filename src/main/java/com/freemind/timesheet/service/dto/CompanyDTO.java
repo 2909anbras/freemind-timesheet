@@ -16,8 +16,6 @@ public class CompanyDTO implements Serializable {
 
     private Set<CustomerDTO> customers = new HashSet<>();
 
-    //    private Long customerId;
-
     public Long getId() {
         return id;
     }
@@ -31,7 +29,7 @@ public class CompanyDTO implements Serializable {
     }
 
     public void setCustomers(Set<CustomerDTO> customers) {
-        customers = customers;
+        this.customers = customers;
     }
 
     public String getName() {
@@ -65,7 +63,7 @@ public class CompanyDTO implements Serializable {
         return "CompanyDTO{" +
             "id=" + getId() +
             ", name='" + getName() +
-            ", customers:"+getCustomers()+
+            ", customers:"+getCustomers().size()+
             "'" +
             "}";
     }

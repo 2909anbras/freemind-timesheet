@@ -1,5 +1,15 @@
 {
-  "globale-view": {
-    "title": "Global view of the company"
+  "global-view": {
+    "title": "Global view of the company",
+    "company-filter": "Company Filter",
+    "job-filter": "Job filter",
+    "customer-filter": "Customer Filter",
+    "project-filter": "Project filter",
+    "companies": "Company full view",
+    "button": {
+      "new-company": "Add Company",
+      "add-customer": "Add Customer",
+      "add-project": "Add Project"
+    }
   }
 }

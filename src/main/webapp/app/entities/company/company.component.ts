@@ -7,6 +7,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ICompany } from 'app/shared/model/company.model';
 
+import { Account } from 'app/core/user/account.model';
+import { AccountService } from 'app/core/auth/account.service';
+
+import { AppUserService } from '../app-user/app-user.service';
+import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
+
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { CompanyService } from './company.service';
 import { CompanyDeleteDialogComponent } from './company-delete-dialog.component';
@@ -24,8 +30,11 @@ export class CompanyComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  account?: Account;
 
   constructor(
+    protected appUserService: AppUserService,
+    protected accountService: AccountService,
     protected companyService: CompanyService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -35,17 +44,34 @@ export class CompanyComponent implements OnInit, OnDestroy {
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
-
-    this.companyService
-      .query({
-        page: pageToLoad - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
-      .subscribe(
-        (res: HttpResponse<ICompany[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-        () => this.onError()
-      );
+    if (this.accountService.hasAnyAuthority('ROLE_ADMIN'))
+      this.companyService
+        .query({
+          page: pageToLoad - 1,
+          size: this.itemsPerPage,
+          sort: this.sort(),
+        })
+        .subscribe(
+          (res: HttpResponse<ICompany[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
+          () => this.onError()
+        );
+    else {
+      this.accountService.identity().subscribe(account => {
+        if (account) {
+          this.account = account;
+          this.appUserService.find(account.id).subscribe((res: HttpResponse<IAppUser>) => {
+            const appUser = res.body;
+            if (appUser) {
+              account.companyId = appUser.companyId;
+              console.log(account);
+              this.companyService.find(account.companyId).subscribe((res: HttpResponse<ICompany>) => {
+                res.body ? (this.companies = [res.body]) : null;
+              });
+            }
+          });
+        }
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -109,6 +135,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
       });
     }
     this.companies = data || [];
+    console.log(this.companies);
     this.ngbPaginationPage = this.page;
   }
 

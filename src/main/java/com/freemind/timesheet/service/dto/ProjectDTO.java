@@ -1,13 +1,14 @@
 package com.freemind.timesheet.service.dto;
 
-import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link com.freemind.timesheet.domain.Project} entity.
  */
 public class ProjectDTO implements Serializable {
-    
     private Long id;
 
     @NotNull
@@ -17,9 +18,18 @@ public class ProjectDTO implements Serializable {
     @NotNull
     private Boolean enable;
 
+    private Set<JobDTO> jobs = new HashSet<>();
 
     private Long customerId;
-    
+
+    public Set<JobDTO> getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(Set<JobDTO> jobs) {
+        this.jobs = jobs;
+    }
+
     public Long getId() {
         return id;
     }
@@ -76,6 +86,7 @@ public class ProjectDTO implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", enable='" + isEnable() + "'" +
+            ", jobs='" + getJobs() + "'" +
             ", customerId=" + getCustomerId() +
             "}";
     }

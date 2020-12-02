@@ -10,6 +10,11 @@ import { ProjectService } from './project.service';
 import { ICustomer } from 'app/shared/model/customer.model';
 import { CustomerService } from 'app/entities/customer/customer.service';
 
+import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
+import { AppUserService } from '../app-user/app-user.service';
+import { Account } from 'app/core/user/account.model';
+import { AccountService } from 'app/core/auth/account.service';
+
 @Component({
   selector: 'jhi-project-update',
   templateUrl: './project-update.component.html',
@@ -17,6 +22,7 @@ import { CustomerService } from 'app/entities/customer/customer.service';
 export class ProjectUpdateComponent implements OnInit {
   isSaving = false;
   customers: ICustomer[] = [];
+  currentAccount: Account | null = null;
 
   editForm = this.fb.group({
     id: [],
@@ -26,6 +32,8 @@ export class ProjectUpdateComponent implements OnInit {
   });
 
   constructor(
+    protected appUserService: AppUserService,
+    protected accountService: AccountService,
     protected projectService: ProjectService,
     protected customerService: CustomerService,
     protected activatedRoute: ActivatedRoute,
@@ -33,10 +41,30 @@ export class ProjectUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.accountService.identity().subscribe(e => {
+      e ? (this.currentAccount = e) : null;
+      console.log(this.currentAccount);
+    });
     this.activatedRoute.data.subscribe(({ project }) => {
       this.updateForm(project);
 
-      this.customerService.query().subscribe((res: HttpResponse<ICustomer[]>) => (this.customers = res.body || []));
+      if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+        this.customerService.query().subscribe((res: HttpResponse<ICustomer[]>) => (this.customers = res.body || []));
+      } else {
+        if (this.currentAccount) {
+          this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
+            const appUser = res.body;
+            if (appUser) {
+              this.currentAccount!.companyId = appUser.companyId;
+              console.log(this.currentAccount);
+              this.customerService.findAllByCompany(null, this.currentAccount!.companyId).subscribe((res: HttpResponse<ICustomer[]>) => {
+                console.log(res.body);
+                this.customers = res.body || [];
+              });
+            }
+          });
+        }
+      }
     });
   }
 

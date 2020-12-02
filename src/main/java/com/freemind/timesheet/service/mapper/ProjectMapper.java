@@ -1,17 +1,14 @@
 package com.freemind.timesheet.service.mapper;
 
-
 import com.freemind.timesheet.domain.*;
 import com.freemind.timesheet.service.dto.ProjectDTO;
-
 import org.mapstruct.*;
 
 /**
  * Mapper for the entity {@link Project} and its DTO {@link ProjectDTO}.
  */
-@Mapper(componentModel = "spring", uses = {CustomerMapper.class})
+@Mapper(componentModel = "spring", uses = { CustomerMapper.class, JobMapper.class })
 public interface ProjectMapper extends EntityMapper<ProjectDTO, Project> {
-
     @Mapping(source = "customer.id", target = "customerId")
     ProjectDTO toDto(Project project);
 

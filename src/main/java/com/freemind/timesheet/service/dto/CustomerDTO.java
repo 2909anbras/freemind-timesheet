@@ -18,6 +18,8 @@ public class CustomerDTO implements Serializable {
     @NotNull
     private Boolean enable;
 
+    private Set<ProjectDTO> projects = new HashSet<>();
+
     private Long companyId;
 
     public Long getId() {
@@ -42,6 +44,14 @@ public class CustomerDTO implements Serializable {
 
     public void setEnable(Boolean enable) {
         this.enable = enable;
+    }
+
+    public Set<ProjectDTO> getProjects() {
+        return this.projects;
+    }
+
+    public void setProjects(Set<ProjectDTO> projects) {
+        this.projects = projects;
     }
 
     public Long getCompanyId() {
@@ -76,6 +86,7 @@ public class CustomerDTO implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", enable='" + isEnable() + "'" +
+            ", projects= "+getProjects()+" "+
             ", companyId='" + getCompanyId() + "'" +
             "}";
     }

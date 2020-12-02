@@ -23,7 +23,7 @@ export class CompanyService {
     return this.http.put<ICompany>(this.resourceUrl, company, { observe: 'response' });
   }
 
-  find(id: number): Observable<EntityResponseType> {
+  find(id?: number): Observable<EntityResponseType> {
     return this.http.get<ICompany>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 

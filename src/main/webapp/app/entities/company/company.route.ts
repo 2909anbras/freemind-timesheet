@@ -64,7 +64,7 @@ export const companyRoute: Routes = [
       company: CompanyResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN],
       pageTitle: 'freemindTimesheetApp.company.home.title',
     },
     canActivate: [UserRouteAccessService],

@@ -9,6 +9,10 @@ import { IJob, Job } from 'app/shared/model/job.model';
 import { JobService } from './job.service';
 import { IProject } from 'app/shared/model/project.model';
 import { ProjectService } from 'app/entities/project/project.service';
+import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
+import { AppUserService } from '../app-user/app-user.service';
+import { Account } from 'app/core/user/account.model';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-job-update',
@@ -19,6 +23,7 @@ export class JobUpdateComponent implements OnInit {
   projects: IProject[] = [];
   startDateDp: any;
   endDateDp: any;
+  currentAccount: Account | null = null;
 
   editForm = this.fb.group({
     id: [],
@@ -32,6 +37,8 @@ export class JobUpdateComponent implements OnInit {
   });
 
   constructor(
+    protected appUserService: AppUserService,
+    protected accountService: AccountService,
     protected jobService: JobService,
     protected projectService: ProjectService,
     protected activatedRoute: ActivatedRoute,
@@ -39,10 +46,29 @@ export class JobUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.accountService.identity().subscribe(e => {
+      e ? (this.currentAccount = e) : null;
+      console.log(this.currentAccount);
+    });
     this.activatedRoute.data.subscribe(({ job }) => {
       this.updateForm(job);
-
-      this.projectService.query().subscribe((res: HttpResponse<IProject[]>) => (this.projects = res.body || []));
+      if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+        this.projectService.query().subscribe((res: HttpResponse<IProject[]>) => (this.projects = res.body || []));
+      } else {
+        if (this.currentAccount) {
+          this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
+            const appUser = res.body;
+            if (appUser) {
+              this.currentAccount!.companyId = appUser.companyId;
+              console.log(this.currentAccount);
+              this.projectService.getProjectByCompanyId(this.currentAccount!.companyId, null).subscribe((res: HttpResponse<IProject[]>) => {
+                console.log(res.body);
+                this.projects = res.body || [];
+              });
+            }
+          });
+        }
+      }
     });
   }
 

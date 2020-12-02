@@ -1,5 +1,6 @@
 package com.freemind.timesheet.repository;
 
+import com.freemind.timesheet.domain.Company;
 import com.freemind.timesheet.domain.Customer;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSp
     //
     ////    @Query("select customer from Customer customer left join fetch customer.companies where customer.id =:id")
     //    Optional<Customer> findOneWithEagerRelationships(@Param("id") Long id);
+
+    @Query("select distinct customer from Customer customer left join customer.projects")
+    Page<Customer> findAllWithEagerRelationships(Specification specification, Pageable pageable);
 
     @Query("select distinct customer.id from Customer customer where customer.company.id= ?1 ")
     List<Long> findCustomersIdByCompany(Long id);
