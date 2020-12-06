@@ -1,23 +1,25 @@
 <div >
     <h4 jhiTranslate="global-view.companies">Company</h4>
 </div>
-<table>
+<table class="table table-bordered table-condensed table-responsive">
     <thead>
-        <th *jhiHasAnyAuthority="['ROLE_ADMIN']" 
-        style="border-color: black!important;">
+        <th *jhiHasAnyAuthority="['ROLE_ADMIN']" style="width: 20%">
             <label jhiTranslate="global-view.company-filter">COMPANY</label>
             <input  type="text" class="form-control" [(ngModel)]="searchCompany" placeholder="*">
         </th>
-        <th style="border-color: black!important;">
-            <label jhiTranslate="global-view.customer-filter">CUSTOMER</label>
-            <input  type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">
-            <label >Enable?</label>
-            <select class="form-control" [(ngModel)]="searchCustomerState" >
-                <option [ngValue]=""></option>
-                <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
-            </select>
+        <th style="width: 20%">
+            <div class="input-group">
+                <div class="input-group-addon"> <label jhiTranslate="global-view.customer-filter">CUSTOMER</label>
+                <input  type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">
+                <label >Enable?</label>
+                <select class="form-control" [(ngModel)]="searchCustomerState" >
+                    <option [ngValue]=""></option>
+                    <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
+                </div>
+                </select>
+            </div>
         </th>
-        <th style="border-color: black!important;">
+        <th style="width: 20%" >
             <label jhiTranslate="global-view.project-filter">PROJECT</label>
             <input  type="text" class="form-control" [(ngModel)]="searchProject" placeholder="*">
             <label >Enable?</label>
@@ -26,7 +28,7 @@
                 <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
             </select>
         </th>
-        <th style="border-color: black!important;">
+        <th style="width: 20%" >
             <label jhiTranslate="global-view.job-filter">PROJECT</label>
             <input  type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
             <label >Enable?</label>
@@ -40,39 +42,67 @@
         <!-- company container-->
         <ng-container *ngFor="let company of showCompanies | companyFilter: searchCompany">
           <!-- <tr></tr> -->
-            <tr *ngIf="showCompanies && showCompanies.length>0" > 
-                <td >
-                    <fa-icon [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
-                    <a [routerLink]="['/company', company.id, 'edit']">{{ company.name }}</a>
+            <tr style="background-color: #cacaca"> 
+                <td *ngIf="showCompanies && showCompanies.length>0" style="border: none!important;">
+                    <div *ngIf="!companyHidden; else hiddeCompany">
+                        <fa-icon (click)="switchCompanyHidden()"  style="cursor: pointer" [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
+                        <a [routerLink]="['/company', company.id, 'edit']">{{ company.name }}</a>
+                    </div>
                 </td>
+                <ng-template  #hiddeCompany>
+                    <td style="border: none!important;">
+                        <fa-icon (click)="switchCompanyHidden()" style="cursor: pointer" [icon]="'chevron-circle-up'" [fixedWidth]="true"></fa-icon> 
+                        <a [routerLink]="['/company', company.id, 'edit']">{{ company.name }}</a>
+                    </td>
+                </ng-template>
+                <td colspan="4" style="background-color: #cacaca;border-left: none!important;"></td>
+                    
             </tr>
             <!-- customer container-->
             <ng-container  *ngFor="let customer of company.customers | customerFilter: searchCustomer: searchCustomerState">
                 <!-- <tr ></tr> -->
-                <tr >
-                    <td colspan="1"></td>
-                    <td >
-                        <fa-icon [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
-                        <a [routerLink]="['/customer', customer.id, 'edit']">{{customer.name}}</a>
-                    </td>
-                </tr>
+                    <tr *ngIf="!companyHidden" style="background-color: #cacaca">
+                        <td colspan="1" style="border-right: none!important;"></td>
+                        <div *ngIf="!customerHidden; else hiddeCustomer">
+                            <!-- <td colspan="1"></td> -->
+                            <td style="border: none!important;" >
+                                <fa-icon (click)="switchCustomerHidden()" style="cursor: pointer" [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
+                                <a [routerLink]="['/customer', customer.id, 'edit']">{{customer.name}}</a>
+                            </td>
+                        </div>
+                        <ng-template #hiddeCustomer>
+                            
+                            <td style="border: none!important;">
+                                <fa-icon (click)="switchCustomerHidden()" style="cursor: pointer" [icon]="'chevron-circle-up'" [fixedWidth]="true"></fa-icon> 
+                                <a [routerLink]="['/customer', customer.id, 'edit']">{{customer.name}}</a>
+                            </td>
+                        </ng-template>
+                    </tr>
+                </div>
                 <!-- project container -->
                 <ng-container *ngFor=" let project of customer.projects| projectFilter: searchProject: searchProjectState">
                     <!-- <tr ></tr> -->
-                    <tr >
-                        <td colspan="2"></td>
-                        <td >
-                            <fa-icon [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
-                            <a [routerLink]="['/project', project.id, 'edit']">   {{project.name}}</a>
-                        </td>
+                    <tr *ngIf="!companyHidden && !customerHidden" style="background-color: #cacaca" >
+                        <td colspan="2" style="border-right: none!important;"></td>
+                        <div *ngIf="!projectHidden; else hiddeProject">
+                            <td style="border: none!important;">
+                                <fa-icon (click)="switchProjectHidden()" style="cursor: pointer"  [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
+                                <a [routerLink]="['/project', project.id, 'edit']">   {{project.name}}</a>
+                            </td>
+                        </div>
+                        <ng-template #hiddeProject>
+                            <td style="border: none!important;" >
+                                <fa-icon (click)="switchProjectHidden()" style="cursor: pointer"  [icon]="'chevron-circle-up'" [fixedWidth]="true"></fa-icon> 
+                                <a [routerLink]="['/project', project.id, 'edit']">   {{project.name}}</a>
+                            </td>
+                        </ng-template>
                     </tr>
-                    <!-- job container, pas obligé -->
                     <ng-container *ngFor=" let job of project.jobs| jobFilter: searchJob: searchJobState">
                         <!-- <tr >
                         </tr> -->
-                        <tr>
-                            <td colspan="3"></td>
-                            <td>
+                        <tr *ngIf="!companyHidden && !customerHidden && !projectHidden" style="background-color: #cacaca">
+                            <td colspan="3" style="border-right: none!important;"></td>
+                            <td style="border-left: none!important;">
                                 <a [routerLink]="['/project', project.id, 'edit']">   {{job.name}}</a>
                             </td>
                         </tr>

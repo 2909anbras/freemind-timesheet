@@ -100,5 +100,18 @@ export class FullViewComponent implements OnInit {
     });
     console.log(this.showCompanies);
   }
+
+  public switchCompanyHidden(): void {
+    console.log(this.companyHidden);
+    this.companyHidden = !this.companyHidden;
+  }
+  public switchCustomerHidden(): void {
+    console.log(this.customerHidden);
+    this.customerHidden = !this.customerHidden;
+  }
+  public switchProjectHidden(): void {
+    console.log(this.projectHidden);
+    this.projectHidden = !this.projectHidden;
+  }
   public newCompany(): void {}
 }
