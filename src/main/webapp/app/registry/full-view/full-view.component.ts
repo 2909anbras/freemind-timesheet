@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { JhiEventManager } from 'ng-jhipster';
+import { JhiLanguageService } from 'ng-jhipster';
+import { SessionStorageService } from 'ngx-webstorage';
 import { HttpResponse } from '@angular/common/http';
+import { Directive, ElementRef, Renderer2, Input } from '@angular/core';
 
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { Subscription, combineLatest } from 'rxjs';
@@ -55,7 +58,6 @@ export class FullViewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    //   this.setCurrentAccount();
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
     if (this.currentAccount && !this.accountService.hasAnyAuthority('ROLE_ADMIN'))
       this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
@@ -66,6 +68,7 @@ export class FullViewComponent implements OnInit {
         if (res.body) {
           this.showCompanies = res.body;
           this.allCompanies = res.body;
+          this.sortingCompanies();
           console.log(this.showCompanies);
         }
       });
@@ -78,37 +81,24 @@ export class FullViewComponent implements OnInit {
         });
     }
   }
+  private sortingCompanies(): void {
+    console.log('in');
 
-  // setCurrentAccount(): void {
-  //   this.accountService.identity().subscribe(account => (this.currentAccount = account));
-  //   if (this.currentAccount && !this.accountService.hasAnyAuthority('ROLE_ADMIN'))
-  //     this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
-  //       this.currentAccount && res.body ? (this.currentAccount.companyId = res.body.companyId) : null;
-  //     });
-  // }
+    this.showCompanies.sort((a, b) => {
+      if (a.name && b.name) {
+        if (a.name.localeCompare(b.name) === 1) {
+          return -1;
+        } else if (a.name.localeCompare(b.name) === -1) {
+          return 1;
+        } else return -1;
+      } else return -1;
+    });
 
-  // fillTheFullTable(): void {
-  //   this.setAllCompanies();
-  // }
-
-  // setCompanyForTheCurrentAccount(): void {
-  //   //hidden the filter in the html (jhHasAnyAuthority)
-  //   if (this.currentAccount?.companyId)
-  //     this.companyService.find(this.currentAccount?.companyId).subscribe((res: HttpResponse<ICompany>) => {
-  //       res.body ? this.allCompanies?.push(res.body) : null;
-  //       this.showCompanies = this.allCompanies;
-  //     });
-  // }
-
-  // setAllCompanies(): void {
-  //   //juste fill pour le moment
-  //   this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
-  //     if (res.body) {
-  //       this.showCompanies = res.body;
-  //       this.allCompanies = res.body;
-  //     }
-  //   });
-  // }
-
+    this.showCompanies.sort((a, b) => {
+      if (a.customers.length === 0) return 1;
+      else return -1;
+    });
+    console.log(this.showCompanies);
+  }
   public newCompany(): void {}
 }

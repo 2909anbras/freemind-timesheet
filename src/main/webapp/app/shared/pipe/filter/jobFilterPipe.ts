@@ -6,7 +6,7 @@ import { IJob } from 'app/shared/model/job.model';
 export class JobFilterPipe implements PipeTransform {
   transform(jobs: IJob[], arg: string, isEnable: string): IJob[] {
     if (!jobs) return [];
-    if (!arg) return jobs;
+    if (!arg && !isEnable) return jobs;
 
     arg = arg.toLocaleLowerCase();
     jobs = [...jobs.filter(c => c.name?.toLocaleLowerCase().includes(arg))];

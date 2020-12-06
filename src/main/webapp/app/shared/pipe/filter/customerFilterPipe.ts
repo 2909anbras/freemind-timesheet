@@ -6,7 +6,7 @@ import { ICustomer } from 'app/shared/model/customer.model';
 export class CustomerFilterPipe implements PipeTransform {
   transform(customers: ICustomer[], arg: string, isEnable: string): ICustomer[] {
     if (!customers) return [];
-    if (!arg) return customers;
+    if (!arg && !isEnable) return customers;
 
     arg = arg.toLocaleLowerCase();
     customers = [...customers.filter(c => c.name?.toLocaleLowerCase().includes(arg))];
@@ -14,6 +14,8 @@ export class CustomerFilterPipe implements PipeTransform {
     if (!isEnable || isEnable === 'All') return customers;
     const bool = isEnable === 'Enable';
     customers = [...customers.filter(c => c.enable === bool)];
+    customers = [...customers.filter(customer => customer.projects.length > 0)];
+
     console.log('customers Pipe');
     console.log(customers);
     return customers;
