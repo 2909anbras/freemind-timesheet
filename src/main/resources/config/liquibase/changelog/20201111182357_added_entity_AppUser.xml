@@ -20,9 +20,6 @@
 
                 <constraints nullable="true" />
             </column>
-           <!--   <column name="internal_user_id" type="bigint">
-                <constraints unique="true" nullable="false" uniqueConstraintName="ux_app_user_internal_user_id" />
-            </column>-->
             <column name="company_id" type="bigint">
                 <constraints nullable="true" />
             </column>

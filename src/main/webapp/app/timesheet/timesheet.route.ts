@@ -11,7 +11,7 @@ import { TimesheetComponent } from 'app/timesheet/timesheet.component';
 
 export const TimesheetRoute: Routes = [
   {
-    path: 'timesheet',
+    path: '',
     component: TimesheetComponent,
     data: {
       authorities: [Authority.USER],

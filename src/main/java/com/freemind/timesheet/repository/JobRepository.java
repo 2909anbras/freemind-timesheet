@@ -18,7 +18,6 @@ import org.springframework.stereotype.Repository;
 //@SuppressWarnings("unused")
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificationExecutor<Job> {
-    //lets try
     @Query("select distinct job.project.id from Job job left join job.appUsers where job.appUsers In ?1 ")
     List<Long> findProjectsByUsersId(List<Long> appUsersId);
 
@@ -31,6 +30,12 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
     @Query("select distinct appUser.id from AppUser appUser left join appUser.jobs ap where appUser.company.id = ?1 ")
     List<Long> findJobsIdByCompany(Long companyId);
 
-    @Query("select distinct job from Job job left join job.appUsers ap where ap.id IN ?1 ") //deg mais à tester
+    @Query("select distinct job from Job job left join job.appUsers ap where ap.id IN ?1 ")
     Page<Job> findByJobsId(List<Long> appUsersId, Specification specification, Pageable pageable);
+
+    @Query("select distinct job from Job job left join job.appUsers ap where ap.id=?1")
+    List<Job> findByUserId(Long id);
+
+    @Query("select distinct job from Job job left join job.performances")
+    Page<Job> findAllWithEagearRelationship(Specification specification, Pageable pageable);
 }

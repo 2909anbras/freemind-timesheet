@@ -31,6 +31,10 @@ export class CustomerService {
     return this.http.get<ICustomer[]>(`${this.resourceUrl + '/company'}/${test}`, { params: options, observe: 'response' });
   }
 
+  findCustomersByUserId(userId: number): Observable<EntityArrayResponseType> {
+    return this.http.get<ICustomer[]>(`${this.resourceUrl + '/user'}/${userId}`, { observe: 'response' });
+  }
+
   find(id: number): Observable<EntityResponseType> {
     return this.http.get<ICustomer>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }

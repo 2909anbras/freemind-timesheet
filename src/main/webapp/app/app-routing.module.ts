@@ -32,6 +32,13 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
           },
           loadChildren: () => import('./registry/registry-routing.module').then(m => m.RegistryRoutingModule),
         },
+        {
+          path: 'timesheet',
+          data: {
+            authorities: [Authority.USER],
+          },
+          loadChildren: () => import('./timesheet/timesheet.module').then(m => m.FreemindTimesheetTimesheetModule),
+        },
         ...LAYOUT_ROUTES,
       ],
       { enableTracing: DEBUG_INFO_ENABLED }

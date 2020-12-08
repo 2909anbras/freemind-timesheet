@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
  * @see org.springframework.boot.actuate.audit.AuditEvent
  */
 @Entity
-@Table(name = "jhi_persistent_audit_event")
+@Table(name = "jhi_persistent_audit_event", schema = "public")
 public class PersistentAuditEvent implements Serializable {
     private static final long serialVersionUID = 1L;
 

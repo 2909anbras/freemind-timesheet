@@ -1,5 +1,6 @@
 package com.freemind.timesheet.service;
 
+import com.freemind.timesheet.domain.Customer;
 import com.freemind.timesheet.domain.Job;
 import com.freemind.timesheet.repository.JobRepository;
 import com.freemind.timesheet.service.dto.JobDTO;
@@ -83,7 +84,11 @@ public class JobService {
 
         return jobRepository.findProjectsByUsersId(appUsersId);
     }
-    //	public Page<Project> findByUsersId(List<Long> appUsersId) {
-    //		return this.jobRepository.findAllByUsersId(appUsersId);
-    //	}
+
+    @Transactional(readOnly = true)
+    public List<JobDTO> findByUser(Long userId) {
+        log.debug("Request to find jobs by userId : {}", userId);
+        Page<JobDTO> tmp = ((Page<Job>) jobRepository.findByUserId(userId)).map(t -> this.jobMapper.toDto((Job) t));
+        return tmp.getContent();
+    }
 }

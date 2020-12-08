@@ -48,7 +48,7 @@ public class JobQueryService extends QueryService<Job> {
     public List<JobDTO> findByCriteria(JobCriteria criteria) {
         log.debug("find by criteria : {}", criteria);
         final Specification<Job> specification = createSpecification(criteria);
-        return jobMapper.toDto(jobRepository.findAll(specification));
+        return jobMapper.toDto(jobRepository.findAll(specification)); //findall
     }
 
     /**
@@ -61,7 +61,10 @@ public class JobQueryService extends QueryService<Job> {
     public Page<JobDTO> findByCriteria(JobCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<Job> specification = createSpecification(criteria);
-        return jobRepository.findAll(specification, page).map(jobMapper::toDto);
+        Page<Job> tmp = jobRepository.findAllWithEagearRelationship(specification, page);
+        log.debug("find by criteria : {}, page: {}", tmp.getContent());
+
+        return jobRepository.findAllWithEagearRelationship(specification, page).map(jobMapper::toDto);
     }
 
     public Page<JobDTO> findByCcompany(Long companyId, JobCriteria criteria, Pageable pageable) {
@@ -73,10 +76,6 @@ public class JobQueryService extends QueryService<Job> {
         log.debug("AppUsers {}", appUsers);
 
         return jobRepository.findByJobsId(appUsers, specification, pageable).map(jobMapper::toDto);
-        //        Page<Job> jobs= jobRepository.findJobsIdByCompany(companyId, specification, pageable);
-        //        return jobRepository.findJobsIdByCompany(companyId,specification,  pageable).map(jobMapper::toDto);
-
-        //        return jobRepository.findByJobsId(jobsId, specification, pageable).map(jobMapper::toDto);//à tester
     }
 
     /**

@@ -38,6 +38,10 @@ export class JobService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  findJobsByUserId(userId: number): Observable<EntityArrayResponseType> {
+    return this.http.get<IJob[]>(`${this.resourceUrl + '/user'}/${userId}`, { observe: 'response' });
+  }
+
   getJobByCompanyId(companyId?: number, req?: any): Observable<EntityArrayResponseType> {
     console.log(companyId);
     console.log(req);

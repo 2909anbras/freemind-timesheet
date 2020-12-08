@@ -111,6 +111,13 @@ public class JobResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    @GetMapping("/jobs/user/{userId}")
+    public ResponseEntity<List<JobDTO>> getAllJobsByUser(@PathVariable Long userId) {
+        log.debug("REST request to get Jobs by user: {}", userId);
+        List<JobDTO> jobs = jobService.findByUser(userId);
+        return ResponseEntity.ok().body(jobs);
+    }
+
     /**
      * {@code GET  /jobs/count} : count all the jobs.
      *

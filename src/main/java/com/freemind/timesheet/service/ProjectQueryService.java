@@ -86,21 +86,6 @@ public class ProjectQueryService extends QueryService<Project> {
         return projectRepository.findByCustomersId(customersId, specification, pageable).map(projectMapper::toDto);
     }
 
-    //    @Transactional(readOnly = true)
-    //    public Page<ProjectDTO> findByCompany(Long companyId, ProjectCriteria criteria, Pageable pageable) {
-    //        // TODO Auto-generated method stub
-    //        //getAppUsersIdByCompany
-    //        //getJobsByAppUsers
-    //        //GetProjectByJobs
-    //        log.debug("find by criteria : {}", criteria);
-    //        final Specification<Project> specification = createSpecification(criteria);
-    ////        List<Long> projectIds = this.customerService.findProjectIdsByCustomerWithCompany(companyId);
-    //        log.debug("AppUsersId : {}", projectIds);
-    //        List<Long> projectsId = this.jobService.findProjectsByAppUsersId(appUsersId);
-    //        log.debug("projectsId : {}", projectsId);
-    //        return projectRepository.findByIds(projectsId, specification, pageable).map(projectMapper::toDto);
-    //    }
-
     /**
      * Return a {@link Page} of {@link ProjectDTO} which matches the criteria from the database.
      * @param criteria The object which holds all the filters, which the entities should match.

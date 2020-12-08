@@ -13,7 +13,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * A Project.
  */
 @Entity
-@Table(name = "project")
+@Table(name = "project", schema = "public")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Project implements Serializable {
     private static final long serialVersionUID = 1L;

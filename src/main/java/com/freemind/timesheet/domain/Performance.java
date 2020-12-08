@@ -12,7 +12,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * A Performance.
  */
 @Entity
-@Table(name = "performance")
+@Table(name = "performance", schema = "public")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Performance implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -33,11 +33,12 @@ public class Performance implements Serializable {
     private LocalDate date;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = "performances", allowSetters = true)
+    @JsonIgnoreProperties(value = "performances_user", allowSetters = true)
+    @JoinColumn(name = "user_id")
     private AppUser appUser;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = "performances", allowSetters = true)
+    @JsonIgnoreProperties(value = "performances_job", allowSetters = true)
     private Job job;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

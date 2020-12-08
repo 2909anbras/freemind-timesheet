@@ -4,15 +4,14 @@ import com.freemind.timesheet.domain.Project;
 import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.service.dto.ProjectDTO;
 import com.freemind.timesheet.service.mapper.ProjectMapper;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link Project}.
@@ -20,7 +19,6 @@ import java.util.Optional;
 @Service
 @Transactional
 public class ProjectService {
-
     private final Logger log = LoggerFactory.getLogger(ProjectService.class);
 
     private final ProjectRepository projectRepository;
@@ -54,10 +52,8 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public Page<ProjectDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Projects");
-        return projectRepository.findAll(pageable)
-            .map(projectMapper::toDto);
+        return projectRepository.findAll(pageable).map(projectMapper::toDto);
     }
-
 
     /**
      * Get one project by id.
@@ -68,8 +64,7 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public Optional<ProjectDTO> findOne(Long id) {
         log.debug("Request to get Project : {}", id);
-        return projectRepository.findById(id)
-            .map(projectMapper::toDto);
+        return projectRepository.findById(id).map(projectMapper::toDto);
     }
 
     /**
@@ -80,5 +75,15 @@ public class ProjectService {
     public void delete(Long id) {
         log.debug("Request to delete Project : {}", id);
         projectRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProjectDTO> getProjectsByUserId(Long userId) {
+        log.debug("Request to delete Project : {}", userId);
+
+        Page<ProjectDTO> tmp =
+            ((Page<Project>) this.projectRepository.findProjectsByUserId(userId)).map(t -> this.projectMapper.toDto((Project) t));
+
+        return tmp.getContent();
     }
 }

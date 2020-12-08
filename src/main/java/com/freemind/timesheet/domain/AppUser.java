@@ -12,7 +12,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * A AppUser.
  */
 @Entity
-@Table(name = "app_user")
+@Table(name = "app_user", schema = "public")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AppUser implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class AppUser implements Serializable {
     @JsonIgnoreProperties(value = "appUsers", allowSetters = true)
     private Company company;
 
-    @OneToMany(mappedBy = "appUser")
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Performance> performances = new HashSet<>();
 

@@ -77,7 +77,7 @@
                     <label class="form-control-label" jhiTranslate="freemindTimesheetApp.job.project" for="field_project">Project</label>
                     <select class="form-control" id="field_project" name="project" formControlName="projectId">
                         <option [ngValue]="null"></option>
-                        <option [ngValue]="projectOption.id" *ngFor="let projectOption of projects; trackBy: trackById">{{ projectOption.id }}</option>
+                        <option [ngValue]="projectOption.id" *ngFor="let projectOption of projects; trackBy: trackById">{{ projectOption.name }}</option>
                     </select>
                 </div>
             </div>

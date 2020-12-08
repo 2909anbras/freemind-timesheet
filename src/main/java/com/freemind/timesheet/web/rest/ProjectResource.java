@@ -66,6 +66,13 @@ public class ProjectResource {
             .body(result);
     }
 
+    @GetMapping("/projects/user/{userId}")
+    public ResponseEntity<List<ProjectDTO>> getByJobsId(@PathVariable Long userId) throws URISyntaxException {
+        log.debug("REST request to save Project : {}", userId);
+        List<ProjectDTO> projects = this.projectService.getProjectsByUserId(userId);
+        return ResponseEntity.ok().body(projects);
+    }
+
     /**
      * {@code PUT  /projects} : Updates an existing project.
      *

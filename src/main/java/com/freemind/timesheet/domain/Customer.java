@@ -15,7 +15,7 @@ import org.hibernate.annotations.OnDeleteAction;
  * A Customer.
  */
 @Entity
-@Table(name = "customer")
+@Table(name = "customer", schema = "public")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Customer implements Serializable {
     private static final long serialVersionUID = 1L;

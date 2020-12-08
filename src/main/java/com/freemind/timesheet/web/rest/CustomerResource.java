@@ -136,6 +136,13 @@ public class CustomerResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    @GetMapping("/customers/user/{userId}")
+    public ResponseEntity<List<CustomerDTO>> getCustomersByUser(@PathVariable Long userId) {
+        log.debug("REST request to get Customers by company 1 : {}", userId);
+        List<CustomerDTO> customers = this.customerService.findByUserId(userId);
+        return ResponseEntity.ok().body(customers);
+    }
+
     /**
      * {@code DELETE  /customers/:id} : delete the "id" customer.
      *

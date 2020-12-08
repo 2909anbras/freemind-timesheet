@@ -16,7 +16,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * A Job.
  */
 @Entity
-@Table(name = "job")
+@Table(name = "job", schema = "public")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Job implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -56,6 +56,10 @@ public class Job implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnore
     private Set<AppUser> appUsers = new HashSet<>();
+
+    @OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<Performance> performances = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -182,6 +186,31 @@ public class Job implements Serializable {
         this.appUsers = appUsers;
     }
 
+    public Set<Performance> getPerformances() {
+        return this.performances;
+    }
+
+    public Job performances(Set<Performance> performances) {
+        this.performances = performances;
+        return this;
+    }
+
+    public Job addPerformance(Performance performance) {
+        this.performances.add(performance);
+        performance.setJob(this);
+        return this;
+    }
+
+    public Job removePerformance(Performance performance) {
+        this.performances.remove(performance);
+        performance.setJob(null);
+        return this;
+    }
+
+    public void setPerformances(Set<Performance> performances) {
+        this.performances = performances;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -211,6 +240,7 @@ public class Job implements Serializable {
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
             ", enable='" + isEnable() + "'" +
+            ", performances="+getPerformances().size()+"'"+
             "}";
     }
 }

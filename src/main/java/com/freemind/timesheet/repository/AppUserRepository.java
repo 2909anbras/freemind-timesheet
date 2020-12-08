@@ -38,4 +38,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long>, JpaSpec
 
     @Query("select appUser from AppUser appUser where appUser.company.id=?1")
     Page<AppUser> findByCompany(Long id, Specification<AppUser> specification, Pageable pageable);
+
+    @Query("select disctinct appUser from AppUser appUser where appUser.company.id =?1")
+    List<AppUser> getAllByCompany(Long companyId);
 }

@@ -22,7 +22,6 @@
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
-                    <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="name"><span jhiTranslate="freemindTimesheetApp.job.name">Name</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="description"><span jhiTranslate="freemindTimesheetApp.job.description">Description</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="status"><span jhiTranslate="freemindTimesheetApp.job.status">Status</span> <fa-icon icon="sort"></fa-icon></th>
@@ -35,7 +34,7 @@
             </thead>
             <tbody>
                 <tr *ngFor="let job of jobs ;trackBy: trackId">
-                    <td><a [routerLink]="['/job', job.id, 'view']">{{ job.id }}</a></td>
+                    <!-- <td><a [routerLink]="['/job', job.id, 'view']">{{ job.id }}</a></td> -->
                     <td>{{ job.name }}</td>
                     <td>{{ job.description }}</td>
                     <td jhiTranslate="{{ 'freemindTimesheetApp.Status.' + job.status }}">{{ job.status }}</td>

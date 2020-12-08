@@ -4,6 +4,7 @@ import com.freemind.timesheet.domain.Customer;
 import com.freemind.timesheet.repository.CustomerRepository;
 import com.freemind.timesheet.service.dto.CustomerDTO;
 import com.freemind.timesheet.service.mapper.CustomerMapper;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,5 +87,12 @@ public class CustomerService {
         //        Customer customer = customerRepository.findOneWithEagerRelationships(id).get();
         //        customer.removeProjects();
         //        customerRepository.deleteById(id);
+    }
+
+    public List<CustomerDTO> findByUserId(Long userId) {
+        log.debug("Request to find Customer by user : {}", userId);
+        Page<CustomerDTO> tmp =
+            ((Page<Customer>) this.customerRepository.findCustomersByUserId(userId)).map(t -> this.customerMapper.toDto(t));
+        return tmp.getContent();
     }
 }

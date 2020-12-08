@@ -163,6 +163,12 @@ public class UserResource {
         );
     }
 
+    @GetMapping("/users/appUserIds/{id}")
+    public ResponseEntity<List<ManagedUserVM>> getAllUsersByCompany(@PathVariable Long companyId) {
+        final List<ManagedUserVM> users = userService.getAllByCompany(companyId);
+        return ResponseEntity.ok().body(users);
+    }
+
     /**
      * {@code GET /users} : get all users.
      *

@@ -38,6 +38,10 @@ export class ProjectService {
     return this.http.get<IProject[]>(`${this.resourceUrl + '/company'}/${companyId}`, { params: options, observe: 'response' });
   }
 
+  findProjectsByUserId(userId: number): Observable<EntityArrayResponseType> {
+    return this.http.get<IProject[]>(`${this.resourceUrl + '/user'}/${userId}`, { observe: 'response' });
+  }
+
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
