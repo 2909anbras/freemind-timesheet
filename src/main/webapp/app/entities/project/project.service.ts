@@ -39,6 +39,7 @@ export class ProjectService {
   }
 
   findProjectsByUserId(userId: number): Observable<EntityArrayResponseType> {
+    console.log(userId);
     return this.http.get<IProject[]>(`${this.resourceUrl + '/user'}/${userId}`, { observe: 'response' });
   }
 

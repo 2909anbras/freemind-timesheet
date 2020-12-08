@@ -82,7 +82,7 @@ public class ProjectService {
         log.debug("Request to delete Project : {}", userId);
 
         Page<ProjectDTO> tmp =
-            ((Page<Project>) this.projectRepository.findProjectsByUserId(userId)).map(t -> this.projectMapper.toDto((Project) t));
+            ((Page<Project>) this.projectRepository.findProjectsByUserId(userId, null)).map(t -> this.projectMapper.toDto((Project) t));
 
         return tmp.getContent();
     }

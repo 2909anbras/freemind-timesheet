@@ -1,6 +1,8 @@
 package com.freemind.timesheet.service;
 
+import com.freemind.timesheet.domain.Company;
 import com.freemind.timesheet.domain.Customer;
+import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.repository.CustomerRepository;
 import com.freemind.timesheet.service.dto.CustomerDTO;
 import com.freemind.timesheet.service.mapper.CustomerMapper;
@@ -21,13 +23,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomerService {
     private final Logger log = LoggerFactory.getLogger(CustomerService.class);
 
+    private final CompanyRepository companyRepository;
+
     private final CustomerRepository customerRepository;
 
     private final CustomerMapper customerMapper;
 
-    public CustomerService(CustomerRepository customerRepository, CustomerMapper customerMapper) {
+    public CustomerService(CustomerRepository customerRepository, CustomerMapper customerMapper, CompanyRepository companyRepository) {
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
+        this.companyRepository = companyRepository;
     }
 
     /**
@@ -39,6 +44,9 @@ public class CustomerService {
     public CustomerDTO save(CustomerDTO customerDTO) {
         log.debug("Request to save Customer : {}", customerDTO);
         Customer customer = customerMapper.toEntity(customerDTO);
+        Company company = companyRepository.getOne(customerDTO.getCompanyId());
+        company.addCustomer(customer);
+        companyRepository.save(company);
         customer = customerRepository.save(customer);
         return customerMapper.toDto(customer);
     }

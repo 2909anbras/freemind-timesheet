@@ -446,6 +446,8 @@ public class UserService {
     }
 
     public List<ManagedUserVM> getAllByCompany(Long companyId) { //noms,performances,company,jobs,id
+        log.debug("add users: {}", companyId);
+
         List<AppUser> appUsers = this.appUserRepository.findByCompany(companyId, null, null).getContent();
         List<User> users = (List<User>) this.userRepository.findAllByIds(
                 null,

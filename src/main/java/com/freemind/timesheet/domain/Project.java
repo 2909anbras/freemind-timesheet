@@ -32,11 +32,11 @@ public class Project implements Serializable {
     @Column(name = "enable", nullable = false)
     private Boolean enable;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Job> jobs = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JsonIgnoreProperties(value = "projects", allowSetters = true)
     private Customer customer;
 

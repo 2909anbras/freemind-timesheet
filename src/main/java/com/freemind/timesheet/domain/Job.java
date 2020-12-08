@@ -57,7 +57,7 @@ public class Job implements Serializable {
     @JsonIgnore
     private Set<AppUser> appUsers = new HashSet<>();
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Performance> performances = new HashSet<>();
 

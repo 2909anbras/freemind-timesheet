@@ -68,6 +68,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             console.log(this.currentAccount);
             this.projectService.getProjectByCompanyId(this.currentAccount!.companyId, req).subscribe(
               (res: HttpResponse<IProject[]>) => {
+                console.log(res.body);
                 this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate);
               },
               () => this.onError()

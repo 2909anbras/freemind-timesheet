@@ -27,11 +27,11 @@ public class Company implements Serializable {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<AppUser> appUsers = new HashSet<>();
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.PERSIST) //mappedBy = "company_customer",
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL) //mappedBy = "company_customer",
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     //    @JsonIgnore
     private Set<Customer> customers;

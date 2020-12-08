@@ -88,7 +88,7 @@ public class JobService {
     @Transactional(readOnly = true)
     public List<JobDTO> findByUser(Long userId) {
         log.debug("Request to find jobs by userId : {}", userId);
-        Page<JobDTO> tmp = ((Page<Job>) jobRepository.findByUserId(userId)).map(t -> this.jobMapper.toDto((Job) t));
+        Page<JobDTO> tmp = ((Page<Job>) jobRepository.findByUserId(userId, null)).map(t -> this.jobMapper.toDto((Job) t));
         return tmp.getContent();
     }
 }

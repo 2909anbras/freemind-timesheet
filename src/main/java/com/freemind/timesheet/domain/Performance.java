@@ -32,12 +32,12 @@ public class Performance implements Serializable {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JsonIgnoreProperties(value = "performances_user", allowSetters = true)
     @JoinColumn(name = "user_id")
     private AppUser appUser;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JsonIgnoreProperties(value = "performances_job", allowSetters = true)
     private Job job;
 

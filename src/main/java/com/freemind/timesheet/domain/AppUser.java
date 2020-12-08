@@ -41,7 +41,7 @@ public class AppUser implements Serializable {
     @JsonIgnoreProperties(value = "appUsers", allowSetters = true)
     private Company company;
 
-    @OneToMany(mappedBy = "appUser", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Performance> performances = new HashSet<>();
 

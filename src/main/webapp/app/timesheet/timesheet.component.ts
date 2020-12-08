@@ -64,14 +64,14 @@ export class TimesheetComponent implements OnInit {
     if (this.currentAccount) {
       //compelete the currentAccount.
 
-      this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
-        this.currentAccount && res.body ? (this.currentAccount.companyId = res.body.companyId) : null;
-      });
       //define the currentEMployee
       //if admin|current_admin=> allusers et currentEmployee
       if (this.isAdmin()) {
         //getAllCompanies
       } else {
+        this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
+          this.currentAccount && res.body ? (this.currentAccount.companyId = res.body.companyId) : null;
+        });
         //employee define, allemployees,
         this.currentEmployee = this.currentAccount;
         //current employee = account
@@ -83,27 +83,32 @@ export class TimesheetComponent implements OnInit {
             : null;
           console.log(this.employeesList);
         }
+        this.jobService.findJobsByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<IJob[]>) => {
+          res.body ? (this.jobs = res.body) : null;
+          console.log('jobs');
+          console.log(this.jobs);
+        });
+        console.log('project');
+
+        this.projectService.findProjectsByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<IProject[]>) => {
+          res.body ? (this.projects = res.body) : null;
+          console.log(this.projects);
+        });
+
+        console.log('customer');
+        this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {
+          res.body ? (this.customers = res.body) : null;
+          console.log(this.customers);
+        });
+
+        this.currentEmployee.companyId ? this.setCompany(this.currentEmployee.companyId) : null;
+
         //getAllUsersByCompany=>changer model, rajouter les performances
         // else{
         //   //company=find company By id
         // }
-        this.currentEmployee.companyId ? this.setCompany(this.currentEmployee.companyId) : null;
         console.log(this.company);
       }
-      this.jobService.findJobsByUserId(this.currentAccount.id).subscribe((res: HttpResponse<IJob[]>) => {
-        res.body ? (this.jobs = res.body) : null;
-        console.log(this.jobs);
-      });
-
-      this.projectService.findProjectsByUserId(this.currentAccount.id).subscribe((res: HttpResponse<IProject[]>) => {
-        res.body ? (this.projects = res.body) : null;
-        console.log(this.projects);
-      });
-
-      this.customerService.findCustomersByUserId(this.currentAccount.id).subscribe((res: HttpResponse<ICustomer[]>) => {
-        res.body ? (this.customers = res.body) : null;
-        console.log(this.customers);
-      });
     }
     // if (this.currentAccount && !this.accountService.hasAnyAuthority('ROLE_ADMIN'))
     //   this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
@@ -156,7 +161,7 @@ export class TimesheetComponent implements OnInit {
   }
 
   private isCustomerAdmin(): boolean {
-    return this.accountService.hasAnyAuthority('ROLE_CUSTOMER_ADMIN');
+    return this.accountService.hasAnyAuthority('ROLE_CUSTOMER_ADMIN') && !this.isAdmin();
   }
 
   private setNumberOfColumns(mounth: number, year: number): void {

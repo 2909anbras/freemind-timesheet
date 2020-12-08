@@ -34,7 +34,7 @@ public class Customer implements Serializable {
     @Column(name = "enable", nullable = false)
     private Boolean enable;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Project> projects = new HashSet<>();
 
