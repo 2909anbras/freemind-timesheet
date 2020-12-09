@@ -1,6 +1,12 @@
 package com.freemind.timesheet.service;
 
+import com.freemind.timesheet.domain.AppUser;
+import com.freemind.timesheet.domain.Customer;
+import com.freemind.timesheet.domain.Job;
 import com.freemind.timesheet.domain.Performance;
+import com.freemind.timesheet.domain.Project;
+import com.freemind.timesheet.repository.AppUserRepository;
+import com.freemind.timesheet.repository.JobRepository;
 import com.freemind.timesheet.repository.PerformanceRepository;
 import com.freemind.timesheet.service.dto.PerformanceDTO;
 import com.freemind.timesheet.service.mapper.PerformanceMapper;
@@ -23,10 +29,21 @@ public class PerformanceService {
 
     private final PerformanceRepository performanceRepository;
 
+    private final AppUserRepository appUserRepository;
+
+    private final JobRepository jobRepository;
+
     private final PerformanceMapper performanceMapper;
 
-    public PerformanceService(PerformanceRepository performanceRepository, PerformanceMapper performanceMapper) {
+    public PerformanceService(
+        PerformanceRepository performanceRepository,
+        AppUserRepository appUserRepository,
+        JobRepository jobRepository,
+        PerformanceMapper performanceMapper
+    ) {
         this.performanceRepository = performanceRepository;
+        this.jobRepository = jobRepository;
+        this.appUserRepository = appUserRepository;
         this.performanceMapper = performanceMapper;
     }
 
@@ -40,6 +57,15 @@ public class PerformanceService {
         log.debug("Request to save Performance : {}", performanceDTO);
         Performance performance = performanceMapper.toEntity(performanceDTO);
         performance = performanceRepository.save(performance);
+
+        AppUser ap = appUserRepository.findById(performance.getAppUser().getId()).get();
+        ap.addPerformance(performance);
+        appUserRepository.save(ap);
+
+        Job j = jobRepository.findById(performance.getJob().getId()).get();
+        j.addPerformance(performance);
+        jobRepository.save(j);
+
         return performanceMapper.toDto(performance);
     }
 

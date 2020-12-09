@@ -1,6 +1,8 @@
 package com.freemind.timesheet.service;
 
+import com.freemind.timesheet.domain.Customer;
 import com.freemind.timesheet.domain.Project;
+import com.freemind.timesheet.repository.CustomerRepository;
 import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.service.dto.ProjectDTO;
 import com.freemind.timesheet.service.mapper.ProjectMapper;
@@ -23,10 +25,13 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
 
+    private final CustomerRepository customerRepository;
+
     private final ProjectMapper projectMapper;
 
-    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper) {
+    public ProjectService(ProjectRepository projectRepository, CustomerRepository customerRepository, ProjectMapper projectMapper) {
         this.projectRepository = projectRepository;
+        this.customerRepository = customerRepository;
         this.projectMapper = projectMapper;
     }
 
@@ -40,6 +45,11 @@ public class ProjectService {
         log.debug("Request to save Project : {}", projectDTO);
         Project project = projectMapper.toEntity(projectDTO);
         project = projectRepository.save(project);
+
+        Customer c = customerRepository.findById(project.getCustomer().getId()).get();
+        c.addProject(project);
+        customerRepository.save(c);
+
         return projectMapper.toDto(project);
     }
 

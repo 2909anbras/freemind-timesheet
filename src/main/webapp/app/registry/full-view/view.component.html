@@ -3,9 +3,9 @@
 </div>
 <table class="table table-bordered table-condensed table-responsive">
     <thead>
-        <th *jhiHasAnyAuthority="['ROLE_ADMIN']" style="width: 20%">
-            <label jhiTranslate="global-view.company-filter">COMPANY</label>
-            <input  type="text" class="form-control" [(ngModel)]="searchCompany" placeholder="*">
+        <th  style="width: 20%">
+            <label *jhiHasAnyAuthority="['ROLE_ADMIN']"jhiTranslate="global-view.company-filter">COMPANY</label>
+            <input *jhiHasAnyAuthority="['ROLE_ADMIN']" type="text" class="form-control" [(ngModel)]="searchCompany" placeholder="*">
         </th>
         <th style="width: 20%">
             <div class="input-group">

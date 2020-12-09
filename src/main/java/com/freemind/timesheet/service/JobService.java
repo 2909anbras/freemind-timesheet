@@ -1,8 +1,12 @@
 package com.freemind.timesheet.service;
 
+import com.freemind.timesheet.domain.AppUser;
 import com.freemind.timesheet.domain.Customer;
 import com.freemind.timesheet.domain.Job;
+import com.freemind.timesheet.domain.Project;
+import com.freemind.timesheet.repository.AppUserRepository;
 import com.freemind.timesheet.repository.JobRepository;
+import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.service.dto.JobDTO;
 import com.freemind.timesheet.service.mapper.JobMapper;
 import java.util.List;
@@ -22,11 +26,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class JobService {
     private final Logger log = LoggerFactory.getLogger(JobService.class);
 
+    private final ProjectRepository projectRepository;
+
+    private final AppUserRepository appUserRepository;
+
     private final JobRepository jobRepository;
 
     private final JobMapper jobMapper;
 
-    public JobService(JobRepository jobRepository, JobMapper jobMapper) {
+    public JobService(
+        JobRepository jobRepository,
+        ProjectRepository projectRepository,
+        AppUserRepository appUserRepository,
+        JobMapper jobMapper
+    ) {
+        this.appUserRepository = appUserRepository;
+        this.projectRepository = projectRepository;
         this.jobRepository = jobRepository;
         this.jobMapper = jobMapper;
     }
@@ -41,6 +56,23 @@ public class JobService {
         log.debug("Request to save Job : {}", jobDTO);
         Job job = jobMapper.toEntity(jobDTO);
         job = jobRepository.save(job);
+
+        final Job jb = job;
+
+        Project p = projectRepository.findById(job.getProject().getId()).get();
+        p.addJob(job);
+        jobRepository.save(job);
+
+        job
+            .getAppUsers()
+            .forEach(
+                ap -> {
+                    AppUser tmp = appUserRepository.findById(ap.getId()).get();
+                    tmp.addJob(jb);
+                    appUserRepository.save(tmp);
+                }
+            );
+
         return jobMapper.toDto(job);
     }
 

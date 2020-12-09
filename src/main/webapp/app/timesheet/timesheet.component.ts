@@ -76,7 +76,7 @@ export class TimesheetComponent implements OnInit {
         this.currentEmployee = this.currentAccount;
         //current employee = account
         if (this.isCustomerAdmin()) {
-          this.currentAccount.companyId
+          this.currentAccount.companyId //not working
             ? this.userService.findAllByCompany(this.currentAccount.companyId).subscribe((res: HttpResponse<IUser[]>) => {
                 res.body ? (this.employeesList = res.body) : null;
               })
@@ -90,15 +90,16 @@ export class TimesheetComponent implements OnInit {
         });
         console.log('project');
 
-        this.projectService.findProjectsByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<IProject[]>) => {
-          res.body ? (this.projects = res.body) : null;
-          console.log(this.projects);
-        });
+        // this.projectService.findProjectsByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<IProject[]>) => {
+        //   res.body ? (this.projects = res.body) : null;
+        //   console.log(this.projects);
+        // });
 
         console.log('customer');
         this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {
           res.body ? (this.customers = res.body) : null;
           console.log(this.customers);
+          this.getProjects(this.customers);
         });
 
         this.currentEmployee.companyId ? this.setCompany(this.currentEmployee.companyId) : null;
@@ -110,28 +111,17 @@ export class TimesheetComponent implements OnInit {
         console.log(this.company);
       }
     }
-    // if (this.currentAccount && !this.accountService.hasAnyAuthority('ROLE_ADMIN'))
-    //   this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
-    //     this.currentAccount && res.body ? (this.currentAccount.companyId = res.body.companyId) : null;
-    //   });
-    //   console.log(this.currentAccount);
-    // if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
-    //   this.userService.query().subscribe((res:HttpResponse<IUser[]>)=>{
-    //     res.body?this.employeesList=res.body:null;
-    //   })
-    // }
-    // else {
-    //   // console.log("coucou");
-    //   // console.log(this.currentAccount);
-    //   // console.log(this.currentAccount?.companyId);
-    //   // if (this.currentAccount){
-    //     // this.companyService.find(1).subscribe((res: HttpResponse<ICompany>) => {
-    //     //   // res.body ? this.company=res.body:null;
-    //     //   // console.log(this.company);
-    //     // });
-    //     // this.selectedEmployee=this.currentAccount;
-    //     //getjobs
-    // }
+  }
+
+  public getProjects(customers: ICustomer[]): IProject[] {
+    let projects: IProject[] = [];
+    projects = [
+      ...projects.filter(p => {
+        p.jobs.some(j => j.appUsers?.some(ap => ap.id === this.currentEmployee?.id));
+      }),
+    ];
+    console.log(projects);
+    return projects;
   }
 
   private getAllCompanies(): void {

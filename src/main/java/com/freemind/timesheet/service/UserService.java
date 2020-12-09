@@ -3,12 +3,14 @@ package com.freemind.timesheet.service;
 import com.freemind.timesheet.config.Constants;
 import com.freemind.timesheet.domain.AppUser;
 import com.freemind.timesheet.domain.Authority;
+import com.freemind.timesheet.domain.Company;
 import com.freemind.timesheet.domain.Job;
 import com.freemind.timesheet.domain.Performance;
 import com.freemind.timesheet.domain.User;
 import com.freemind.timesheet.repository.AppUserRepository;
 import com.freemind.timesheet.repository.AuthorityRepository;
 import com.freemind.timesheet.repository.CompanyRepository;
+import com.freemind.timesheet.repository.JobRepository;
 import com.freemind.timesheet.repository.UserRepository;
 import com.freemind.timesheet.security.AuthoritiesConstants;
 import com.freemind.timesheet.security.SecurityUtils;
@@ -50,6 +52,8 @@ public class UserService {
 
     private final JobMapper jobMapper;
 
+    private final JobRepository jobRepository;
+
     private final PerformanceMapper performanceMapper;
 
     private final CompanyRepository companyRepository;
@@ -63,6 +67,7 @@ public class UserService {
     private final CacheManager cacheManager;
 
     public UserService(
+        JobRepository jobRepository,
         UserRepository userRepository,
         AppUserRepository appUserRepository,
         PasswordEncoder passwordEncoder,
@@ -73,6 +78,7 @@ public class UserService {
         JobMapper jobMapper,
         PerformanceMapper performanceMapper
     ) {
+        this.jobRepository = jobRepository;
         this.appUserRepository = appUserRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -231,8 +237,24 @@ public class UserService {
         AppUser newUserExtra = new AppUser();
         newUserExtra.setInternalUser(user);
         newUserExtra.setPhone(phone);
-        newUserExtra.setCompany(companyRepository.getOne(companyId));
         newUserExtra.setJobs(jobs.stream().map(e -> jobMapper.toEntity(e)).collect(Collectors.toSet()));
+
+        jobs
+            .stream()
+            .map(e -> jobMapper.toEntity(e))
+            .collect(Collectors.toSet())
+            .forEach(
+                j -> {
+                    Job tmp = jobRepository.findById(j.getId()).get();
+                    tmp.addAppUser(newUserExtra);
+                    jobRepository.save(tmp);
+                }
+            );
+        Company c = companyRepository.getOne(companyId);
+        newUserExtra.setCompany(c);
+        c.addAppUser(newUserExtra);
+        companyRepository.save(c);
+
         newUserExtra.setId(user.getId());
         log.debug("Created Information for UserExtra: {}", newUserExtra);
 
@@ -281,8 +303,25 @@ public class UserService {
                     AppUser newUserExtra = appUserRepository.getOne(userDTO.getId());
                     newUserExtra.setInternalUser(user);
                     newUserExtra.setPhone(userDTO.getPhone());
-                    newUserExtra.setCompany(companyRepository.getOne(userDTO.getCompanyId()));
+                    Company c = companyRepository.getOne(userDTO.getCompanyId());
+                    newUserExtra.setCompany(c);
+                    c.addAppUser(newUserExtra);
+                    companyRepository.save(c);
+
                     newUserExtra.setJobs(userDTO.getJobs().stream().map(jobMapper::toEntity).collect(Collectors.toSet()));
+
+                    userDTO
+                        .getJobs()
+                        .stream()
+                        .map(e -> jobMapper.toEntity(e))
+                        .collect(Collectors.toSet())
+                        .forEach(
+                            j -> {
+                                Job tmp = jobRepository.findById(j.getId()).get();
+                                tmp.addAppUser(newUserExtra);
+                                jobRepository.save(tmp);
+                            }
+                        );
 
                     //                    newUserExtra.setJobs(userDTO.getJobs().stream().map(e -> jobMapper.toEntity(e)).collect(Collectors.toSet()));
                     log.debug("#############################################################################", userDTO.getJobs());
@@ -421,11 +460,6 @@ public class UserService {
     }
 
     public Optional<ManagedUserVM> addPerformance(Long id, @Valid PerformanceDTO performanceDTO) {
-        //récup le user et le AppUser
-        //add au appUser la performance
-        //new managedUserVM
-        //set all data with user & appUser
-
         User user = userRepository.getOne(id);
         AppUser appUser = appUserRepository.findOneWithEagerRelationships(id).get(); //rajouter les performances dans query
         log.debug("add Performance: {}", appUser.getPerformances());

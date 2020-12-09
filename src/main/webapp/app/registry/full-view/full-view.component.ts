@@ -61,25 +61,29 @@ export class FullViewComponent implements OnInit {
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
     if (this.currentAccount && !this.accountService.hasAnyAuthority('ROLE_ADMIN'))
       this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
+        console.log('Complete account');
         this.currentAccount && res.body ? (this.currentAccount.companyId = res.body.companyId) : null;
-      });
-    if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
-      this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
-        if (res.body) {
-          this.showCompanies = res.body;
-          this.allCompanies = res.body;
-          this.sortingCompanies();
-          console.log(this.showCompanies);
+        if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+          this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
+            if (res.body) {
+              console.log('Complete admin companies');
+              this.showCompanies = res.body;
+              this.allCompanies = res.body;
+              this.sortingCompanies();
+              console.log(this.showCompanies);
+            }
+          });
+        } else {
+          console.log(this.currentAccount);
+          if (this.currentAccount?.companyId)
+            this.companyService.find(this.currentAccount?.companyId).subscribe((res: HttpResponse<ICompany>) => {
+              console.log('Complete company');
+              res.body ? this.allCompanies?.push(res.body) : null;
+              this.showCompanies = this.allCompanies;
+              console.log(this.showCompanies);
+            });
         }
       });
-    } else {
-      if (this.currentAccount?.companyId)
-        this.companyService.find(this.currentAccount?.companyId).subscribe((res: HttpResponse<ICompany>) => {
-          res.body ? this.allCompanies?.push(res.body) : null;
-          this.showCompanies = this.allCompanies;
-          console.log(this.showCompanies);
-        });
-    }
   }
   private sortingCompanies(): void {
     console.log('in');

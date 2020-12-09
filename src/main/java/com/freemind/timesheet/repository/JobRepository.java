@@ -24,11 +24,8 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
     @Query("select  appUser.jobs from AppUser appUser left join appUser.jobs where appUser.company.id = ?1 ")
     Page<Job> findJobsIdByCompany(Long companyId, Specification<Job> specification, Pageable pageable);
 
-    @Query("select  appUser.jobs from AppUser appUser left join appUser.jobs where appUser.company.id = ?1 ")
-    Page<Job> findJobsIdByCompany(Long companyId, Pageable pageable);
-
-    @Query("select distinct appUser.id from AppUser appUser left join appUser.jobs ap where appUser.company.id = ?1 ")
-    List<Long> findJobsIdByCompany(Long companyId);
+    @Query("select distinct appUser.jobs from AppUser appUser left join appUser.jobs where appUser.company.id = ?1 ")
+    Page<Job> findJobsByCompany(Long companyId, Pageable pageable);
 
     @Query("select distinct job from Job job left join job.appUsers ap where ap.id IN ?1 ")
     Page<Job> findByJobsId(List<Long> appUsersId, Specification specification, Pageable pageable);

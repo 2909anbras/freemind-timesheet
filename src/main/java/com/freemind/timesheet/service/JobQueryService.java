@@ -71,11 +71,11 @@ public class JobQueryService extends QueryService<Job> {
         log.debug("find by criteria : {}, page: {}", criteria, pageable, companyId);
         final Specification<Job> specification = createSpecification(criteria);
         log.debug("########################################################################################################");
-        List<Long> appUsers = this.jobRepository.findJobsIdByCompany(companyId);
+        Page<Job> jobs = this.jobRepository.findJobsByCompany(companyId, null);
 
-        log.debug("AppUsers {}", appUsers);
-
-        return jobRepository.findByJobsId(appUsers, specification, pageable).map(jobMapper::toDto);
+        log.debug("jobs {}", jobs.getContent());
+        return jobs.map(jobMapper::toDto);
+        //        return jobRepository.findByJobsId(appUsers, specification, pageable).map(jobMapper::toDto);
     }
 
     /**
