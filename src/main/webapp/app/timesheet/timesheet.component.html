@@ -1,3 +1,45 @@
 <div >
     <h4 jhiTranslate="timesheet.title">Timesheet</h4>
 </div>
+
+<table>
+    <tr>
+        <th>
+            Context
+        </th>
+        <ng-container *ngFor="let item of [].constructor(nbrOfColumns); index as i" >
+            <th>
+                {{getDay(i)}}
+            </th>
+        </ng-container>
+
+    </tr>
+    
+    <tbody>
+        <!--Customers-->
+        <ng-container *ngFor="let customer of customers"> 
+            <tr>
+                <td>
+                    {{customer.name}}
+                </td>
+            </tr>
+            <!--Projects-->
+            <ng-container *ngFor="let project of getProjects(customer)">
+                <tr>
+                    <td>
+                        {{project.name}}
+                    </td>
+                </tr>
+                <!--Jobs-->
+                <ng-container *ngFor="let job of getJobs(project)">
+                    <tr>
+                        <td>
+                           {{job.name}}
+                        </td>
+                    </tr>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+    </tbody>
+
+</table>

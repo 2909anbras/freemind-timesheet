@@ -1,20 +1,25 @@
 package com.freemind.timesheet.service.dto;
 
-import java.time.LocalDate;
-import javax.validation.constraints.*;
-import java.io.Serializable;
+import com.freemind.timesheet.domain.AppUser;
 import com.freemind.timesheet.domain.enumeration.Status;
+import com.freemind.timesheet.web.rest.vm.ManagedUserVM;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link com.freemind.timesheet.domain.Job} entity.
  */
 public class JobDTO implements Serializable {
-    
     private Long id;
 
     @NotNull
     @Size(min = 3)
     private String name;
+
+    private Set<AppUserDTO> appUsers = new HashSet<>();
 
     @Size(min = 20)
     private String description;
@@ -27,9 +32,8 @@ public class JobDTO implements Serializable {
 
     private Boolean enable;
 
-
     private Long projectId;
-    
+
     public Long getId() {
         return id;
     }
@@ -94,6 +98,14 @@ public class JobDTO implements Serializable {
         this.projectId = projectId;
     }
 
+    public Set<AppUserDTO> getAppUsers() {
+        return this.appUsers;
+    }
+
+    public void setAppUsers(Set<AppUserDTO> appUsers) {
+        this.appUsers = appUsers;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -123,6 +135,7 @@ public class JobDTO implements Serializable {
             ", endDate='" + getEndDate() + "'" +
             ", enable='" + isEnable() + "'" +
             ", projectId=" + getProjectId() +
+            ", appUsers="+getAppUsers()+
             "}";
     }
 }

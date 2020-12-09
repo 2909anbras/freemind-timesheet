@@ -18,6 +18,8 @@ import { AccountService } from 'app/core/auth/account.service';
 import { IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
 
+import * as moment from 'moment';
+
 @Component({
   selector: 'jhi-timesheet',
   templateUrl: './timesheet.component.html',
@@ -37,12 +39,15 @@ export class TimesheetComponent implements OnInit {
   searchJob = '';
   searchProject = '';
 
+  day = 1;
+  cptDay = 0;
+
   date: Date = new Date();
   dateCopy: Date = new Date();
   nbrOfColumns = 0; //on init prend le nombre de jour dans le mois.
   monthName = '';
   months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
+  days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   constructor(
     protected jobService: JobService,
     protected customerService: CustomerService,
@@ -55,15 +60,15 @@ export class TimesheetComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.setNumberOfColumns(this.date.getMonth(), this.date.getFullYear());
-
+    this.setNumberOfColumns(this.date.getMonth() + 1, this.date.getFullYear());
+    //init le compteur par rapport au jour de la semaine.
+    this.day = 1;
+    console.log(this.date);
+    this.cptDay = this.date.getDay();
+    console.log(this.nbrOfColumns);
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
 
-    //config le reste
-
     if (this.currentAccount) {
-      //compelete the currentAccount.
-
       //define the currentEMployee
       //if admin|current_admin=> allusers et currentEmployee
       if (this.isAdmin()) {
@@ -99,7 +104,7 @@ export class TimesheetComponent implements OnInit {
         this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {
           res.body ? (this.customers = res.body) : null;
           console.log(this.customers);
-          this.getProjects(this.customers);
+          // this.getProjects(this.customers);
         });
 
         this.currentEmployee.companyId ? this.setCompany(this.currentEmployee.companyId) : null;
@@ -113,15 +118,27 @@ export class TimesheetComponent implements OnInit {
     }
   }
 
-  public getProjects(customers: ICustomer[]): IProject[] {
-    let projects: IProject[] = [];
-    projects = [
-      ...projects.filter(p => {
-        p.jobs.some(j => j.appUsers?.some(ap => ap.id === this.currentEmployee?.id));
-      }),
-    ];
-    console.log(projects);
+  public getProjects(customer: ICustomer): IProject[] {
+    const projects: IProject[] = [];
+    customer.projects.forEach(p => {
+      p.jobs.forEach(j => {
+        if (j.appUsers?.some(ap => ap.id === this.currentEmployee?.id)) {
+          projects.push(p);
+        }
+      });
+    });
     return projects;
+  }
+
+  public getJobs(project: IProject): IJob[] {
+    const jobs: IJob[] = [];
+    project.jobs.forEach(j => {
+      if (j.appUsers?.some(ap => ap.id === this.currentEmployee?.id)) {
+        jobs.push(j);
+        console.log(j.appUsers?.some(ap => ap.id === this.currentEmployee?.id));
+      }
+    });
+    return jobs;
   }
 
   private getAllCompanies(): void {
@@ -171,6 +188,24 @@ export class TimesheetComponent implements OnInit {
   public previousMouth(): void {
     this.dateCopy.setMonth(this.date.getMonth() - 1);
     this.setNumberOfColumns(this.dateCopy.getMonth(), this.dateCopy.getFullYear());
+  }
+
+  public getDay(i: number): string {
+    let str = '';
+    this.day = i + 1;
+    if (this.cptDay < this.days.length) {
+      str = this.days[this.cptDay] + ' ' + this.day;
+      this.cptDay++;
+    } else {
+      this.cptDay = 0;
+      str = this.days[this.cptDay] + ' ' + this.day;
+    }
+    return str;
+  }
+
+  private incrementDay(): void {
+    this.day++;
+    if (this.day > 31) this.day = 1;
   }
 
   private setMonthName(): void {
