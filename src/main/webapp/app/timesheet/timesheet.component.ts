@@ -35,6 +35,7 @@ export class TimesheetComponent implements OnInit {
   company: ICompany | null = null;
   currentEmployee: IUser | null = null;
 
+  searchCompany = '';
   searchCustomer = '';
   searchJob = '';
   searchProject = '';
@@ -194,11 +195,11 @@ export class TimesheetComponent implements OnInit {
     let str = '';
     this.day = i + 1;
     if (this.cptDay < this.days.length) {
-      str = this.days[this.cptDay] + ' ' + this.day;
+      str = ' ' + this.days[this.cptDay] + ' \n ' + this.day + ' ';
       this.cptDay++;
     } else {
       this.cptDay = 0;
-      str = this.days[this.cptDay] + ' ' + this.day;
+      str = ' ' + this.days[this.cptDay] + '\n ' + this.day + ' ';
     }
     return str;
   }
