@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, ChangeDetectionStrategy } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 import { HttpResponse } from '@angular/common/http';
 
@@ -8,32 +9,44 @@ import { JobService } from 'app/entities/job/job.service';
 import { ProjectService } from 'app/entities/project/project.service';
 import { CustomerService } from 'app/entities/customer/customer.service';
 
+import { PerformanceCreateDialogComponent } from 'app/entities/performance/performance-create-dialog.component';
+import { ChangeDetectorRef } from '@angular/core';
+
 import { ICompany } from 'app/shared/model/company.model';
 import { ICustomer } from 'app/shared/model/customer.model';
 import { IJob } from 'app/shared/model/job.model';
-import { IProject } from 'app/shared/model/project.model';
+import { IProject, Project } from 'app/shared/model/project.model';
 import { IAppUser } from 'app/shared/model/app-user.model';
 import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 import { IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
+import { IPerformance } from 'app/shared/model/performance.model';
 
 import * as moment from 'moment';
+
+type SelectableEntity = IUser;
 
 @Component({
   selector: 'jhi-timesheet',
   templateUrl: './timesheet.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['timesheet.component.css'],
 })
-export class TimesheetComponent implements OnInit {
+export class TimesheetComponent implements OnInit, AfterViewChecked {
   currentAccount: Account | null = null;
   companies: ICompany[] = [];
   customers: ICustomer[] = [];
   projects: IProject[] = [];
   jobs: IJob[] = [];
-  employeesList: IUser[] = [];
+  employees: IUser[] = [];
   selectedEmployee: IUser | null = null;
   company: ICompany | null = null;
   currentEmployee: IUser | null = null;
+
+  companySelected: ICompany | null = null;
+
+  loop: [] = [];
 
   searchCompany = '';
   searchCustomer = '';
@@ -49,7 +62,9 @@ export class TimesheetComponent implements OnInit {
   monthName = '';
   months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
   constructor(
+    private cdRef: ChangeDetectorRef,
     protected jobService: JobService,
     protected customerService: CustomerService,
     protected projectService: ProjectService,
@@ -57,66 +72,76 @@ export class TimesheetComponent implements OnInit {
     protected appUserService: AppUserService,
     protected userService: UserService,
     protected accountService: AccountService,
-    protected eventManager: JhiEventManager
+    protected eventManager: JhiEventManager,
+    protected modalService: NgbModal
   ) {}
+
+  ngAfterViewChecked(): void {
+    // this.nbrOfColumns = this.getNumberOfDays(this.dateCopy.getMonth(), this.dateCopy.getFullYear());
+    const firstDay = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), 1);
+    this.cptDay = firstDay.getDay();
+    this.cdRef.detectChanges();
+  }
 
   ngOnInit(): void {
     this.setNumberOfColumns(this.date.getMonth() + 1, this.date.getFullYear());
-    //init le compteur par rapport au jour de la semaine.
-    this.day = 1;
-    console.log(this.date);
-    this.cptDay = this.date.getDay();
-    console.log(this.nbrOfColumns);
+    const tmpArray: [] = [].constructor(this.nbrOfColumns);
+    this.loop = tmpArray;
+    this.monthName = this.months[this.date.getMonth()];
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
-
+    this.setMonthName();
     if (this.currentAccount) {
       //define the currentEMployee
       //if admin|current_admin=> allusers et currentEmployee
       if (this.isAdmin()) {
-        //getAllCompanies
+        this.companyService.query(null).subscribe((res: HttpResponse<ICompany[]>) => {
+          res.body ? (this.companies = res.body) : null;
+        });
       } else {
         this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
           this.currentAccount && res.body ? (this.currentAccount.companyId = res.body.companyId) : null;
+          this.currentEmployee = this.currentAccount;
+
+          console.log(this.currentEmployee);
+          if (this.isCustomerAdmin() && this.currentEmployee) {
+            console.log(this.isCustomerAdmin());
+            console.log(this.currentEmployee.companyId);
+            this.currentEmployee.companyId //not working
+              ? this.userService.findAllByCompany(this.currentEmployee.companyId).subscribe((res: HttpResponse<IUser[]>) => {
+                  console.log(res.body);
+                  res.body ? (this.employees = res.body) : null;
+                })
+              : null;
+            console.log(this.employees);
+          }
+          this.jobService.findJobsByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<IJob[]>) => {
+            res.body ? (this.jobs = res.body) : null;
+            console.log(this.jobs);
+          });
+          this.setCustomers();
+          this.currentEmployee?.companyId ? this.setCompany(this.currentEmployee.companyId) : null;
+          console.log(this.company);
         });
-        //employee define, allemployees,
-        this.currentEmployee = this.currentAccount;
-        //current employee = account
-        if (this.isCustomerAdmin()) {
-          this.currentAccount.companyId //not working
-            ? this.userService.findAllByCompany(this.currentAccount.companyId).subscribe((res: HttpResponse<IUser[]>) => {
-                res.body ? (this.employeesList = res.body) : null;
-              })
-            : null;
-          console.log(this.employeesList);
-        }
-        this.jobService.findJobsByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<IJob[]>) => {
-          res.body ? (this.jobs = res.body) : null;
-          console.log('jobs');
-          console.log(this.jobs);
-        });
-        console.log('project');
-
-        // this.projectService.findProjectsByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<IProject[]>) => {
-        //   res.body ? (this.projects = res.body) : null;
-        //   console.log(this.projects);
-        // });
-
-        console.log('customer');
-        this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {
-          res.body ? (this.customers = res.body) : null;
-          console.log(this.customers);
-          // this.getProjects(this.customers);
-        });
-
-        this.currentEmployee.companyId ? this.setCompany(this.currentEmployee.companyId) : null;
-
-        //getAllUsersByCompany=>changer model, rajouter les performances
-        // else{
-        //   //company=find company By id
-        // }
-        console.log(this.company);
       }
     }
+  }
+
+  public nbrOfLoop(): void {}
+
+  private setEmployees(companyId?: number): void {
+    if (companyId)
+      this.userService.findAllByCompany(companyId).subscribe((res: HttpResponse<IUser[]>) => {
+        console.log(res.body);
+        res.body ? (this.employees = res.body) : null;
+      });
+  }
+
+  public setCustomers(): void {
+    if (this.currentEmployee)
+      this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {
+        res.body ? (this.customers = res.body) : null;
+        console.log(this.customers);
+      });
   }
 
   public getProjects(customer: ICustomer): IProject[] {
@@ -132,11 +157,12 @@ export class TimesheetComponent implements OnInit {
   }
 
   public getJobs(project: IProject): IJob[] {
+    // return project.getJobsByUser(this.currentEmployee?.id);
     const jobs: IJob[] = [];
     project.jobs.forEach(j => {
       if (j.appUsers?.some(ap => ap.id === this.currentEmployee?.id)) {
         jobs.push(j);
-        console.log(j.appUsers?.some(ap => ap.id === this.currentEmployee?.id));
+        console.log(j);
       }
     });
     return jobs;
@@ -151,10 +177,10 @@ export class TimesheetComponent implements OnInit {
     //admin && customer admin
     this.currentEmployee?.companyId
       ? this.userService.findAllByCompany(this.currentEmployee.companyId).subscribe((res: HttpResponse<IUser[]>) => {
-          res.body ? (this.employeesList = res.body) : null;
+          res.body ? (this.employees = res.body) : null;
         })
       : null;
-    console.log(this.employeesList);
+    console.log(this.employees);
   }
 
   public setCompany(companyId: number): void {
@@ -174,33 +200,45 @@ export class TimesheetComponent implements OnInit {
 
   private setNumberOfColumns(mounth: number, year: number): void {
     this.nbrOfColumns = this.getNumberOfDays(mounth, year);
-    console.log(this.nbrOfColumns);
+    const tmpArray: [] = [].constructor(this.nbrOfColumns);
+    this.loop = tmpArray;
+    console.log(this.loop);
   }
 
   private getNumberOfDays(mounth: number, year: number): number {
-    return new Date(year, mounth, 0).getDate();
+    return new Date(year, mounth + 1, 0).getDate();
   }
 
-  public nextMouth(): void {
-    this.dateCopy.setMonth(this.date.getMonth() + 1);
+  public nextMonth(): void {
+    this.dateCopy.setMonth(this.dateCopy.getMonth() + 1);
+    this.setMonthName();
     this.setNumberOfColumns(this.dateCopy.getMonth(), this.dateCopy.getFullYear());
   }
 
-  public previousMouth(): void {
-    this.dateCopy.setMonth(this.date.getMonth() - 1);
+  public previousMonth(): void {
+    this.dateCopy.setMonth(this.dateCopy.getMonth() - 1);
+    this.setMonthName();
+    this.setNumberOfColumns(this.dateCopy.getMonth(), this.dateCopy.getFullYear());
+  }
+
+  public currentMonth(): void {
+    this.dateCopy = new Date(this.date);
+    console.log(this.date);
+    this.setMonthName();
     this.setNumberOfColumns(this.dateCopy.getMonth(), this.dateCopy.getFullYear());
   }
 
   public getDay(i: number): string {
     let str = '';
     this.day = i + 1;
+
     if (this.cptDay < this.days.length) {
       str = ' ' + this.days[this.cptDay] + ' \n ' + this.day + ' ';
-      this.cptDay++;
     } else {
       this.cptDay = 0;
       str = ' ' + this.days[this.cptDay] + '\n ' + this.day + ' ';
     }
+    this.cptDay++;
     return str;
   }
 
@@ -212,4 +250,56 @@ export class TimesheetComponent implements OnInit {
   private setMonthName(): void {
     this.monthName = 'Date: ' + this.months[this.dateCopy.getMonth()] + ' ' + this.dateCopy.getFullYear();
   }
+
+  onChange(): void {
+    //change currentEmployee
+    console.log(this.currentEmployee);
+    this.setCustomers();
+    // this.selectedDevice = newValue;
+  }
+
+  onChangeCompany(): void {
+    this.setEmployees(this.companySelected?.id);
+    console.log('EMPLOYEES');
+    console.log(this.employees);
+    this.employees.length === 0 ? (this.customers = []) : null;
+  }
+
+  trackById(index: number, item: SelectableEntity): any {
+    return item.id;
+  }
+
+  getPerformance(job: IJob, i: number): any {
+    const date: Date = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1);
+    console.log(date);
+    let perf: any;
+    job.performances?.some(p => {
+      p.date === date;
+      perf = p;
+    });
+    if (perf) return perf.hours;
+    else return 0;
+  }
+
+  encodeHours(p: IProject, j: IJob, c: ICustomer, i: number): void {
+    console.log('ICI');
+    console.log(new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1));
+    const modalRef = this.modalService.open(PerformanceCreateDialogComponent, { size: 'lg', backdrop: 'static', windowClass: 'modal-xl' });
+    modalRef.componentInstance.job = j;
+    modalRef.componentInstance.project = p;
+    modalRef.componentInstance.customer = c;
+    modalRef.componentInstance.date = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1);
+  }
 }
+// this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {
+//   res.body ? (this.customers = res.body) : null;
+//   console.log(this.customers);
+// });
+// if(this.currentEmployee)
+// this.currentEmployee.companyId ? this.setCompany(this.currentEmployee.companyId) : null;
+
+//getAllUsersByCompany=>changer model, rajouter les performances
+// else{
+//   //company=find company By id
+// }
+// console.log(this.company);

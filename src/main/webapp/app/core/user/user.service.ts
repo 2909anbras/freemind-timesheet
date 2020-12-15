@@ -32,6 +32,7 @@ export class UserService {
   }
 
   findAllByCompany(id: number): Observable<HttpResponse<IUser[]>> {
+    console.log('DEDANS');
     return this.http.get<IUser[]>(`${this.resourceUrl + '/company'}/${id}`, { observe: 'response' });
   }
 

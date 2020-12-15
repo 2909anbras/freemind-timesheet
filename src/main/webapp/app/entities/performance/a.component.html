@@ -1,0 +1,29 @@
+<form  name="createForm" (ngSubmit)="confirmCreation()">
+    <!-- *ngIf="customer" -->
+    <div class="modal-header">
+        <h4 class="modal-title" jhiTranslate="entity.create.title">Confirm create operation</h4>
+        <p class="modal-title">{{customerToString}}</p>
+        <p class="modal-title">{{projectToString}}</p>
+        <p class="modal-title">{{jobToString}}</p>
+        <p class="modal-title">{{dateToString}}</p>
+        <button  type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="cancel()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+        <!-- <jhi-alert-error></jhi-alert-error> -->
+        <!-- [translateValues]="{ id: customer.id }" -->
+        <p id="jhi-create-performance-heading" jhiTranslate="freemindTimesheetApp.performance.create.question" ></p>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+            &nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+        <!-- <fa-icon icon="ban"></fa-icon> -->
+        <!-- <fa-icon icon="times"></fa-icon> -->
+        <button id="jhi-confirm-create-customer" type="submit" class="btn btn-danger">
+            &nbsp;<span jhiTranslate="entity.action.create">Delete</span>
+        </button>
+    </div>
+</form>

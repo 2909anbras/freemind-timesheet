@@ -1,13 +1,33 @@
 <div >
     <h4 jhiTranslate="timesheet.title">Timesheet</h4>
 </div>
-<div><!--Filters-->
-    <label *jhiHasAnyAuthority="['ROLE_ADMIN']"jhiTranslate="global-view.company-filter">COMPANY</label>
-    <input *jhiHasAnyAuthority="['ROLE_ADMIN']" type="text" class="form-control" [(ngModel)]="searchCompany" placeholder="*">
+
+<div>
+    <!--Filters-->
+    <div *jhiHasAnyAuthority="['ROLE_ADMIN']" >
+        <select style="width: 10%;" class="form-control" (change)="onChangeCompany()" [(ngModel)]="companySelected" >
+            <!-- <option [ngValue]=""></option> -->
+            <option *ngFor="let company of companies" [ngValue]="company">{{company.name}}</option>
+        </select>
+    </div>
     <label jhiTranslate="global-view.customer-filter">CUSTOMER</label>
     <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">
     <label jhiTranslate="global-view.project-filter">PROJECT</label>
     <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchProject" placeholder="*">
+    <label jhiTranslate="global-view.job-filter">Job</label>
+    <input style="width: 10%;" type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
+    <label >Employee</label>
+    <select style="width: 10%;" class="form-control" (change)="onChange()" [(ngModel)]="currentEmployee" >
+        <option [ngValue]=null></option>
+        <option *ngFor="let employee of employees; trackBy: trackById" [ngValue]="employee">{{employee.login}}</option>
+    </select>
+</div>
+
+<div>
+    <p>{{monthName}}</p>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="previousMonth()">Previous Month</button>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="currentMonth()">Current Month</button>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="nextMonth()">Next Month</button>
 </div>
 
 
@@ -16,13 +36,12 @@
         <th style="text-indent: 3,5em;max-width: 10%;" colspan="3">
             Context
         </th>
-
-        <ng-container *ngFor="let item of [].constructor(nbrOfColumns); index as i" >
+        <!-- [].constructor(nbrOfColumns) -->
+        <ng-container *ngFor="let item of nbrOfColumns | keyvalue  ; index as i" >
             <th style="text-align: right; padding-right: 15px; max-width: 10%;">
                 {{getDay(i)}}
             </th>
         </ng-container>
-
     </tr>
     
     <tbody>
@@ -38,7 +57,6 @@
             <ng-container *ngFor="let project of getProjects(customer) | projectFilter: searchProject:'All' ">
                 <tr>
                     <td colspan="1">
-
                     </td>
                     <td style="max-width: 10%;">
                         {{project.name}}
@@ -46,16 +64,19 @@
                     <td colspan="34"></td>
                 </tr>
                 <!--Jobs-->
-                <ng-container *ngFor="let job of getJobs(project)">
+                <ng-container *ngFor="let job of getJobs(project)|jobFilter: searchJob: 'All'">
                     <tr>
                         <td colspan="2"></td>
                         <td>
                            {{job.name}}
                         </td>
+                        <!--loop qui va afficher tous les 0 ou les heures. Que ddes 0 pour le moment. Faire appel d'une fonction-->
+                        <ng-container *ngFor="let item of nbrOfColumns | keyvalue; index as i">
+                            <td (click)="encodeHours(project,job,customer,i)"style="border-color: black;cursor: pointer">{{getPerformance(job,i)}}</td>
+                        </ng-container>
                     </tr>
                 </ng-container>
             </ng-container>
         </ng-container>
     </tbody>
-
 </table>

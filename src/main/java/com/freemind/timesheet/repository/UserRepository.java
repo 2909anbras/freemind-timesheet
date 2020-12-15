@@ -41,6 +41,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findAllByLoginNot(Pageable pageable, String login);
 
-    @Query("select distinct user from User user where user.id IN ?2 ")
-    Page<User> findAllByIds(Pageable pageable, List<Long> ids);
+    @Query("select distinct user from User user where user.id IN ?1 ")
+    Page<User> findAllByIds(List<Long> ids, Pageable pageable);
 }

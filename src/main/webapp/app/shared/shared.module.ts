@@ -9,6 +9,7 @@ import { JobFilterPipe } from './pipe/filter/jobFilterPipe';
 import { ProjectFilterPipe } from './pipe/filter/projectFilterPipe';
 import { CustomerFilterPipe } from './pipe/filter/customerFilterPipe';
 import { CompanyFilterPipe } from './pipe/filter/companyFilterPipe';
+import { KeyvaluePipe } from './pipe/filter/keyvaluePipe';
 // import { RegistryRoutingModule} from '../registry/registry-routing.module';
 @NgModule({
   imports: [FreemindTimesheetSharedLibsModule],
@@ -22,6 +23,7 @@ import { CompanyFilterPipe } from './pipe/filter/companyFilterPipe';
     ProjectFilterPipe,
     CustomerFilterPipe,
     CompanyFilterPipe,
+    KeyvaluePipe,
   ],
   entryComponents: [LoginModalComponent],
   exports: [
@@ -35,6 +37,7 @@ import { CompanyFilterPipe } from './pipe/filter/companyFilterPipe';
     ProjectFilterPipe,
     CustomerFilterPipe,
     CompanyFilterPipe,
+    KeyvaluePipe,
   ],
 })
 export class FreemindTimesheetSharedModule {}

@@ -21,6 +21,8 @@ public class JobDTO implements Serializable {
 
     private Set<AppUserDTO> appUsers = new HashSet<>();
 
+    private Set<PerformanceDTO> performances = new HashSet<>();
+
     @Size(min = 20)
     private String description;
 
@@ -98,6 +100,14 @@ public class JobDTO implements Serializable {
         this.projectId = projectId;
     }
 
+    public Set<PerformanceDTO> getPerformances() {
+        return performances;
+    }
+
+    public void setPerformances(Set<PerformanceDTO> performances) {
+        this.performances = performances;
+    }
+
     public Set<AppUserDTO> getAppUsers() {
         return this.appUsers;
     }
@@ -134,8 +144,9 @@ public class JobDTO implements Serializable {
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
             ", enable='" + isEnable() + "'" +
-            ", projectId=" + getProjectId() +
-            ", appUsers="+getAppUsers()+
+            ", projectId= " + getProjectId() +
+            ", appUsers= "+getAppUsers()+
+            ", performances= "+ getPerformances()+
             "}";
     }
 }

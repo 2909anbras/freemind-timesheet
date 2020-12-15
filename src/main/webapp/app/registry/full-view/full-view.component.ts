@@ -50,7 +50,6 @@ export class FullViewComponent implements OnInit {
   // ngbPaginationPage = 1;
 
   constructor(
-    //   public status: Status,
     protected companyService: CompanyService,
     protected appUserService: AppUserService,
     protected accountService: AccountService,
@@ -59,14 +58,12 @@ export class FullViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
-    console.log('Complete account');
 
     // if (this.currentAccount && !this.accountService.hasAnyAuthority('ROLE_ADMIN'))
     if (this.currentAccount)
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
         this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
           if (res.body) {
-            console.log('Complete admin companies');
             this.showCompanies = res.body;
             this.allCompanies = res.body;
             this.sortingCompanies();
@@ -75,20 +72,15 @@ export class FullViewComponent implements OnInit {
         });
       } else {
         this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
-          console.log('Complete account');
           this.currentAccount && res.body ? (this.currentAccount.companyId = res.body.companyId) : null;
-          console.log('Complete account');
-
           console.log(this.currentAccount);
           if (this.currentAccount?.companyId)
             this.companyService.find(this.currentAccount?.companyId).subscribe((res: HttpResponse<ICompany>) => {
-              console.log('Complete company');
               res.body ? this.allCompanies?.push(res.body) : null;
               this.showCompanies = this.allCompanies;
               console.log(this.showCompanies);
             });
         });
-        // });
       }
   }
   private sortingCompanies(): void {

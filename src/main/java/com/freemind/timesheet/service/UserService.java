@@ -411,7 +411,7 @@ public class UserService {
 
     @Transactional
     public Page<UserDTO> getUsersByIds(List<Long> ids, Pageable pageable) { //ManagedUser
-        return userRepository.findAllByIds(pageable, ids).map(UserDTO::new);
+        return userRepository.findAllByIds(ids, pageable).map(UserDTO::new);
         //        return null;
     }
 
@@ -480,25 +480,23 @@ public class UserService {
     }
 
     public List<ManagedUserVM> getAllByCompany(Long companyId) { //noms,performances,company,jobs,id
-        log.debug("add users: {}", companyId);
+        log.debug("companyid : {}", companyId);
 
         List<AppUser> appUsers = this.appUserRepository.findByCompany(companyId, null, null).getContent();
-        List<User> users = (List<User>) this.userRepository.findAllByIds(
-                null,
-                appUsers.stream().map(t -> t.getId()).collect(Collectors.toList())
-            );
-        log.debug("add users: {}", users);
-
+        List<User> users =
+            this.userRepository.findAllByIds(appUsers.stream().map(t -> t.getId()).collect(Collectors.toList()), null).getContent();
         List<ManagedUserVM> managedUsers = new ArrayList<ManagedUserVM>();
         for (int i = 0; i < appUsers.size(); i++) {
             User u = users.get(i);
             AppUser apu = appUsers.get(i);
             ManagedUserVM tmp = new ManagedUserVM();
+            tmp.setId(apu.getId());
             tmp.setCompanyId(u.getId());
             tmp.setLogin(u.getLogin());
             tmp.setCompanyId(apu.getCompany().getId());
             tmp.setJobs(apu.getJobs().stream().map(jobMapper::toDto).collect(Collectors.toSet()));
             tmp.setPerformances(apu.getPerformances().stream().map(performanceMapper::toDto).collect(Collectors.toSet()));
+            managedUsers.add(tmp);
         }
 
         log.debug("managedUsers :{}", managedUsers);

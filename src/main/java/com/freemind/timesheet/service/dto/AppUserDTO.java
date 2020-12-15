@@ -13,8 +13,11 @@ public class AppUserDTO implements Serializable {
     private String phone;
 
     private Long internalUserId;
+
     private Set<JobDTO> jobs = new HashSet<>();
+
     private Set<PerformanceDTO> performances = new HashSet<>();
+
     private Long companyId;
 
     public Long getId() {
