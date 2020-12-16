@@ -16,6 +16,7 @@ export class PerformanceService {
   constructor(protected http: HttpClient) {}
 
   create(performance: IPerformance): Observable<EntityResponseType> {
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@CREATE@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     console.log(performance);
     return this.http.post<IPerformance>(this.resourceUrl, performance, { observe: 'response' });
   }

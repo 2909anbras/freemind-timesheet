@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+// import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgJhipsterModule } from 'ng-jhipster';
@@ -9,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   exports: [
+    // BrowserModule,
     FormsModule,
     CommonModule,
     NgbModule,

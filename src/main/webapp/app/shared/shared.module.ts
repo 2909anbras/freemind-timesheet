@@ -3,7 +3,10 @@ import { FreemindTimesheetSharedLibsModule } from './shared-libs.module';
 import { FindLanguageFromKeyPipe } from './language/find-language-from-key.pipe';
 import { AlertComponent } from './alert/alert.component';
 import { AlertErrorComponent } from './alert/alert-error.component';
+
 import { LoginModalComponent } from './login/login.component';
+import { PerformanceCreateDialogComponent } from 'app/entities/performance/performance-create-dialog.component';
+
 import { HasAnyAuthorityDirective } from './auth/has-any-authority.directive';
 import { JobFilterPipe } from './pipe/filter/jobFilterPipe';
 import { ProjectFilterPipe } from './pipe/filter/projectFilterPipe';
@@ -17,6 +20,7 @@ import { KeyvaluePipe } from './pipe/filter/keyvaluePipe';
     FindLanguageFromKeyPipe,
     AlertComponent,
     AlertErrorComponent,
+    PerformanceCreateDialogComponent,
     LoginModalComponent,
     HasAnyAuthorityDirective,
     JobFilterPipe,
@@ -25,13 +29,14 @@ import { KeyvaluePipe } from './pipe/filter/keyvaluePipe';
     CompanyFilterPipe,
     KeyvaluePipe,
   ],
-  entryComponents: [LoginModalComponent],
+  entryComponents: [LoginModalComponent, PerformanceCreateDialogComponent],
   exports: [
     FreemindTimesheetSharedLibsModule,
     FindLanguageFromKeyPipe,
     AlertComponent,
     AlertErrorComponent,
     LoginModalComponent,
+    PerformanceCreateDialogComponent,
     HasAnyAuthorityDirective,
     JobFilterPipe,
     ProjectFilterPipe,

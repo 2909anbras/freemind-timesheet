@@ -1,13 +1,13 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
-import { FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 import { ICustomer } from 'app/shared/model/customer.model';
 import { IProject } from 'app/shared/model/project.model';
 import { IJob } from 'app/shared/model/job.model';
 import { IPerformance } from 'app/shared/model/performance.model';
-import { addConsoleHandler } from 'selenium-webdriver/lib/logging';
+// import { addConsoleHandler } from 'selenium-webdriver/lib/logging';
 
 import { PerformanceService } from 'app/entities/performance/performance.service';
 import { IUser } from 'app/core/user/user.model';
@@ -30,10 +30,9 @@ export class PerformanceCreateDialogComponent implements OnInit {
   projectToString = '';
   jobToString = '';
 
-  createForm = this.fb.group({
+  createForm: FormGroup = this.fb.group({
     hours: ['', [Validators.required]],
   });
-
   constructor(
     public activeModal: NgbActiveModal,
     protected eventManager: JhiEventManager,
@@ -50,18 +49,24 @@ export class PerformanceCreateDialogComponent implements OnInit {
     this.jobToString = 'Job: ' + this.job?.name;
   }
   cancel(): void {
-    this.activeModal.dismiss();
+    this.createForm?.patchValue({
+      hours: '',
+    });
+    this.activeModal.dismiss('cancel');
   }
 
   create(): void {
     this.performanceService
       .create({
-        hours: this.createForm.get('hours')!.value,
+        hours: this.createForm?.get('hours')!.value,
         date: this.date!,
         jobId: this.job?.id,
         appUserId: this.currentEmployee?.id,
       })
-      .subscribe();
+      .subscribe(() => {
+        this.eventManager.broadcast('timesheetModification');
+        this.activeModal.close();
+      });
     //faire nouvelle perf et envoyer dans service.
     // this.customerService.delete(id).subscribe(() => {
     //   this.eventManager.broadcast('customerListModification');

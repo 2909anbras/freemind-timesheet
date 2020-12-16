@@ -9,6 +9,6 @@ import { PerformanceCreateDialogComponent } from 'app/entities/performance/perfo
 @NgModule({
   imports: [FreemindTimesheetSharedModule, RouterModule.forChild(TimesheetRoute)],
   declarations: [TimesheetComponent],
-  entryComponents: [PerformanceCreateDialogComponent],
+  // entryComponents: [PerformanceCreateDialogComponent],
 })
 export class FreemindTimesheetTimesheetModule {}

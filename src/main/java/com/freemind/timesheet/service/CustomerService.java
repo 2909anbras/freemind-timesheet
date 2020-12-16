@@ -92,9 +92,9 @@ public class CustomerService {
      */
     public void delete(Long id) { //test
         log.debug("Request to delete Customer : {}", id);
-        //        Customer customer = customerRepository.findOneWithEagerRelationships(id).get();
-        //        customer.removeProjects();
-        //        customerRepository.deleteById(id);
+        Customer customer = customerRepository.findById(id).get();
+        customer.removeProjects();
+        customerRepository.deleteById(id);
     }
 
     public List<CustomerDTO> findByUserId(Long userId) {

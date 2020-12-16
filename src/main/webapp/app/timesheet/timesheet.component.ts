@@ -126,8 +126,6 @@ export class TimesheetComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  public nbrOfLoop(): void {}
-
   private setEmployees(companyId?: number): void {
     if (companyId)
       this.userService.findAllByCompany(companyId).subscribe((res: HttpResponse<IUser[]>) => {
@@ -270,16 +268,35 @@ export class TimesheetComponent implements OnInit, AfterViewChecked {
   }
 
   getPerformance(job: IJob, i: number): any {
+    //me trouve à chaque fois celui qui correspond à la date.
+    //il ne doit prendre que celui qui correspond. Donc, pas some.
     const date: Date = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1);
-    console.log(date);
+    // console.log(date);
     let perf: any;
-    job.performances?.some(p => {
-      p.date === date;
-      perf = p;
-    });
+    let a: any;
+    if (job.performances) {
+      for (const p of job?.performances) {
+        if (p.date) {
+          a = new Date(p.date.toString());
+        }
+        if (p.date && this.compareDate(a, date)) {
+          console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+          console.log(a);
+          console.log(date);
+          perf = p;
+        }
+      }
+    }
     if (perf) return perf.hours;
     else return 0;
   }
+
+  private compareDate(d: Date, dBis: Date): boolean {
+    if (d.getDate() === dBis.getDate() && d.getFullYear() === dBis.getFullYear() && d.getMonth() === dBis.getMonth()) return true;
+    else return false;
+  }
+
+  private normalizeDate(d: Date): void {}
 
   encodeHours(p: IProject, j: IJob, c: ICustomer, i: number): void {
     console.log('ICI');
@@ -304,3 +321,8 @@ export class TimesheetComponent implements OnInit, AfterViewChecked {
 //   //company=find company By id
 // }
 // console.log(this.company);
+
+// job.performances?.some(p => {
+//   p.date === date;
+//   perf = p;
+// });

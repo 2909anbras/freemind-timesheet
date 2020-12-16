@@ -1,4 +1,4 @@
-<form  name="createForm" (ngSubmit)="create()" formGroup="createForm">
+<form   (ngSubmit)="create()" [formGroup]="createForm">
     <!-- *ngIf="customer" -->
     <div class="modal-header">
         <h4 class="modal-title" jhiTranslate="entity.create.title">Confirm create operation</h4>
@@ -13,8 +13,10 @@
     <div class="modal-body">
         <!-- <jhi-alert-error></jhi-alert-error> -->
         <!-- [translateValues]="{ id: customer.id }" -->
-        <label for="hours">Hours of works (between 0 and 10):</label>
-        <input formControlName="hours" #hours type="number" id="hours" name="hours" min="0" max="10">
+        <div class="form-group">
+            <label for="hours">Hours of works (between 0 and 10):</label>
+            <input formControlName="hours" #hours type="number" id="hours" name="hours" min="0" max="10">
+        </div>
         <p id="jhi-create-performance-heading" jhiTranslate="freemindTimesheetApp.performance.create.question" ></p>
     </div>
 
@@ -25,7 +27,7 @@
         <!-- <fa-icon icon="ban"></fa-icon> -->
         <!-- <fa-icon icon="times"></fa-icon> -->
         <button id="jhi-confirm-create-customer" type="submit" class="btn btn-danger">
-            &nbsp;<span jhiTranslate="entity.action.create">Delete</span>
+            &nbsp;<span jhiTranslate="entity.action.create">Create</span>
         </button>
     </div>
 </form>
