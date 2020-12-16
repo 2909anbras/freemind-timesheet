@@ -1,12 +1,16 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
+import { FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { ICustomer } from 'app/shared/model/customer.model';
 import { IProject } from 'app/shared/model/project.model';
 import { IJob } from 'app/shared/model/job.model';
 import { IPerformance } from 'app/shared/model/performance.model';
 import { addConsoleHandler } from 'selenium-webdriver/lib/logging';
+
+import { PerformanceService } from 'app/entities/performance/performance.service';
+import { IUser } from 'app/core/user/user.model';
 
 @Component({
   templateUrl: './a.component.html',
@@ -15,6 +19,7 @@ export class PerformanceCreateDialogComponent implements OnInit {
   customer?: ICustomer;
   project?: IProject;
   job?: IJob;
+  currentEmployee?: IUser;
   performance?: IPerformance;
   date?: Date;
   months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -25,11 +30,18 @@ export class PerformanceCreateDialogComponent implements OnInit {
   projectToString = '';
   jobToString = '';
 
-  constructor(public activeModal: NgbActiveModal, protected eventManager: JhiEventManager) {}
+  createForm = this.fb.group({
+    hours: ['', [Validators.required]],
+  });
+
+  constructor(
+    public activeModal: NgbActiveModal,
+    protected eventManager: JhiEventManager,
+    private performanceService: PerformanceService,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit(): void {
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@é');
-    console.log(this.date);
     this.date
       ? (this.dateToString = 'Date: ' + this.date.getDate() + '/' + (this.date.getMonth() + 1) + '/' + this.date.getFullYear())
       : null;
@@ -41,7 +53,15 @@ export class PerformanceCreateDialogComponent implements OnInit {
     this.activeModal.dismiss();
   }
 
-  confirmCreation(): void {
+  create(): void {
+    this.performanceService
+      .create({
+        hours: this.createForm.get('hours')!.value,
+        date: this.date!,
+        jobId: this.job?.id,
+        appUserId: this.currentEmployee?.id,
+      })
+      .subscribe();
     //faire nouvelle perf et envoyer dans service.
     // this.customerService.delete(id).subscribe(() => {
     //   this.eventManager.broadcast('customerListModification');

@@ -31,7 +31,7 @@ type SelectableEntity = IUser;
   selector: 'jhi-timesheet',
   templateUrl: './timesheet.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['timesheet.component.css'],
+  // styleUrls: ['timesheet.component.css'],
 })
 export class TimesheetComponent implements OnInit, AfterViewChecked {
   currentAccount: Account | null = null;
@@ -288,6 +288,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked {
     modalRef.componentInstance.job = j;
     modalRef.componentInstance.project = p;
     modalRef.componentInstance.customer = c;
+    modalRef.componentInstance.currentEmployee = this.currentEmployee;
     modalRef.componentInstance.date = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1);
   }
 }
