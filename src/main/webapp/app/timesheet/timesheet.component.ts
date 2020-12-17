@@ -1,7 +1,8 @@
-import { Component, OnInit, AfterViewChecked, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 import { HttpResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 
 import { CompanyService } from 'app/entities/company/company.service';
 import { AppUserService } from 'app/entities/app-user/app-user.service';
@@ -33,7 +34,7 @@ type SelectableEntity = IUser;
   changeDetection: ChangeDetectionStrategy.OnPush,
   // styleUrls: ['timesheet.component.css'],
 })
-export class TimesheetComponent implements OnInit, AfterViewChecked {
+export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   currentAccount: Account | null = null;
   companies: ICompany[] = [];
   customers: ICustomer[] = [];
@@ -55,6 +56,8 @@ export class TimesheetComponent implements OnInit, AfterViewChecked {
 
   day = 1;
   cptDay = 0;
+
+  eventSubscriber?: Subscription;
 
   date: Date = new Date();
   dateCopy: Date = new Date();
@@ -83,7 +86,14 @@ export class TimesheetComponent implements OnInit, AfterViewChecked {
     this.cdRef.detectChanges();
   }
 
+  ngOnDestroy(): void {
+    if (this.eventSubscriber) {
+      this.eventManager.destroy(this.eventSubscriber);
+    }
+  }
+
   ngOnInit(): void {
+    this.timesheetChange();
     this.setNumberOfColumns(this.date.getMonth() + 1, this.date.getFullYear());
     const tmpArray: [] = [].constructor(this.nbrOfColumns);
     this.loop = tmpArray;
@@ -101,26 +111,19 @@ export class TimesheetComponent implements OnInit, AfterViewChecked {
         this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
           this.currentAccount && res.body ? (this.currentAccount.companyId = res.body.companyId) : null;
           this.currentEmployee = this.currentAccount;
-
-          console.log(this.currentEmployee);
           if (this.isCustomerAdmin() && this.currentEmployee) {
-            console.log(this.isCustomerAdmin());
-            console.log(this.currentEmployee.companyId);
             this.currentEmployee.companyId //not working
               ? this.userService.findAllByCompany(this.currentEmployee.companyId).subscribe((res: HttpResponse<IUser[]>) => {
                   console.log(res.body);
                   res.body ? (this.employees = res.body) : null;
                 })
               : null;
-            console.log(this.employees);
           }
-          this.jobService.findJobsByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<IJob[]>) => {
-            res.body ? (this.jobs = res.body) : null;
-            console.log(this.jobs);
-          });
+          // this.jobService.findJobsByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<IJob[]>) => {
+          //   res.body ? (this.jobs = res.body) : null;
+          // });
           this.setCustomers();
           this.currentEmployee?.companyId ? this.setCompany(this.currentEmployee.companyId) : null;
-          console.log(this.company);
         });
       }
     }
@@ -297,6 +300,15 @@ export class TimesheetComponent implements OnInit, AfterViewChecked {
   }
 
   private normalizeDate(d: Date): void {}
+
+  timesheetChange(): void {
+    console.log('REFRESH');
+    this.eventSubscriber = this.eventManager.subscribe('timesheetModification', () => this.refresh());
+  }
+
+  refresh(): void {
+    this.setCustomers();
+  }
 
   encodeHours(p: IProject, j: IJob, c: ICustomer, i: number): void {
     console.log('ICI');

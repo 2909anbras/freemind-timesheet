@@ -13,7 +13,7 @@ import { PerformanceService } from 'app/entities/performance/performance.service
 import { IUser } from 'app/core/user/user.model';
 
 @Component({
-  templateUrl: './a.component.html',
+  templateUrl: './performance-create-dialog.component.html',
 })
 export class PerformanceCreateDialogComponent implements OnInit {
   customer?: ICustomer;
@@ -34,6 +34,7 @@ export class PerformanceCreateDialogComponent implements OnInit {
     hours: ['', [Validators.required]],
   });
   constructor(
+    // private location:Location,
     public activeModal: NgbActiveModal,
     protected eventManager: JhiEventManager,
     private performanceService: PerformanceService,
