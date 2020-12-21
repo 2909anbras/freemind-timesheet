@@ -54,8 +54,10 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   searchJob = '';
   searchProject = '';
 
+  currentIndex = 0;
   day = 1;
   cptDay = 0;
+  cptTd = 0;
 
   eventSubscriber?: Subscription;
 
@@ -65,6 +67,8 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   monthName = '';
   months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  disableTd = false;
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -97,6 +101,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.setNumberOfColumns(this.date.getMonth() + 1, this.date.getFullYear());
     const tmpArray: [] = [].constructor(this.nbrOfColumns);
     this.loop = tmpArray;
+    this.cptTd = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), 1).getDay();
     this.monthName = this.months[this.date.getMonth()];
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
     this.setMonthName();
@@ -203,7 +208,6 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.nbrOfColumns = this.getNumberOfDays(mounth, year);
     const tmpArray: [] = [].constructor(this.nbrOfColumns);
     this.loop = tmpArray;
-    console.log(this.loop);
   }
 
   private getNumberOfDays(mounth: number, year: number): number {
@@ -212,19 +216,21 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   public nextMonth(): void {
     this.dateCopy.setMonth(this.dateCopy.getMonth() + 1);
+    this.cptTd = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), 1).getDay();
     this.setMonthName();
     this.setNumberOfColumns(this.dateCopy.getMonth(), this.dateCopy.getFullYear());
   }
 
   public previousMonth(): void {
     this.dateCopy.setMonth(this.dateCopy.getMonth() - 1);
+    this.cptTd = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), 1).getDay();
     this.setMonthName();
     this.setNumberOfColumns(this.dateCopy.getMonth(), this.dateCopy.getFullYear());
   }
 
   public currentMonth(): void {
     this.dateCopy = new Date(this.date);
-    console.log(this.date);
+    this.cptTd = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), 1).getDay();
     this.setMonthName();
     this.setNumberOfColumns(this.dateCopy.getMonth(), this.dateCopy.getFullYear());
   }
@@ -256,7 +262,6 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     //change currentEmployee
     console.log(this.currentEmployee);
     this.setCustomers();
-    // this.selectedDevice = newValue;
   }
 
   onChangeCompany(): void {
@@ -270,28 +275,28 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     return item.id;
   }
 
+  getPerformanceHours(job: IJob, i: number): number {
+    const perf: any = this.getPerformance(job, i);
+    if (perf) return perf.hours;
+    else return 0;
+  }
+
   getPerformance(job: IJob, i: number): any {
-    //me trouve à chaque fois celui qui correspond à la date.
-    //il ne doit prendre que celui qui correspond. Donc, pas some.
     const date: Date = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1);
-    // console.log(date);
     let perf: any;
     let a: any;
+    //add some pour améliorer perf. If some alors foreach
     if (job.performances) {
       for (const p of job?.performances) {
         if (p.date) {
           a = new Date(p.date.toString());
         }
         if (p.date && this.compareDate(a, date)) {
-          console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-          console.log(a);
-          console.log(date);
           perf = p;
         }
       }
     }
-    if (perf) return perf.hours;
-    else return 0;
+    return perf;
   }
 
   private compareDate(d: Date, dBis: Date): boolean {
@@ -299,10 +304,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     else return false;
   }
 
-  private normalizeDate(d: Date): void {}
-
   timesheetChange(): void {
-    console.log('REFRESH');
     this.eventSubscriber = this.eventManager.subscribe('timesheetModification', () => this.refresh());
   }
 
@@ -311,14 +313,29 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   encodeHours(p: IProject, j: IJob, c: ICustomer, i: number): void {
-    console.log('ICI');
-    console.log(new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1));
     const modalRef = this.modalService.open(PerformanceCreateDialogComponent, { size: 'lg', backdrop: 'static', windowClass: 'modal-xl' });
     modalRef.componentInstance.job = j;
     modalRef.componentInstance.project = p;
     modalRef.componentInstance.customer = c;
+    modalRef.componentInstance.performance = this.getPerformance(j, i);
     modalRef.componentInstance.currentEmployee = this.currentEmployee;
     modalRef.componentInstance.date = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1);
+  }
+
+  public IsDisable(i: number): boolean {
+    //faut le faire avancer le coco
+    const bool = true;
+    // this.currentIndex!==i?this.currentIndex=i:null;
+    // if()
+    // if(this.days[this.cptTd]==="Sat"||this.days[this.cptTd]==="Sun"){
+    //   bool=false;
+    // }
+    // console.log(this.cptTd);
+    // console.log(this.days[this.cptTd]);
+    // this.cptTd++;
+    // if(this.cptTd===7)
+    //   this.cptTd=0;
+    return bool;
   }
 }
 // this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {

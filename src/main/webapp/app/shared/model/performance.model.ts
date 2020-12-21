@@ -6,8 +6,16 @@ export interface IPerformance {
   jobId?: number;
   appUserId?: number;
   date?: Date;
+  description?: string;
 }
 
 export class Performance implements IPerformance {
-  constructor(public id?: number, public hours?: number, public jobId?: number, public appUserId?: number, public date?: Date) {}
+  constructor(
+    public id?: number,
+    public hours?: number,
+    public jobId?: number,
+    public appUserId?: number,
+    public date?: Date,
+    description?: string
+  ) {}
 }

@@ -21,6 +21,9 @@ import { JobDeleteDialogComponent } from './job-delete-dialog.component';
 })
 export class JobComponent implements OnInit, OnDestroy {
   jobs?: IJob[];
+  searchJob = '';
+  searchJobState = 'All';
+  enabledStateList = ['Enable', 'Disabled', 'All'];
   eventSubscriber?: Subscription;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;

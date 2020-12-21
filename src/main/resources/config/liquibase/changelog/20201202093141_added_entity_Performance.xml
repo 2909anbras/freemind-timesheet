@@ -18,6 +18,9 @@
             <column name="hours" type="integer">
                 <constraints nullable="false" />
             </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="date" type="date">
                 <constraints nullable="false" />
             </column>

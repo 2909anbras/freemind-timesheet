@@ -32,10 +32,10 @@ export class FullViewComponent implements OnInit {
   searchJob = '';
   searchProject = '';
 
-  searchCustomerState = '';
-  searchProjectState = '';
-  searchJobState = '';
-  searchCompanyState = '';
+  searchCustomerState = 'All';
+  searchProjectState = 'All';
+  searchJobState = 'All';
+  searchCompanyState = 'All';
 
   enabledStateList = ['Enable', 'Disabled', 'All'];
 

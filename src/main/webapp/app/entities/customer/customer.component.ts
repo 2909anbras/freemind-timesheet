@@ -22,6 +22,10 @@ import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
 })
 export class CustomerComponent implements OnInit, OnDestroy {
   customers?: ICustomer[];
+  searchCustomer = '';
+  searchCustomerState = 'All';
+  enabledStateList = ['Enable', 'Disabled', 'All'];
+
   eventSubscriber?: Subscription;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;

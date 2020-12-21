@@ -16,6 +16,7 @@ import { AppUserService } from 'app/entities/app-user/app-user.service';
 import { LANGUAGES } from 'app/core/language/language.constants';
 import { User } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 type SelectableEntity = ICompany | IJob; //
 
@@ -24,6 +25,7 @@ type SelectableEntity = ICompany | IJob; //
   templateUrl: './user-management-update.component.html',
 })
 export class UserManagementUpdateComponent implements OnInit {
+  account?: Account;
   user!: User;
   languages = LANGUAGES;
   authorities: string[] = [];
@@ -55,6 +57,7 @@ export class UserManagementUpdateComponent implements OnInit {
   });
 
   constructor(
+    private accountService: AccountService,
     private appUserService: AppUserService,
     private userService: UserService,
     private route: ActivatedRoute,
@@ -69,18 +72,25 @@ export class UserManagementUpdateComponent implements OnInit {
         this.authorities = authorities;
       });
       this.jobService.query().subscribe((res: HttpResponse<IJob[]>) => (this.jobs = res.body || []));
-      this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
-        this.companies = res.body || [];
-        console.log(this.companies);
-      });
-      console.log(user);
+      if (this.accountService.hasAnyAuthority('ROLE_ADMIN'))
+        this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
+          this.companies = res.body || [];
+        });
+      else {
+        this.accountService.identity().subscribe((account: any) => {
+          this.appUserService.find(account.id).subscribe((res: HttpResponse<IAppUser>) => {
+            if (res.body!.companyId)
+              this.companyService.find(res.body?.companyId).subscribe((c: HttpResponse<ICompany>) => {
+                this.companies.push(c.body!);
+              });
+          });
+        });
+      }
+
       this.isNew = user.id === undefined;
       if (this.isNew) {
         this.showJobs = true;
       } else this.showJobs = !user.authorities.some((x: string) => x === 'ROLE_ADMIN');
-
-      console.log(this.showJobs);
-
       if (user) {
         this.user = user;
         if (this.user.id === undefined) {
@@ -93,11 +103,10 @@ export class UserManagementUpdateComponent implements OnInit {
               this.user.companyId = appUser.companyId;
               this.user.phone = appUser.phone;
               this.user.jobs = appUser.jobs;
+              this.updateForm(user);
             }
-            // this.updateForm(user);
           });
         }
-        this.updateForm(user);
       }
     });
   }
@@ -129,8 +138,6 @@ export class UserManagementUpdateComponent implements OnInit {
   }
 
   private updateForm(user: User): void {
-    //ici biding
-    console.log(user);
     this.editForm.patchValue({
       id: user.id,
       login: user.login,

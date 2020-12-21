@@ -13,7 +13,6 @@
                     <input  type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">
                     <label >Enable?</label>
                     <select class="form-control" [(ngModel)]="searchCustomerState" >
-                        <option [ngValue]=""></option>
                         <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
                     </select>
                 </div>
@@ -24,7 +23,6 @@
             <input  type="text" class="form-control" [(ngModel)]="searchProject" placeholder="*">
             <label >Enable?</label>
             <select class="form-control" [(ngModel)]="searchProjectState" >
-                <option [ngValue]=""></option>
                 <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
             </select>
         </th>
@@ -33,7 +31,6 @@
             <input  type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
             <label >Enable?</label>
             <select class="form-control" [(ngModel)]="searchJobState" >
-                <option [ngValue]=""></option>
                 <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
             </select>
         </th>
@@ -41,7 +38,7 @@
     <tbody>
         <!-- company container-->
         <ng-container *ngFor="let company of showCompanies | companyFilter: searchCompany">
-          <!-- <tr></tr> -->
+          
             <tr style="border: none!important;background-color: #cacaca"> 
                 <td *ngIf="showCompanies && showCompanies.length>0" style="border: none!important;">
                     <div *ngIf="!companyHidden; else hiddeCompany">
@@ -60,11 +57,11 @@
             </tr>
             <!-- customer container-->
             <ng-container  *ngFor="let customer of company.customers | customerFilter: searchCustomer: searchCustomerState">
-                <!-- <tr ></tr> -->
+                
                     <tr *ngIf="!companyHidden"style="border-left: none!important;" >
                         <td colspan="1" style="border-left: none!important;border-right: none!important;"></td>
                         <div *ngIf="!customerHidden; else hiddeCustomer" style="border: none!important;background-color:  #f5f5ee;">
-                            <!-- <td colspan="1"></td> -->
+                           
                             <td style="border-left: none!important;border-right: none!important;background-color:  #f5f5ee;" >
                                 <fa-icon (click)="switchCustomerHidden()" style="cursor: pointer" [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
                                 <a [routerLink]="['/customer', customer.id, 'edit']">{{customer.name}}</a>
@@ -80,10 +77,8 @@
                         </ng-template>
                         <td colspan="3" style="border-left: none!important;border-right: none!important;background-color: #f5f5ee;"></td>
                     </tr>
-                <!-- </div> -->
                 <!-- project container -->
                 <ng-container *ngFor=" let project of customer.projects| projectFilter: searchProject: searchProjectState">
-                    <!-- <tr ></tr> -->
                     <tr *ngIf="!companyHidden && !customerHidden"  >
                         <td colspan="2" style="border-left: none!important;border-right: none!important;background-color: #fdfdfd"></td>
                         <div *ngIf="!projectHidden; else hiddeProject" style="background-color: #fdfdfd">
@@ -100,8 +95,7 @@
                         </ng-template>
                     </tr>
                     <ng-container *ngFor=" let job of project.jobs| jobFilter: searchJob: searchJobState">
-                        <!-- <tr >
-                        </tr> -->
+
                         <tr *ngIf="!companyHidden && !customerHidden && !projectHidden"style="border-left: none!important;" >
                             <td colspan="3" style="border: none!important;"></td>
                             <td style="border-bottom: none!important;border-left: none!important;">

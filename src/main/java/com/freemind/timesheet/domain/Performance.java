@@ -28,6 +28,9 @@ public class Performance implements Serializable {
     @Column(name = "hours", nullable = false)
     private Integer hours;
 
+    @Column(name = "description")
+    private String description;
+
     @NotNull
     @Column(name = "date", nullable = false)
     private LocalDate date;
@@ -96,6 +99,19 @@ public class Performance implements Serializable {
     public Performance job(Job job) {
         this.job = job;
         return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Performance description(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setJob(Job job) {

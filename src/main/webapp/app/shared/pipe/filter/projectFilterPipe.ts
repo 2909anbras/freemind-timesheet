@@ -14,10 +14,7 @@ export class ProjectFilterPipe implements PipeTransform {
     if (!isEnable || isEnable === 'All') return projects;
     const bool = isEnable === 'Enable';
     projects = [...projects.filter(c => c.enable === bool)];
-    projects = [...projects.filter(project => project.jobs.length > 0)];
-
-    console.log('projects Pipe');
-    console.log(projects);
+    // projects = [...projects.filter(project => project.jobs.length > 0)];
     return projects;
   }
 }

@@ -72,7 +72,12 @@
                         </td>
                         <!--loop qui va afficher tous les 0 ou les heures. Que ddes 0 pour le moment. Faire appel d'une fonction-->
                         <ng-container *ngFor="let item of nbrOfColumns | keyvalue; index as i">
-                            <td (click)="encodeHours(project,job,customer,i)"style="border-color: black;cursor: pointer">{{getPerformance(job,i)}}</td>
+                            <td *ngIf="IsDisable(i);else Disable" (click)="encodeHours(project,job,customer,i)"style="border-color: black;cursor: pointer">{{getPerformanceHours(job,i)}}</td>
+
+                            <ng-template  #Disable>
+                                <td style="border-color: black;background-color: rgb(221, 219, 219);">{{getPerformance(job,i)}}</td>
+                            </ng-template> 
+                          
                         </ng-container>
                     </tr>
                 </ng-container>

@@ -102,10 +102,14 @@
     "item-count": "Showing {{first}} - {{second}} of {{total}} items."
   },
   "entity": {
+    "create": {
+      "title": ""
+    },
     "action": {
       "addblob": "Add blob",
       "addimage": "Add image",
       "back": "Back",
+      "create": "Create",
       "cancel": "Cancel",
       "delete": "Delete",
       "edit": "Edit",

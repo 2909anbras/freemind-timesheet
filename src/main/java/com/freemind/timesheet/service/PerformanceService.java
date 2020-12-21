@@ -54,8 +54,6 @@ public class PerformanceService {
      * @return the persisted entity.
      */
     public PerformanceDTO save(PerformanceDTO performanceDTO) {
-        log.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@é");
-
         log.debug("Request to save Performance : {}", performanceDTO);
         Performance performance = performanceMapper.toEntity(performanceDTO);
         performance.setDate(performance.getDate().plusDays(1));

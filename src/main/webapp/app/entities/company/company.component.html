@@ -10,6 +10,9 @@
         </button>
     </h2>
 
+    <label *jhiHasAnyAuthority="['ROLE_ADMIN']"jhiTranslate="global-view.company-filter">COMPANY</label>
+    <input *jhiHasAnyAuthority="['ROLE_ADMIN']" type="text" class="form-control" [(ngModel)]="searchCompany" placeholder="*">
+
     <jhi-alert-error></jhi-alert-error>
 
     <jhi-alert></jhi-alert>
@@ -22,13 +25,13 @@
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
-                    <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+                    <!-- <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th> -->
                     <th scope="col"  jhiSortBy="name"><span jhiTranslate="freemindTimesheetApp.company.name">Name</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let company of companies ;trackBy: trackId">
+                <tr *ngFor="let company of companies | companyFilter: searchCompany ;trackBy: trackId">
                     <td>{{ company.name }}</td>
                     <td class="text-right">
                         <div class="btn-group">

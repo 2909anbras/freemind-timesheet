@@ -10,6 +10,16 @@
         </button>
     </h2>
 
+    <div class="input-group">
+        <div class="input-group-addon"> <label jhiTranslate="global-view.customer-filter">CUSTOMER</label>
+            <input  type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">
+            <label >Enable?</label>
+            <select class="form-control" [(ngModel)]="searchCustomerState" >
+                <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
+            </select>
+        </div>
+    </div>
+
     <jhi-alert-error></jhi-alert-error>
 
     <jhi-alert></jhi-alert>
@@ -28,7 +38,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let customer of customers ;trackBy: trackId">
+                <tr *ngFor="let customer of customers | customerFilter: searchCustomer: searchCustomerState ;trackBy: trackId">
                     <!-- <td><a [routerLink]="['/customer', customer.id, 'view']">{{ customer.id }}</a></td> -->
                     <td>{{ customer.name }}</td>
                     <td>{{ customer.enable }}</td>

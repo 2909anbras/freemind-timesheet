@@ -43,7 +43,6 @@ export class ProjectUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.accountService.identity().subscribe(e => {
       e ? (this.currentAccount = e) : null;
-      console.log(this.currentAccount);
     });
     this.activatedRoute.data.subscribe(({ project }) => {
       this.updateForm(project);
@@ -56,9 +55,7 @@ export class ProjectUpdateComponent implements OnInit {
             const appUser = res.body;
             if (appUser) {
               this.currentAccount!.companyId = appUser.companyId;
-              console.log(this.currentAccount);
               this.customerService.findAllByCompany(null, this.currentAccount!.companyId).subscribe((res: HttpResponse<ICustomer[]>) => {
-                console.log(res.body);
                 this.customers = res.body || [];
               });
             }

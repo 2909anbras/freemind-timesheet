@@ -143,7 +143,6 @@
             <div  class="form-group">
                 <label class="form-control-label" jhiTranslate="timeSheetApp.appUser.company" for="field_company">Company</label>
                 <select class="form-control" id="field_company" [disabled]="showJobs" name="company" formControlName="companyId">
-                    <option [ngValue]="null"></option>
                     <option [ngValue]="companyOption.id" *ngFor="let companyOption of companies; trackBy: trackById">{{ companyOption.name }}</option>
                 </select>
             </div>

@@ -9,6 +9,16 @@
             </span>
         </button>
     </h2>
+    <div class="input-group">
+        <div class="input-group-addon"> 
+            <label jhiTranslate="global-view.job-filter">JOB</label>
+            <input  type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
+            <label >Enable?</label>
+            <select class="form-control" [(ngModel)]="searchJobState" >
+                <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
+            </select>
+        </div>
+    </div>
 
     <jhi-alert-error></jhi-alert-error>
 
@@ -33,7 +43,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let job of jobs ;trackBy: trackId">
+                <tr *ngFor="let job of jobs | jobFilter: searchJob: searchJobState ;trackBy: trackId">
                     <!-- <td><a [routerLink]="['/job', job.id, 'view']">{{ job.id }}</a></td> -->
                     <td>{{ job.name }}</td>
                     <td>{{ job.description }}</td>

@@ -22,6 +22,8 @@ public class PerformanceDTO implements Serializable {
 
     private Long jobId;
 
+    private String description;
+
     public Long getId() {
         return id;
     }
@@ -36,6 +38,14 @@ public class PerformanceDTO implements Serializable {
 
     public void setHours(Integer hours) {
         this.hours = hours;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDate getDate() {
@@ -88,6 +98,7 @@ public class PerformanceDTO implements Serializable {
             ", date='" + getDate() + "'" +
             ", appUserId=" + getAppUserId() +
             ", jobId=" + getJobId() +
+            ", description="+getDescription()+
             "}";
     }
 }

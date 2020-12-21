@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 
+import { IUser } from 'app/core/user/user.model';
 import { IJob, Job } from 'app/shared/model/job.model';
 import { JobService } from './job.service';
 import { IProject } from 'app/shared/model/project.model';
@@ -13,7 +14,9 @@ import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
 import { AppUserService } from '../app-user/app-user.service';
 import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
+import { UserService } from 'app/core/user/user.service';
 
+type SelectableEntity = IUser | IProject;
 @Component({
   selector: 'jhi-job-update',
   templateUrl: './job-update.component.html',
@@ -24,6 +27,7 @@ export class JobUpdateComponent implements OnInit {
   startDateDp: any;
   endDateDp: any;
   currentAccount: Account | null = null;
+  users: IUser[] = [];
 
   editForm = this.fb.group({
     id: [],
@@ -34,9 +38,11 @@ export class JobUpdateComponent implements OnInit {
     endDate: [],
     enable: [],
     projectId: [],
+    users: [],
   });
 
   constructor(
+    protected userService: UserService,
     protected appUserService: AppUserService,
     protected accountService: AccountService,
     protected jobService: JobService,
@@ -48,11 +54,11 @@ export class JobUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.accountService.identity().subscribe(e => {
       e ? (this.currentAccount = e) : null;
-      console.log(this.currentAccount);
     });
     this.activatedRoute.data.subscribe(({ job }) => {
       this.updateForm(job);
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+        //by job Company!
         this.projectService.query().subscribe((res: HttpResponse<IProject[]>) => (this.projects = res.body || []));
       } else {
         if (this.currentAccount) {
@@ -60,9 +66,10 @@ export class JobUpdateComponent implements OnInit {
             const appUser = res.body;
             if (appUser) {
               this.currentAccount!.companyId = appUser.companyId;
-              console.log(this.currentAccount);
+              this.userService.findAllByCompany(this.currentAccount!.companyId).subscribe((users: HttpResponse<IUser[]>) => {
+                if (users.body) this.users = users.body;
+              });
               this.projectService.getProjectByCompanyId(this.currentAccount!.companyId, null).subscribe((res: HttpResponse<IProject[]>) => {
-                console.log(res.body);
                 this.projects = res.body || [];
               });
             }
@@ -82,6 +89,7 @@ export class JobUpdateComponent implements OnInit {
       endDate: job.endDate,
       enable: job.enable,
       projectId: job.projectId,
+      users: job.appUsers,
     });
   }
 
@@ -110,6 +118,7 @@ export class JobUpdateComponent implements OnInit {
       endDate: this.editForm.get(['endDate'])!.value,
       enable: this.editForm.get(['enable'])!.value,
       projectId: this.editForm.get(['projectId'])!.value,
+      // appUsers:this.editForm.get(['users'])!.value,//change users by appUsers
     };
   }
 
@@ -129,7 +138,7 @@ export class JobUpdateComponent implements OnInit {
     this.isSaving = false;
   }
 
-  trackById(index: number, item: IProject): any {
+  trackById(index: number, item: SelectableEntity): any {
     return item.id;
   }
 }

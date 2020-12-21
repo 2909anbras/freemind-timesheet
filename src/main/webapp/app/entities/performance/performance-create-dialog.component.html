@@ -2,22 +2,22 @@
     <!-- *ngIf="customer" -->
     <div class="modal-header">
         <h4 class="modal-title" jhiTranslate="entity.create.title">Confirm create operation</h4>
-        <p class="modal-title">{{customerToString}}</p>
-        <p class="modal-title">{{projectToString}}</p>
-        <p class="modal-title">{{jobToString}}</p>
-        <p class="modal-title">{{dateToString}}</p>
+        <p class="modal-title">{{customerToString}}</p>&nbsp;
+        <p class="modal-title">{{projectToString}}</p>&nbsp;
+        <p class="modal-title">{{jobToString}}</p>&nbsp;
+        <p class="modal-title">{{dateToString}}</p>&nbsp;
         <button  type="button" class="close" data-dismiss="modal" aria-hidden="true"
                 (click)="cancel()">&times;</button>
     </div>
 
     <div class="modal-body">
-        <!-- <jhi-alert-error></jhi-alert-error> -->
+        <jhi-alert-error></jhi-alert-error>
         <!-- [translateValues]="{ id: customer.id }" -->
+        <p id="jhi-create-performance-heading" jhiTranslate="performance.create.question" ></p>
         <div class="form-group">
             <label for="hours">Hours of works (between 0 and 10):</label>
             <input formControlName="hours" #hours type="number" id="hours" name="hours" min="0" max="10">
         </div>
-        <p id="jhi-create-performance-heading" jhiTranslate="freemindTimesheetApp.performance.create.question" ></p>
     </div>
 
     <div class="modal-footer">
@@ -26,7 +26,7 @@
         </button>
         <!-- <fa-icon icon="ban"></fa-icon> -->
         <!-- <fa-icon icon="times"></fa-icon> -->
-        <button id="jhi-confirm-create-customer" type="submit" class="btn btn-danger">
+        <button id="jhi-confirm-create-customer" type="submit" class="btn btn-success">
             &nbsp;<span jhiTranslate="entity.action.create">Create</span>
         </button>
     </div>

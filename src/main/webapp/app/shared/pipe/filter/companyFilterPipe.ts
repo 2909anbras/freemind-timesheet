@@ -10,10 +10,8 @@ export class CompanyFilterPipe implements PipeTransform {
 
     arg = arg.toLocaleLowerCase();
     companies = [...companies.filter(company => company.name?.toLocaleLowerCase().includes(arg))];
-    companies = [...companies.filter(company => company.customers.length > 0)];
+    // companies = [...companies.filter(company => company.customers.length > 0)];
     this.sortingCompanies(companies);
-    console.log('company Pipe');
-    console.log(companies);
     return companies;
   }
 

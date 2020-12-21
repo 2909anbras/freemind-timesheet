@@ -23,6 +23,7 @@ import { CompanyDeleteDialogComponent } from './company-delete-dialog.component'
 })
 export class CompanyComponent implements OnInit, OnDestroy {
   companies?: ICompany[];
+  searchCompany = '';
   eventSubscriber?: Subscription;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;

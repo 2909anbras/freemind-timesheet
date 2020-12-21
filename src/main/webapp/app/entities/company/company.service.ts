@@ -24,6 +24,7 @@ export class CompanyService {
   }
 
   find(id?: number): Observable<EntityResponseType> {
+    console.log(id);
     return this.http.get<ICompany>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 

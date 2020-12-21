@@ -22,6 +22,10 @@ import { AppUserService } from '../app-user/app-user.service';
 })
 export class ProjectComponent implements OnInit, OnDestroy {
   projects?: IProject[];
+  searchProject = '';
+  searchProjectState = 'All';
+  enabledStateList = ['Enable', 'Disabled', 'All'];
+
   eventSubscriber?: Subscription;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;

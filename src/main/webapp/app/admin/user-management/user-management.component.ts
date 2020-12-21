@@ -59,9 +59,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           }
           this.appUserService.findByCompany(this.currentAccount?.companyId, reqBis).subscribe((res: HttpResponse<IAppUser[]>) => {
             const appUsers = res.body;
-            console.log(appUsers);
             if (appUsers) {
-              console.log(appUsers);
               const tmp: number[] = [];
               appUsers.forEach(element => {
                 element.companyId ? tmp.push(element.companyId) : null;
