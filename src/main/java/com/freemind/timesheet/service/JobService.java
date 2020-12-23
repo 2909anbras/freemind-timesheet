@@ -58,9 +58,12 @@ public class JobService {
         job = jobRepository.save(job);
 
         final Job jb = job;
-
-        Project p = projectRepository.findById(job.getProject().getId()).get();
-        p.addJob(job);
+        Project p = null;
+        if (jobDTO.getProjectId() != null) {
+            p = projectRepository.findById(job.getProject().getId()).get();
+            p.addJob(job);
+            projectRepository.save(p);
+        }
         jobRepository.save(job);
 
         job
@@ -69,6 +72,7 @@ public class JobService {
                 ap -> {
                     AppUser tmp = appUserRepository.findById(ap.getId()).get();
                     tmp.addJob(jb);
+                    log.debug("AppUser Jobs: {}", tmp.getJobs());
                     appUserRepository.save(tmp);
                 }
             );

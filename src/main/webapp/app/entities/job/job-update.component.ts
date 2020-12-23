@@ -90,7 +90,6 @@ export class JobUpdateComponent implements OnInit {
       for (let i = 0; i < job.appUsers.length; i++) {
         if (this.users.find(x => job.appUsers![i].id === x.id)) tmp.push(this.users.find(x => job.appUsers![i].id === x.id));
       }
-    console.log(tmp);
     this.editForm.patchValue({
       id: job.id,
       name: job.name,

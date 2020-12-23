@@ -17,18 +17,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSpecificationExecutor<Customer> {
-    //    @Query(
-    ////        value = "select distinct customer from Customer customer left join fetch customer.companies",
-    ////        countQuery = "select count(distinct customer) from Customer customer"
-    //    )
-    //    Page<Customer> findAllWithEagerRelationships(Pageable pageable);
-    //
-    ////    @Query("select distinct customer from Customer customer left join fetch customer.companies")
-    //    List<Customer> findAllWithEagerRelationships();
-    //
-    ////    @Query("select customer from Customer customer left join fetch customer.companies where customer.id =:id")
-    //    Optional<Customer> findOneWithEagerRelationships(@Param("id") Long id);
-
     @Query(
         "SELECT DISTINCT c FROM Customer c " +
         "LEFT JOIN c.projects projects " +
@@ -36,9 +24,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSp
         "LEFT JOIN jobs.appUsers ap " +
         "WHERE ap.id=?1"
     )
-    //			+ "JOIN Job j ON p.jobs.id = j.id ")
-    //			+ "Join AppUser ap ON j.appUsers on ap.id "
-    //			+ "where ap.id =?1 ")
     Page<Customer> findCustomersByUserId(Long appUsersId, Pageable pageable);
 
     @Query("select distinct job.project.customer from Job job left join job.appUsers ap where ap=?1 ")

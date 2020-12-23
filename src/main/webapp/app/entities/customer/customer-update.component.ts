@@ -68,11 +68,14 @@ export class CustomerUpdateComponent implements OnInit {
   }
 
   updateForm(customer: ICustomer): void {
+    let id = 0;
+    if (this.account?.companyId) id = this.account?.companyId;
+    else id = customer.companyId!;
     this.editForm.patchValue({
       id: customer.id,
       name: customer.name,
       enable: customer.enable,
-      companyId: customer.companyId,
+      companyId: id,
     });
   }
 
