@@ -22,6 +22,8 @@ public class ProjectDTO implements Serializable {
 
     private Long customerId;
 
+    private String customerName;
+
     public Set<JobDTO> getJobs() {
         return jobs;
     }
@@ -40,6 +42,14 @@ public class ProjectDTO implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public void setCustomerName(String name) {
+        this.customerName = name;
+    }
+
+    public String getCustomerName() {
+        return this.customerName;
     }
 
     public void setName(String name) {
@@ -88,6 +98,7 @@ public class ProjectDTO implements Serializable {
             ", enable='" + isEnable() + "'" +
             ", jobs='" + getJobs() + "'" +
             ", customerId=" + getCustomerId() +
+            ", customerName="+ getCustomerName()+
             "}";
     }
 }

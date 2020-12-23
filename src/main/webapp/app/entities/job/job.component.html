@@ -53,7 +53,7 @@
                     <td>{{ job.enable }}</td>
                     <td>
                         <div *ngIf="job.projectId">
-                            <a [routerLink]="['/project', job.projectId , 'view']" >{{ job.projectId }}</a>
+                            <a [routerLink]="['/project', job.projectId , 'view']" >{{ job.projectName }}</a>
                         </div>
                     </td>
                     <td class="text-right">

@@ -6,22 +6,18 @@ export interface IProject {
   enable?: boolean;
   jobs: IJob[];
   customerId?: number;
-  // getJobsByUser:(id:number)=>IJob[];
+  customerName?: string;
 }
 
 export class Project implements IProject {
-  constructor(public id?: number, public name?: string, public enable?: boolean, public jobs: IJob[] = []!, public customerId?: number) {
+  constructor(
+    public id?: number,
+    public name?: string,
+    public enable?: boolean,
+    public jobs: IJob[] = []!,
+    public customerName?: string,
+    public customerId?: number
+  ) {
     this.enable = this.enable || false;
   }
-
-  // public getJobsByUser(id:number):IJob[]{
-  //   const jobs: IJob[] = [];
-  //   this.jobs.forEach(j => {
-  //     if (j.appUsers?.some(ap => ap.id === id)) {
-  //       jobs.push(j);
-  //       console.log(j);
-  //     }
-  //   });
-  //   return jobs;
-  // }
 }

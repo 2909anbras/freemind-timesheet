@@ -34,11 +34,12 @@ public class Customer implements Serializable {
     @Column(name = "enable", nullable = false)
     private Boolean enable;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Project> projects = new HashSet<>();
 
     @ManyToOne(cascade = CascadeType.REFRESH) //tester
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE) //pas sûr
     private Company company;
 

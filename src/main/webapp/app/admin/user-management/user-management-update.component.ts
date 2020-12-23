@@ -71,11 +71,6 @@ export class UserManagementUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.route.data.subscribe(({ user }) => {
       this.isNew = user.id === undefined;
-      console.log(this.isNew);
-      // this.userService.authorities().subscribe(authorities => {
-      //   this.authorities = authorities;
-      //   console.log(this.authorities);
-      // });
       if (this.isNew) {
         this.user = new User();
       }
@@ -87,39 +82,15 @@ export class UserManagementUpdateComponent implements OnInit {
       }
       this.setCurrentAccount();
       this.setAuthorities();
-      this.jobService.query().subscribe((res: HttpResponse<IJob[]>) => (this.jobs = res.body || []));
-      if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) this.getAllCompanies();
-      // this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
-      //   this.isAdmin=true;
-      //   this.companies = res.body || [];
-      // });
-      // else { //if current user not admin=> only his company
-      //   this.setCurrentAccount();
-      // this.accountService.identity().subscribe((account: any) => {
-      //   this.account=account;
-      //   this.companyService.find(this.account!.companyId).subscribe((c: HttpResponse<ICompany>) => {
-      //     this.companies.push(c.body!);
-      //   });
-      // this.account=account;
-      // this.appUserService.find(account.id).subscribe((res: HttpResponse<IAppUser>) => {
-      //   if (res.body!.companyId)
-      //     this.companyService.find(res.body?.companyId).subscribe((c: HttpResponse<ICompany>) => {
-      //       this.companies.push(c.body!);
-      //     });
-      // });
-      // });
-      // }
+      this.jobService.query().subscribe((res: HttpResponse<IJob[]>) => (this.jobs = res.body || [])); //by company
 
-      // if (this.isNew) {
-      //   this.showJobs = true;
+      if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) this.getAllCompanies();
+
       if (this.account!.companyId) this.editForm.patchValue({ companyId: this.account?.companyId });
-      // }
-      //  else
+
       this.showJobs = this.isNew || !user.authorities.some((x: string) => x === 'ROLE_ADMIN');
-      // this.showJobs=this.user.companyId!==undefined;//if no company, no jobs
-      console.log(this.user);
+
       if (this.showJobs && !this.isNew) {
-        console.log('DEDANS ET JE DEVRAIS PAS');
         this.appUserService.find(user.id).subscribe((res: HttpResponse<IAppUser>) => {
           const appUser = res.body;
           if (appUser) {
@@ -132,8 +103,6 @@ export class UserManagementUpdateComponent implements OnInit {
       } else this.updateForm(user);
     });
   }
-
-  private completeAdditionalUserInformations(): void {}
 
   private setAuthorities(): void {
     this.userService.authorities().subscribe(authorities => {
@@ -181,7 +150,6 @@ export class UserManagementUpdateComponent implements OnInit {
       );
     } else {
       this.userService.create(this.user).subscribe(
-        //this.user.jobs
         () => this.onSaveSuccess(),
         () => this.onSaveError()
       );
@@ -189,11 +157,6 @@ export class UserManagementUpdateComponent implements OnInit {
   }
 
   private updateForm(user: User): void {
-    // if(this.account!.companyId)
-    //   this.editForm.patchValue({companyId: this.account?.companyId})
-    // else
-    //   this.editForm.patchValue({companyId: user.companyId})
-
     this.editForm.patchValue({
       id: user.id,
       login: user.login,

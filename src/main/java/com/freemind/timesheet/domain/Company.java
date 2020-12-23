@@ -8,6 +8,8 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * A Company.
@@ -31,9 +33,8 @@ public class Company implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<AppUser> appUsers = new HashSet<>();
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL) //mappedBy = "company_customer",
+    @OneToMany(mappedBy = "company", cascade = CascadeType.REFRESH, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    //    @JsonIgnore
     private Set<Customer> customers;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -108,10 +109,10 @@ public class Company implements Serializable {
         this.customers = customer;
     }
 
-    @PreRemove
-    public void removeCustomer() {
-        this.customers = null;
-    }
+    //    @PreRemove
+    //    public void removeCustomer() {
+    //        this.customers = null;
+    //    }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 

@@ -11,6 +11,8 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * A Job.
@@ -49,6 +51,7 @@ public class Job implements Serializable {
     private Boolean enable;
 
     @ManyToOne(cascade = CascadeType.REFRESH)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties(value = "jobs", allowSetters = true)
     private Project project;
 
@@ -212,6 +215,16 @@ public class Job implements Serializable {
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+
+    @PreRemove
+    public void removeAppUsers() {
+        for (AppUser ap : this.appUsers) {
+            ap.removeJob(this);
+        }
+        for (Performance p : this.performances) {
+            p.setJob(null);
+        }
+    }
 
     @Override
     public boolean equals(Object o) {

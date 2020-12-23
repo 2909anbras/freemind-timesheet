@@ -17,12 +17,21 @@ export class CompanyFilterPipe implements PipeTransform {
 
   private sortingCompanies(companies: ICompany[]): void {
     companies.sort((a, b) => {
-      if (a.customers.length > 0 && a.name && b.name) {
-        if (a.name.localeCompare(b.name) > 1) {
+      if (a.name && b.name) {
+        if (a.name.localeCompare(b.name) === 1) {
           return 1;
-        } else if (a.name.localeCompare(b.name) < 1) return -1;
-        else return 0;
-      } else return -1;
+        } else if (a.name.localeCompare(b.name) === -1) {
+          return -1;
+        } else return 1;
+      } else return 1;
     });
+    // companies.sort((a, b) => {
+    //   if (a.customers.length > 0 && a.name && b.name) {
+    //     if (a.name.localeCompare(b.name) > 1) {
+    //       return 1;
+    //     } else if (a.name.localeCompare(b.name) < 1) return -1;
+    //     else return 0;
+    //   } else return -1;
+    // });
   }
 }

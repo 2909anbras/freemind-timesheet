@@ -12,6 +12,7 @@ export interface IJob {
   endDate?: Moment;
   enable?: boolean;
   projectId?: number;
+  projectName?: string;
   appUsers?: IAppUser[];
   performances?: IPerformance[];
 }
@@ -21,6 +22,7 @@ export class Job implements IJob {
     public id?: number,
     public name?: string,
     public description?: string,
+    public projectName?: string,
     public status?: Status,
     public startDate?: Moment,
     public endDate?: Moment,

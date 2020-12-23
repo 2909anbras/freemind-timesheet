@@ -26,6 +26,8 @@ public class JobDTO implements Serializable {
     @Size(min = 20)
     private String description;
 
+    private String projectName;
+
     private Status status;
 
     private LocalDate startDate;
@@ -50,6 +52,14 @@ public class JobDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setProjectName(String name) {
+        this.projectName = name;
+    }
+
+    public String getProjectName() {
+        return this.projectName;
     }
 
     public String getDescription() {

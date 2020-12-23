@@ -84,23 +84,20 @@ export class FullViewComponent implements OnInit {
       }
   }
   private sortingCompanies(): void {
-    console.log('in');
-
     this.showCompanies.sort((a, b) => {
       if (a.name && b.name) {
         if (a.name.localeCompare(b.name) === 1) {
-          return -1;
-        } else if (a.name.localeCompare(b.name) === -1) {
           return 1;
-        } else return -1;
-      } else return -1;
+        } else if (a.name.localeCompare(b.name) === -1) {
+          return -1;
+        } else return 1;
+      } else return 1;
     });
 
-    this.showCompanies.sort((a, b) => {
-      if (a.customers.length === 0) return 1;
-      else return -1;
-    });
-    console.log(this.showCompanies);
+    // this.showCompanies.sort((a, b) => {
+    //   if (a.customers.length === 0) return 1;
+    //   else return -1;
+    // });
   }
 
   public switchCompanyHidden(): void {
