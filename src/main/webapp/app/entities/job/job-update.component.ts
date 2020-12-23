@@ -86,6 +86,7 @@ export class JobUpdateComponent implements OnInit {
   updateForm(job: IJob): void {
     //convert appusers to users for the patch
     const tmp = [];
+    console.log(job);
     if (job.appUsers)
       for (let i = 0; i < job.appUsers.length; i++) {
         if (this.users.find(x => job.appUsers![i].id === x.id)) tmp.push(this.users.find(x => job.appUsers![i].id === x.id));

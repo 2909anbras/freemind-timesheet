@@ -34,8 +34,8 @@ export class PerformanceCreateDialogComponent implements OnInit {
   min = 0;
   max = 10;
   createForm: FormGroup = this.fb.group({
-    hours: ['', [Validators.required], numberRangeValidator(this.min, this.max)],
-    description: [''],
+    hours: ['', [Validators.required]], //,[numberRangeValidator(this.min, this.max)]
+    description: ['', []],
   });
   constructor(
     public activeModal: NgbActiveModal,
@@ -51,7 +51,7 @@ export class PerformanceCreateDialogComponent implements OnInit {
     this.customerToString = 'Customer: ' + '\n' + this.customer?.name;
     this.projectToString = 'Project: ' + '\n' + this.project?.name;
     this.jobToString = 'Job: ' + '\n' + this.job?.name;
-    if (performance) {
+    if (this.performance !== null) {
       this.updateForm();
       this.isNew = false;
     }

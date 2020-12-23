@@ -24,8 +24,6 @@ import { IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
 import { IPerformance } from 'app/shared/model/performance.model';
 
-import * as moment from 'moment';
-
 type SelectableEntity = IUser;
 
 @Component({
@@ -249,11 +247,6 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     return str;
   }
 
-  private incrementDay(): void {
-    this.day++;
-    if (this.day > 31) this.day = 1;
-  }
-
   private setMonthName(): void {
     this.monthName = 'Date: ' + this.months[this.dateCopy.getMonth()] + ' ' + this.dateCopy.getFullYear();
   }
@@ -283,15 +276,16 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getPerformance(job: IJob, i: number): any {
     const date: Date = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1);
-    let perf: any;
+    let perf: any = null;
     let a: any;
     //add some pour améliorer perf. If some alors foreach
     if (job.performances) {
+      //vérifier que id corresponde à current.(si current)
       for (const p of job?.performances) {
         if (p.date) {
           a = new Date(p.date.toString());
         }
-        if (p.date && this.compareDate(a, date)) {
+        if (p.date && this.compareDate(a, date) && p.appUserId === this.currentEmployee?.id) {
           perf = p;
         }
       }
@@ -323,18 +317,8 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public IsDisable(i: number): boolean {
-    //faut le faire avancer le coco
     const bool = true;
-    // this.currentIndex!==i?this.currentIndex=i:null;
-    // if()
-    // if(this.days[this.cptTd]==="Sat"||this.days[this.cptTd]==="Sun"){
-    //   bool=false;
-    // }
-    // console.log(this.cptTd);
-    // console.log(this.days[this.cptTd]);
-    // this.cptTd++;
-    // if(this.cptTd===7)
-    //   this.cptTd=0;
+
     return bool;
   }
 }

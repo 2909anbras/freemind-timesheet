@@ -254,6 +254,7 @@ public class Job implements Serializable {
             ", endDate='" + getEndDate() + "'" +
             ", enable='" + isEnable() + "'" +
             ", performances="+getPerformances().size()+"'"+
+            ", users="+getAppUsers()+"'"+
             "}";
     }
 }

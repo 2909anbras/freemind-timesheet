@@ -53,8 +53,9 @@ public class JobService {
      * @return the persisted entity.
      */
     public JobDTO save(JobDTO jobDTO) {
-        log.debug("Request to save Job : {}", jobDTO);
+        log.debug("Request to save Job : {}", jobDTO); //ok
         Job job = jobMapper.toEntity(jobDTO);
+        log.debug("||||||||||||||||||||||||||||||Request to save Job : {}", job);
         job = jobRepository.save(job);
 
         final Job jb = job;
