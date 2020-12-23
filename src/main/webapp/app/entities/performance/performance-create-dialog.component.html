@@ -18,6 +18,9 @@
             <label for="hours">Hours of works (between 0 and 10):</label>
             <input formControlName="hours" #hours type="number" id="hours" name="hours" min="0" max="10">
         </div>
+        <label class="form-control-label" jhiTranslate="freemindTimesheetApp.job.description" for="field_description">Description</label>
+        <input type="text" class="form-control" name="description" id="field_description"
+               formControlName="description"/>
     </div>
 
     <div class="modal-footer">

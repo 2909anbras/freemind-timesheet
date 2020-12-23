@@ -18,7 +18,6 @@
     <input style="width: 10%;" type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
     <label >Employee</label>
     <select style="width: 10%;" class="form-control" (change)="onChange()" [(ngModel)]="currentEmployee" >
-        <option [ngValue]=null></option>
         <option *ngFor="let employee of employees; trackBy: trackById" [ngValue]="employee">{{employee.login}}</option>
     </select>
 </div>

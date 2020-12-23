@@ -56,10 +56,13 @@ export class JobUpdateComponent implements OnInit {
       e ? (this.currentAccount = e) : null;
     });
     this.activatedRoute.data.subscribe(({ job }) => {
-      this.updateForm(job);
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
         //by job Company!
-        this.projectService.query().subscribe((res: HttpResponse<IProject[]>) => (this.projects = res.body || []));
+        //users by company if admin
+        this.projectService.query().subscribe((res: HttpResponse<IProject[]>) => {
+          this.projects = res.body || [];
+          this.updateForm(job);
+        });
       } else {
         if (this.currentAccount) {
           this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
@@ -68,6 +71,7 @@ export class JobUpdateComponent implements OnInit {
               this.currentAccount!.companyId = appUser.companyId;
               this.userService.findAllByCompany(this.currentAccount!.companyId).subscribe((users: HttpResponse<IUser[]>) => {
                 if (users.body) this.users = users.body;
+                this.updateForm(job);
               });
               this.projectService.getProjectByCompanyId(this.currentAccount!.companyId, null).subscribe((res: HttpResponse<IProject[]>) => {
                 this.projects = res.body || [];
@@ -80,6 +84,13 @@ export class JobUpdateComponent implements OnInit {
   }
 
   updateForm(job: IJob): void {
+    //convert appusers to users for the patch
+    const tmp = [];
+    if (job.appUsers)
+      for (let i = 0; i < job.appUsers.length; i++) {
+        if (this.users.find(x => job.appUsers![i].id === x.id)) tmp.push(this.users.find(x => job.appUsers![i].id === x.id));
+      }
+    console.log(tmp);
     this.editForm.patchValue({
       id: job.id,
       name: job.name,
@@ -89,7 +100,7 @@ export class JobUpdateComponent implements OnInit {
       endDate: job.endDate,
       enable: job.enable,
       projectId: job.projectId,
-      users: job.appUsers,
+      users: tmp,
     });
   }
 
@@ -108,6 +119,12 @@ export class JobUpdateComponent implements OnInit {
   }
 
   private createFromForm(): IJob {
+    //convert users to appUsers
+    console.log(this.editForm.get(['users'])!.value);
+    const tmp = [];
+    for (const u of this.editForm.get(['users'])!.value) {
+      tmp.push(new AppUser(u.id));
+    }
     return {
       ...new Job(),
       id: this.editForm.get(['id'])!.value,
@@ -118,7 +135,8 @@ export class JobUpdateComponent implements OnInit {
       endDate: this.editForm.get(['endDate'])!.value,
       enable: this.editForm.get(['enable'])!.value,
       projectId: this.editForm.get(['projectId'])!.value,
-      // appUsers:this.editForm.get(['users'])!.value,//change users by appUsers
+      //change users by appUsers
+      appUsers: tmp,
     };
   }
 

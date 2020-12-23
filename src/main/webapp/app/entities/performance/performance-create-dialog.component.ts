@@ -35,6 +35,7 @@ export class PerformanceCreateDialogComponent implements OnInit {
   max = 10;
   createForm: FormGroup = this.fb.group({
     hours: ['', [Validators.required], numberRangeValidator(this.min, this.max)],
+    description: [''],
   });
   constructor(
     public activeModal: NgbActiveModal,
@@ -57,9 +58,9 @@ export class PerformanceCreateDialogComponent implements OnInit {
   }
 
   private updateForm(): void {
-    //disable btn
     this.createForm.patchValue({
       hours: this.performance!.hours,
+      description: this.performance!.description,
     });
   }
 
@@ -74,6 +75,7 @@ export class PerformanceCreateDialogComponent implements OnInit {
     this.performanceService
       .create({
         hours: this.createForm?.get('hours')!.value,
+        description: this.createForm?.get('description')!.value,
         date: this.date!,
         jobId: this.job?.id,
         appUserId: this.currentEmployee?.id,

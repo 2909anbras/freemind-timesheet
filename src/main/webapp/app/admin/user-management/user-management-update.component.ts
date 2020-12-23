@@ -12,6 +12,7 @@ import { JobService } from 'app/entities/job/job.service';
 
 import { IAppUser } from 'app/shared/model/app-user.model';
 import { AppUserService } from 'app/entities/app-user/app-user.service';
+import { Account } from 'app/core/user/account.model';
 
 import { LANGUAGES } from 'app/core/language/language.constants';
 import { User } from 'app/core/user/user.model';
@@ -25,6 +26,7 @@ type SelectableEntity = ICompany | IJob; //
   templateUrl: './user-management-update.component.html',
 })
 export class UserManagementUpdateComponent implements OnInit {
+  isAdmin = false;
   account?: Account;
   user!: User;
   languages = LANGUAGES;
@@ -68,46 +70,95 @@ export class UserManagementUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.data.subscribe(({ user }) => {
-      this.userService.authorities().subscribe(authorities => {
-        this.authorities = authorities;
-      });
-      this.jobService.query().subscribe((res: HttpResponse<IJob[]>) => (this.jobs = res.body || []));
-      if (this.accountService.hasAnyAuthority('ROLE_ADMIN'))
-        this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
-          this.companies = res.body || [];
-        });
-      else {
-        this.accountService.identity().subscribe((account: any) => {
-          this.appUserService.find(account.id).subscribe((res: HttpResponse<IAppUser>) => {
-            if (res.body!.companyId)
-              this.companyService.find(res.body?.companyId).subscribe((c: HttpResponse<ICompany>) => {
-                this.companies.push(c.body!);
-              });
-          });
-        });
-      }
-
       this.isNew = user.id === undefined;
+      console.log(this.isNew);
+      // this.userService.authorities().subscribe(authorities => {
+      //   this.authorities = authorities;
+      //   console.log(this.authorities);
+      // });
       if (this.isNew) {
-        this.showJobs = true;
-      } else this.showJobs = !user.authorities.some((x: string) => x === 'ROLE_ADMIN');
+        this.user = new User();
+      }
       if (user) {
         this.user = user;
         if (this.user.id === undefined) {
           this.user.activated = true;
         }
-        if (this.showJobs && !this.isNew) {
-          this.appUserService.find(user.id).subscribe((res: HttpResponse<IAppUser>) => {
-            const appUser = res.body;
-            if (appUser) {
-              this.user.companyId = appUser.companyId;
-              this.user.phone = appUser.phone;
-              this.user.jobs = appUser.jobs;
-              this.updateForm(user);
-            }
-          });
-        }
       }
+      this.setCurrentAccount();
+      this.setAuthorities();
+      this.jobService.query().subscribe((res: HttpResponse<IJob[]>) => (this.jobs = res.body || []));
+      if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) this.getAllCompanies();
+      // this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
+      //   this.isAdmin=true;
+      //   this.companies = res.body || [];
+      // });
+      // else { //if current user not admin=> only his company
+      //   this.setCurrentAccount();
+      // this.accountService.identity().subscribe((account: any) => {
+      //   this.account=account;
+      //   this.companyService.find(this.account!.companyId).subscribe((c: HttpResponse<ICompany>) => {
+      //     this.companies.push(c.body!);
+      //   });
+      // this.account=account;
+      // this.appUserService.find(account.id).subscribe((res: HttpResponse<IAppUser>) => {
+      //   if (res.body!.companyId)
+      //     this.companyService.find(res.body?.companyId).subscribe((c: HttpResponse<ICompany>) => {
+      //       this.companies.push(c.body!);
+      //     });
+      // });
+      // });
+      // }
+
+      // if (this.isNew) {
+      //   this.showJobs = true;
+      if (this.account!.companyId) this.editForm.patchValue({ companyId: this.account?.companyId });
+      // }
+      //  else
+      this.showJobs = this.isNew || !user.authorities.some((x: string) => x === 'ROLE_ADMIN');
+      // this.showJobs=this.user.companyId!==undefined;//if no company, no jobs
+      console.log(this.user);
+      if (this.showJobs && !this.isNew) {
+        console.log('DEDANS ET JE DEVRAIS PAS');
+        this.appUserService.find(user.id).subscribe((res: HttpResponse<IAppUser>) => {
+          const appUser = res.body;
+          if (appUser) {
+            this.user.companyId = appUser.companyId;
+            this.user.phone = appUser.phone;
+            this.user.jobs = appUser.jobs;
+          }
+          this.updateForm(user);
+        });
+      } else this.updateForm(user);
+    });
+  }
+
+  private completeAdditionalUserInformations(): void {}
+
+  private setAuthorities(): void {
+    this.userService.authorities().subscribe(authorities => {
+      this.authorities = authorities;
+      console.log(this.authorities);
+    });
+  }
+
+  private setCurrentAccount(): void {
+    this.accountService.identity().subscribe((account: any) => {
+      this.account = account;
+      if (this.account?.companyId) this.setCurrentCompany();
+    });
+  }
+
+  private setCurrentCompany(): void {
+    this.companyService.find(this.account!.companyId).subscribe((c: HttpResponse<ICompany>) => {
+      this.companies.push(c.body!);
+    });
+  }
+
+  private getAllCompanies(): void {
+    this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => {
+      this.isAdmin = true;
+      this.companies = res.body || [];
     });
   }
 
@@ -138,6 +189,11 @@ export class UserManagementUpdateComponent implements OnInit {
   }
 
   private updateForm(user: User): void {
+    // if(this.account!.companyId)
+    //   this.editForm.patchValue({companyId: this.account?.companyId})
+    // else
+    //   this.editForm.patchValue({companyId: user.companyId})
+
     this.editForm.patchValue({
       id: user.id,
       login: user.login,

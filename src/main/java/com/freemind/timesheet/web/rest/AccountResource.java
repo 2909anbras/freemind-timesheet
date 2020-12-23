@@ -136,11 +136,16 @@ public class AccountResource {
      * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
      */
     @GetMapping("/account") //try to add the current company id
-    public UserDTO getAccount() {
-        return userService
-            .getUserWithAuthorities()
-            .map(UserDTO::new)
-            .orElseThrow(() -> new AccountResourceException("User could not be found"));
+    public ManagedUserVM getAccount() { //userDTO
+        ManagedUserVM user = userService.getUserWithAuthorities();
+        if (user == null) {
+            throw new AccountResourceException("User could not be found");
+        }
+        return user;
+        //        return userService
+        //            .getUserWithAuthorities()
+        ////            .map(UserDTO::new)
+        //            .orElseThrow(() -> new AccountResourceException("User could not be found"));
     }
 
     /**

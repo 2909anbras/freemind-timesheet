@@ -30,6 +30,19 @@ public class ManagedUserVM extends UserDTO {
         // Empty constructor needed for Jackson.
     }
 
+    public ManagedUserVM(UserDTO userDto) {
+        this.setId(userDto.getId());
+        this.setAuthorities(userDto.getAuthorities());
+        this.setEmail(userDto.getEmail());
+        this.setFirstName(userDto.getFirstName());
+        this.setLangKey(userDto.getLangKey());
+        this.setLastName(userDto.getLastName());
+        this.setLogin(userDto.getLogin());
+        this.setImageUrl(userDto.getImageUrl());
+        this.setActivated(userDto.isActivated());
+        // TODO Auto-generated constructor stub
+    }
+
     public String getPhone() {
         return phone;
     }

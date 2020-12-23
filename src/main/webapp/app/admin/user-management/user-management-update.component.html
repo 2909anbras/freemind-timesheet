@@ -5,14 +5,14 @@
                 Create or edit a User
             </h2>
 
-            <div *ngIf="user">
+            
                 <jhi-alert-error></jhi-alert-error>
-
+            <div *ngIf="user">
                 <div class="form-group" [hidden]="!user.id">
                     <label jhiTranslate="global.field.id">ID</label>
                     <input type="text" class="form-control" name="id" formControlName="id" readonly>
                 </div>
-
+            <!-- </div> -->
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="userManagement.login">Login</label>
                     <input type="text" class="form-control" name="login"
@@ -132,22 +132,21 @@
             <label class="form-control-label" for="phone" data-translate="global.form.phone">Phone</label>
             <input type="tel" class="form-control" id="phone" name="phone" value="{{user.phone}}" placeholder="{{'global.form.phone.placeholder' | translate}}"
             formControlName="phone">
-    </div>
-            <div  class="form-group">
-                <label jhiTranslate="freemindTimesheetApp.appUser.job" for="field_jobs">Job</label>
-                <select class="form-control" id="field_jobs" multiple name="jobs" formControlName="jobs">
-                    <option [ngValue]="getSelected(editForm.get('jobs')!.value, jobOption)" *ngFor="let jobOption of jobs; trackBy: trackById">{{ jobOption.name }}</option>
-                </select>
-            </div>
-
-            <div  class="form-group">
-                <label class="form-control-label" jhiTranslate="timeSheetApp.appUser.company" for="field_company">Company</label>
-                <select class="form-control" id="field_company" [disabled]="showJobs" name="company" formControlName="companyId">
-                    <option [ngValue]="companyOption.id" *ngFor="let companyOption of companies; trackBy: trackById">{{ companyOption.name }}</option>
-                </select>
-            </div>
-
         </div>
+        <div  class="form-group">
+            <label jhiTranslate="freemindTimesheetApp.appUser.job" for="field_jobs">Job</label>
+            <select class="form-control" id="field_jobs" multiple name="jobs" formControlName="jobs">
+                <option [ngValue]="getSelected(editForm.get('jobs')!.value, jobOption)" *ngFor="let jobOption of jobs; trackBy: trackById">{{ jobOption.name }}</option>
+            </select>
+        </div>
+
+        <div  class="form-group">
+            <label class="form-control-label" jhiTranslate="timeSheetApp.appUser.company" for="field_company">Company</label>
+            <select class="form-control" id="field_company" [disabled]="isNew && !isAdmin" name="company" formControlName="companyId">
+                <option [ngValue]="companyOption.id" *ngFor="let companyOption of companies; trackBy: trackById">{{ companyOption.name }}</option>
+            </select>
+        </div>
+    </div>
        
             <div *ngIf="user">
                 <button type="button" class="btn btn-secondary" (click)="previousState()">

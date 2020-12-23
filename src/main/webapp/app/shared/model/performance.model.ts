@@ -1,5 +1,3 @@
-import { IJob } from 'app/shared/model/job.model';
-
 export interface IPerformance {
   id?: number;
   hours?: number;
@@ -16,6 +14,6 @@ export class Performance implements IPerformance {
     public jobId?: number,
     public appUserId?: number,
     public date?: Date,
-    description?: string
+    public description?: string
   ) {}
 }

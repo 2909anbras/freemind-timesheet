@@ -421,8 +421,22 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> getUserWithAuthorities() {
-        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByLogin);
+    public ManagedUserVM getUserWithAuthorities() { // {Optional<User>
+        //    	UserDTO userDto= SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByLogin).map(UserDTO::new).get();
+        Optional<User> opt = SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByLogin);
+        UserDTO userDto = null;
+        log.debug("optUser: {}", opt.get());
+
+        if (opt.isPresent()) {
+            userDto = new UserDTO(opt.get());
+        }
+        if (userDto != null) {
+            ManagedUserVM user = new ManagedUserVM(userDto);
+            Optional<AppUser> tmpU = this.appUserRepository.findById(user.getId());
+            if (tmpU.isPresent()) user.setCompanyId(tmpU.get().getId());
+            return user;
+        } else return null;
+        //        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByLogin);
     }
 
     /**
