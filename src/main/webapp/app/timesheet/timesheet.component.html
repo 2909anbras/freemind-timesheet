@@ -16,10 +16,12 @@
     <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchProject" placeholder="*">
     <label jhiTranslate="global-view.job-filter">Job</label>
     <input style="width: 10%;" type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
-    <label >Employee</label>
-    <select style="width: 10%;" class="form-control" (change)="onChange()" [(ngModel)]="currentEmployee" >
-        <option *ngFor="let employee of employees; trackBy: trackById" [ngValue]="employee">{{employee.login}}</option>
-    </select>
+    <div *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" >
+        <label >Employee</label>
+        <select style="width: 10%;" class="form-control" (change)="onChange()" [(ngModel)]="currentEmployee" >
+            <option *ngFor="let employee of employees; trackBy: trackById" [ngValue]="employee">{{employee.login}}</option>
+        </select>
+    </div>
 </div>
 
 <div>

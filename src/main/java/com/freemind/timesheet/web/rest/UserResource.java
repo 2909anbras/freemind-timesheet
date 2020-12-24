@@ -165,7 +165,7 @@ public class UserResource {
 
     @GetMapping("/users/company/{companyId}")
     public ResponseEntity<List<ManagedUserVM>> getAllUsersByCompany(@PathVariable Long companyId) {
-        log.debug("<------------------------------------------------ICI----------------------------------------------> : {}", companyId);
+        log.debug("CompanyId: {}", companyId);
 
         final List<ManagedUserVM> users = userService.getAllByCompany(companyId);
         return ResponseEntity.ok().body(users);
