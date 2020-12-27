@@ -102,10 +102,9 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.cptTd = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), 1).getDay();
     this.monthName = this.months[this.date.getMonth()];
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
+
     this.setMonthName();
     if (this.currentAccount) {
-      //define the currentEMployee
-      //if admin|current_admin=> allusers et currentEmployee
       if (this.isAdmin()) {
         this.companyService.query(null).subscribe((res: HttpResponse<ICompany[]>) => {
           res.body ? (this.companies = res.body) : null;
@@ -114,6 +113,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
           this.currentAccount && res.body ? (this.currentAccount.companyId = res.body.companyId) : null;
           this.currentEmployee = this.currentAccount;
+          console.log(this.currentEmployee);
           if (this.isCustomerAdmin() && this.currentEmployee) {
             this.currentEmployee.companyId //not working
               ? this.userService.findAllByCompany(this.currentEmployee.companyId).subscribe((res: HttpResponse<IUser[]>) => {
@@ -143,8 +143,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   public setCustomers(): void {
     if (this.currentEmployee)
       this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {
-        res.body ? (this.customers = res.body) : null;
-        console.log(this.customers);
+        res.body ? (this.customers = res.body) : (this.customers = []);
       });
   }
 
