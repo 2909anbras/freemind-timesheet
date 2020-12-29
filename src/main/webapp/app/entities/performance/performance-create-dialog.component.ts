@@ -56,9 +56,9 @@ export class PerformanceCreateDialogComponent implements OnInit {
       this.isNew = false;
     }
   }
-  get f() {
-    return this.createForm.controls;
-  }
+  // get f() {
+  //   return this.createForm.controls;
+  // }
 
   private updateForm(): void {
     this.createForm.patchValue({

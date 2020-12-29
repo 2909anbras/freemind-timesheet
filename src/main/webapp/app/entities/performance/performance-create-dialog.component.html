@@ -17,8 +17,11 @@
         <div class="form-group">
             <label for="hours">Hours of works (between 0 and 16):</label>
             <input formControlName="hours" #hours type="number" id="hours" name="hours" min="0" max="10">
-            <div *ngIf="f.createForm.errors">
-                Invalid hours, must be between 0 and 16
+            <div *ngIf="createForm.get('hours')?.errors?.min">
+                Hours to low, must be between 0 and 16
+               </div>
+               <div *ngIf="createForm.get('hours')?.errors?.max">
+                Hours to high, must be between 0 and 16
                </div>
         </div>
         <label class="form-control-label" jhiTranslate="freemindTimesheetApp.job.description" for="field_description">Description</label>
@@ -32,7 +35,7 @@
         </button>
         <!-- <fa-icon icon="ban"></fa-icon> -->
         <!-- <fa-icon icon="times"></fa-icon> -->
-        <button id="jhi-confirm-create-customer" type="submit" class="btn btn-success">
+        <button id="jhi-confirm-create-customer" type="submit" class="btn btn-success" [disabled]="createForm.invalid">
             &nbsp;<span jhiTranslate="entity.action.create">Create</span>
         </button>
     </div>

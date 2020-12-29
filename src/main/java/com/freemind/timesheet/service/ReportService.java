@@ -28,7 +28,11 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
+@Transactional
 public class ReportService {
     private final Logger log = LoggerFactory.getLogger(ReportRessource.class);
     private final UserService userService;
@@ -38,7 +42,7 @@ public class ReportService {
 
     private static int CPTV; //cpt vertical (for row)
     private static int CPTH; //cpt horizontal(for cell)
-    private static int CPTHMAX;
+    private static int CPTHMAX; //total days of the month
 
     public ReportService(CompanyService companyService, JobService jobService, AppUserService appUserService, UserService userService) {
         this.userService = userService;
