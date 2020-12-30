@@ -3,8 +3,9 @@
     "title": "FreemindTimesheet",
     "browsehappy": "U gebruikt een <strong>verouderde</strong> browser. <a href=\"http://browsehappy.com/?locale=en\">upgrade uw browser</a> om de bruikbaarheid te verbeteren.",
     "menu": {
+      "timesheet": "rooster",
       "home": "Startpagina",
-      "registry": "registry",
+      "registry": "register",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Beheer",

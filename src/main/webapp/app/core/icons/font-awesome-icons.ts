@@ -38,6 +38,7 @@ import {
   faAngleDoubleUp,
   faChevronCircleUp,
   faChevronCircleDown,
+  faClock,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -80,4 +81,5 @@ export const fontAwesomeIcons = [
   faAngleDoubleUp,
   faChevronCircleUp,
   faChevronCircleDown,
+  faClock,
 ];

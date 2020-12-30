@@ -44,10 +44,10 @@ export class CustomerUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ customer }) => {
-      this.updateForm(customer);
-      if (this.accountService.hasAnyAuthority('ROLE_ADMIN'))
+      if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
         this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => (this.companies = res.body || []));
-      else {
+        this.updateForm(customer);
+      } else {
         this.accountService.identity().subscribe(account => {
           if (account) {
             this.account = account;
@@ -61,6 +61,7 @@ export class CustomerUpdateComponent implements OnInit {
                 });
               }
             });
+            this.updateForm(customer);
           }
         });
       }
