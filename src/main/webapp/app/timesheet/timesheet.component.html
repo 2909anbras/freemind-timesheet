@@ -4,9 +4,11 @@
 
 <div>
     <div *jhiHasAnyAuthority="['ROLE_ADMIN']" >
+        <label jhiTranslate="global-view.company-filter">Company</label>
         <select style="width: 10%;" class="form-control" (change)="onChangeCompany()" [(ngModel)]="companySelected" >
             <option *ngFor="let company of companies" [ngValue]="company">{{company.name}}</option>
         </select>
+        <div>{{companies.length}}</div>
     </div>
     <label jhiTranslate="global-view.customer-filter">CUSTOMER</label>
     <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">
@@ -14,15 +16,17 @@
     <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchProject" placeholder="*">
     <label jhiTranslate="global-view.job-filter">Job</label>
     <input style="width: 10%;" type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
-    <div *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" >
-        <label >Employee</label>
-        <select style="width: 10%;" class="form-control" (change)="onChange()" [(ngModel)]="currentEmployee" >
-            <option *ngFor="let employee of employees; trackBy: trackById" [ngValue]="employee">{{employee.login}}</option>
-        </select>
+    <div *ngIf="employees != []">
+        <div *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" >
+            <label >Employee</label>
+            <select style="width: 10%;" class="form-control" (change)="onChangeEmployee()" [(ngModel)]="currentEmployee" >
+                <option *ngFor="let employee of employees; trackBy: trackById" [ngValue]="employee">{{employee.login}}</option>
+            </select>
+        </div>
     </div>
-    <div>
+    <div *ngIf="currentEmployee != null">
         <p><b>Employee : </b> {{ currentEmployee!.login }}</p>
-      </div>
+    </div>
 </div>
 
 <div>

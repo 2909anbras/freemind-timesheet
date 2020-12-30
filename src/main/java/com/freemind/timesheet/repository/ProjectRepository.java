@@ -3,6 +3,7 @@ package com.freemind.timesheet.repository;
 import com.freemind.timesheet.domain.Company;
 import com.freemind.timesheet.domain.Project;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Repository;
 public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpecificationExecutor<Project> {
     ////	@Query("select project from Job job where project.jobs.id in ?1")
     //	Page<Project> findByJobsId(List<Long> jobsId, Specification specification,Pageable pageable);
+
+    @Query("select distinct project from Project project left join project.jobs j where j.id =?1")
+    Optional<Project> findProjectByJob(Long id);
 
     @Query("select distinct project from Project project left join project.jobs")
     Page<Project> findAllWithEagerRelationships(Specification specification, Pageable pageable);

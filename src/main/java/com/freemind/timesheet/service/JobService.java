@@ -5,10 +5,12 @@ import com.freemind.timesheet.domain.Customer;
 import com.freemind.timesheet.domain.Job;
 import com.freemind.timesheet.domain.Project;
 import com.freemind.timesheet.repository.AppUserRepository;
+import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.repository.JobRepository;
 import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.service.dto.JobDTO;
 import com.freemind.timesheet.service.mapper.JobMapper;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -24,6 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class JobService {
+    private final CompanyRepository companyRepository;
+
+    private final CompanyService companyService;
+
     private final Logger log = LoggerFactory.getLogger(JobService.class);
 
     private final ProjectRepository projectRepository;
@@ -35,11 +41,15 @@ public class JobService {
     private final JobMapper jobMapper;
 
     public JobService(
+        CompanyService companyService,
         JobRepository jobRepository,
         ProjectRepository projectRepository,
         AppUserRepository appUserRepository,
-        JobMapper jobMapper
+        JobMapper jobMapper,
+        CompanyRepository companyRepository
     ) {
+        this.companyRepository = companyRepository;
+        this.companyService = companyService;
         this.appUserRepository = appUserRepository;
         this.projectRepository = projectRepository;
         this.jobRepository = jobRepository;
@@ -53,27 +63,31 @@ public class JobService {
      * @return the persisted entity.
      */
     public JobDTO save(JobDTO jobDTO) {
-        log.debug("Request to save Job : {}", jobDTO); //ok
+        Optional<Project> projectToRemove;
+        Project p;
+        log.debug("Request to save Job : {}", jobDTO);
         Job job = jobMapper.toEntity(jobDTO);
-        log.debug("||||||||||||||||||||||||||||||Request to save Job : {}", job);
-        job = jobRepository.save(job);
-
-        final Job jb = job;
-        Project p = null;
+        projectToRemove = projectRepository.findProjectByJob(jobDTO.getId());
+        jobRepository.save(job);
         if (jobDTO.getProjectId() != null) {
-            p = projectRepository.findById(job.getProject().getId()).get();
+            if (projectToRemove.isPresent() && jobDTO.getProjectId() != projectToRemove.get().getId()) {
+                projectToRemove.get().removeJob(job);
+                projectRepository.save(projectToRemove.get());
+            }
+            p = projectRepository.findById(jobDTO.getProjectId()).get();
             p.addJob(job);
             projectRepository.save(p);
+            job.setProject(p);
+            jobRepository.save(job);
         }
-        jobRepository.save(job);
 
         job
             .getAppUsers()
             .forEach(
                 ap -> {
                     AppUser tmp = appUserRepository.findById(ap.getId()).get();
-                    tmp.addJob(jb);
-                    log.debug("AppUser Jobs: {}", tmp.getJobs());
+                    tmp.addJob(job);
+                    log.debug("AppUser : {}", ap);
                     appUserRepository.save(tmp);
                 }
             );

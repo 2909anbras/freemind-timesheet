@@ -170,6 +170,7 @@ public class AppUser implements Serializable {
             "id=" + getId() +
             ", phone=" + getPhone() +
             ", customers= "+ getPerformances()+ "'"+
+            "Company="+getCompany()+""+
             "}";
     }
 }

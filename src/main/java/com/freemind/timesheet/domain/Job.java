@@ -2,7 +2,9 @@ package com.freemind.timesheet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.freemind.timesheet.domain.enumeration.Status;
+import com.freemind.timesheet.service.JobService;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -13,6 +15,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Job.
@@ -21,6 +25,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "job", schema = "public")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Job implements Serializable {
+    private static Logger log = LoggerFactory.getLogger(Job.class);
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -50,7 +56,7 @@ public class Job implements Serializable {
     @Column(name = "enable")
     private Boolean enable;
 
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties(value = "jobs", allowSetters = true)
     private Project project;
@@ -218,10 +224,10 @@ public class Job implements Serializable {
 
     @PreRemove
     public void removeAppUsers() {
-        for (AppUser ap : this.appUsers) {
+        if (this.appUsers.size() > 0) for (AppUser ap : this.appUsers) {
             ap.removeJob(this);
         }
-        for (Performance p : this.performances) {
+        if (this.performances.size() > 0) for (Performance p : this.performances) {
             p.setJob(null);
         }
     }
@@ -255,6 +261,7 @@ public class Job implements Serializable {
             ", enable='" + isEnable() + "'" +
             ", performances="+getPerformances().size()+"'"+
             ", users="+getAppUsers()+"'"+
+            ", project="+getProject()+
             "}";
     }
 }

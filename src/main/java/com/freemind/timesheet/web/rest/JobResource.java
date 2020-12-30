@@ -82,6 +82,8 @@ public class JobResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         JobDTO result = jobService.save(jobDTO);
+        log.debug("JOB UPDATED : {}", result);
+
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, jobDTO.getId().toString()))

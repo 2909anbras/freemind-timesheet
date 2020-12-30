@@ -108,6 +108,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
       if (this.isAdmin()) {
         this.companyService.query(null).subscribe((res: HttpResponse<ICompany[]>) => {
           res.body ? (this.companies = res.body) : null;
+          console.log(this.companies);
         });
       } else {
         this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
@@ -132,12 +133,14 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  private setEmployees(companyId?: number): void {
+  private setEmployees(companyId?: number): IUser[] {
     if (companyId)
       this.userService.findAllByCompany(companyId).subscribe((res: HttpResponse<IUser[]>) => {
-        console.log(res.body);
         res.body ? (this.employees = res.body) : null;
+        console.log(this.employees);
+        return res.body;
       });
+    return [];
   }
 
   public setCustomers(): void {
@@ -152,7 +155,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     customer.projects.forEach(p => {
       p.jobs.forEach(j => {
         if (j.appUsers?.some(ap => ap.id === this.currentEmployee?.id)) {
-          projects.push(p);
+          projects.some(x => p.id === x.id) ? null : projects.push(p);
         }
       });
     });
@@ -250,17 +253,22 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.monthName = 'Date: ' + this.months[this.dateCopy.getMonth()] + ' ' + this.dateCopy.getFullYear();
   }
 
-  onChange(): void {
+  onChangeEmployee(): void {
     //change currentEmployee
     console.log(this.currentEmployee);
     this.setCustomers();
   }
 
   onChangeCompany(): void {
-    this.setEmployees(this.companySelected?.id);
-    console.log('EMPLOYEES');
-    console.log(this.employees);
-    this.employees.length === 0 ? (this.customers = []) : null;
+    console.log('COMPANY CHANGE');
+    console.log(this.companySelected);
+    this.employees = this.setEmployees(this.companySelected?.id);
+    if (this.employees.length === 0) {
+      this.customers = [];
+      this.currentEmployee = null;
+    }
+    console.log('CUSTOMERS CHANGE');
+    console.log(this.customers);
   }
 
   trackById(index: number, item: SelectableEntity): any {
@@ -317,8 +325,8 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   public IsDisable(i: number): boolean {
     const bool = true;
-
-    return bool;
+    return !(new Date() < new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1));
+    // return bool;
   }
 }
 // this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {

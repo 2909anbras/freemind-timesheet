@@ -22,12 +22,12 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSp
         "LEFT JOIN c.projects projects " +
         "LEFT JOIN projects.jobs jobs " +
         "LEFT JOIN jobs.appUsers ap " +
-        "WHERE ap.id=?1"
+        "WHERE ap.id=?1 and ap.company.id=c.company.id"
     )
-    Page<Customer> findCustomersByUserId(Long appUsersId, Pageable pageable);
+    Page<Customer> findCustomersByUserId(Long appUsersId, Long currentCompanyId, Pageable pageable);
 
-    @Query("select distinct job.project.customer from Job job left join job.appUsers ap where ap=?1 ")
-    List<Customer> findCustomersByUserId(Long appUsersId);
+    //    @Query("select distinct job.project.customer from Job job left join job.appUsers ap where ap=?1 ")
+    //    List<Customer> findCustomersByUserId(Long appUsersId);
 
     @Query("select distinct customer from Customer customer left join customer.projects")
     Page<Customer> findAllWithEagerRelationships(Specification specification, Pageable pageable);

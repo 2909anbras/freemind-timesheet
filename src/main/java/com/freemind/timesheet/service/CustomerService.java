@@ -99,7 +99,7 @@ public class CustomerService {
 
     public List<CustomerDTO> findByUserId(Long userId) {
         log.debug("Request to find Customer by user : {}", userId);
-        Page<CustomerDTO> tmp = this.customerRepository.findCustomersByUserId(userId, null).map(t -> this.customerMapper.toDto(t));
+        Page<CustomerDTO> tmp = this.customerRepository.findCustomersByUserId(userId, null, null).map(t -> this.customerMapper.toDto(t));
         return tmp.getContent();
     }
 }

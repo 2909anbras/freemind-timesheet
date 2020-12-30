@@ -90,6 +90,7 @@ export class JobUpdateComponent implements OnInit {
     if (job.appUsers)
       for (let i = 0; i < job.appUsers.length; i++) {
         if (this.users.find(x => job.appUsers![i].id === x.id)) tmp.push(this.users.find(x => job.appUsers![i].id === x.id));
+        console.log(tmp);
       }
     this.editForm.patchValue({
       id: job.id,
@@ -123,7 +124,7 @@ export class JobUpdateComponent implements OnInit {
     console.log(this.editForm.get(['users'])!.value);
     const tmp = [];
     for (const u of this.editForm.get(['users'])!.value) {
-      tmp.push(new AppUser(u.id));
+      tmp.push(new AppUser(u.id, undefined, undefined, undefined, u.companyId));
     }
     return {
       ...new Job(),
