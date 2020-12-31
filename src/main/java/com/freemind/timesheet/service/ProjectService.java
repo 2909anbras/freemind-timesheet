@@ -49,6 +49,7 @@ public class ProjectService {
         Customer c = customerRepository.findById(project.getCustomer().getId()).get();
         c.addProject(project);
         customerRepository.save(c);
+        log.debug("Request to save Customer : {}", c);
 
         return projectMapper.toDto(project);
     }

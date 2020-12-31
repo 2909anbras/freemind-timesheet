@@ -66,7 +66,7 @@ public class Job implements Serializable {
     @JsonIgnore
     private Set<AppUser> appUsers = new HashSet<>();
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "job", cascade = CascadeType.REFRESH)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Performance> performances = new HashSet<>();
 
@@ -222,15 +222,20 @@ public class Job implements Serializable {
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
-    @PreRemove
+    //    @PreRemove
     public void removeAppUsers() {
-        if (this.appUsers.size() > 0) for (AppUser ap : this.appUsers) {
+        if (!this.appUsers.isEmpty() || this.appUsers.size() > 0) for (AppUser ap : this.appUsers) {
             ap.removeJob(this);
         }
-        if (this.performances.size() > 0) for (Performance p : this.performances) {
+        if (!this.performances.isEmpty() || this.performances.size() > 0) for (Performance p : this.performances) {
             p.setJob(null);
         }
     }
+
+    //    @PreUpdate
+    //    public void updateJob() {
+    //
+    //    }
 
     @Override
     public boolean equals(Object o) {

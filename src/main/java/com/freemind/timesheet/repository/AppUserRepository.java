@@ -41,4 +41,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long>, JpaSpec
 
     @Query("select distinct appUser from AppUser appUser where appUser.company.id =?1")
     List<AppUser> getAllByCompany(Long companyId);
+
+    @Query("select distinct appUser from AppUser appUser left join appUser.jobs j where j.id=?1 ")
+    List<AppUser> findUsersByJob(Long id);
 }

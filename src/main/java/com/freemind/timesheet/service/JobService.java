@@ -8,11 +8,16 @@ import com.freemind.timesheet.repository.AppUserRepository;
 import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.repository.JobRepository;
 import com.freemind.timesheet.repository.ProjectRepository;
+import com.freemind.timesheet.service.dto.AppUserDTO;
 import com.freemind.timesheet.service.dto.JobDTO;
+import com.freemind.timesheet.service.mapper.AppUserMapperImpl;
 import com.freemind.timesheet.service.mapper.JobMapper;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -32,6 +37,8 @@ public class JobService {
 
     private final Logger log = LoggerFactory.getLogger(JobService.class);
 
+    private final AppUserMapperImpl appUserMapper;
+
     private final ProjectRepository projectRepository;
 
     private final AppUserRepository appUserRepository;
@@ -46,10 +53,12 @@ public class JobService {
         ProjectRepository projectRepository,
         AppUserRepository appUserRepository,
         JobMapper jobMapper,
-        CompanyRepository companyRepository
+        CompanyRepository companyRepository,
+        AppUserMapperImpl appUserMapper
     ) {
         this.companyRepository = companyRepository;
         this.companyService = companyService;
+        this.appUserMapper = appUserMapper;
         this.appUserRepository = appUserRepository;
         this.projectRepository = projectRepository;
         this.jobRepository = jobRepository;
@@ -62,13 +71,15 @@ public class JobService {
      * @param jobDTO the entity to save.
      * @return the persisted entity.
      */
-    public JobDTO save(JobDTO jobDTO) {
-        Optional<Project> projectToRemove;
-        Project p;
-        log.debug("Request to save Job : {}", jobDTO);
+    public JobDTO update(JobDTO jobDTO) {
+        //job
         Job job = jobMapper.toEntity(jobDTO);
+        log.debug("Request to update Job : {}", jobDTO);
+        //project refresh
+        Optional<Project> projectToRemove;
         projectToRemove = projectRepository.findProjectByJob(jobDTO.getId());
-        jobRepository.save(job);
+        Project p;
+
         if (jobDTO.getProjectId() != null) {
             if (projectToRemove.isPresent() && jobDTO.getProjectId() != projectToRemove.get().getId()) {
                 projectToRemove.get().removeJob(job);
@@ -78,7 +89,60 @@ public class JobService {
             p.addJob(job);
             projectRepository.save(p);
             job.setProject(p);
-            jobRepository.save(job);
+        }
+
+        //user
+        //si jobDTO moins de appusers=>remove job de appUser
+        List<AppUser> oldUsers = appUserRepository.findUsersByJob(job.getId());
+        log.debug("OLD APPUSERS: {}", oldUsers);
+        List<AppUser> oldUsersBis = new ArrayList<AppUser>();
+        if (oldUsers.size() >= jobDTO.getAppUsers().size()) {
+            log.debug("INSIDE: {}");
+
+            for (AppUser user : oldUsers) {
+                for (AppUserDTO userDto : jobDTO.getAppUsers()) {
+                    if (user.getId() != userDto.getId()) oldUsersBis.add(user);
+                }
+            }
+            //        	oldUsers=job.getAppUsers().stream().
+            //        			filter(ap->jobDTO.getAppUsers().
+            //        					stream().
+            //        					noneMatch(apDTO->ap.getId()==apDTO.getId())).
+            //        					collect(Collectors.toList());
+            log.debug("INSIDE OLDUSERS: {}", oldUsersBis);
+            for (AppUser ap : oldUsersBis) {
+                log.debug("Old User removed job: {}", ap);
+                ap.removeJob(job);
+                appUserRepository.save(ap);
+            }
+        }
+        List<AppUserDTO> arr = new ArrayList<>(jobDTO.getAppUsers());
+        job.appUsers(new HashSet<AppUser>(appUserMapper.toEntity(arr)));
+
+        job
+            .getAppUsers()
+            .forEach(
+                ap -> {
+                    AppUser tmp = appUserRepository.findById(ap.getId()).get();
+                    tmp.addJob(job);
+                    log.debug("AppUser : {}", ap);
+                    appUserRepository.save(tmp);
+                }
+            );
+        log.debug("Job Saved : {}", job);
+        jobRepository.save(job);
+        return jobMapper.toDto(job);
+    }
+
+    public JobDTO save(JobDTO jobDTO) {
+        log.debug("Request to save Job : {}", jobDTO);
+        Job job = jobMapper.toEntity(jobDTO);
+        jobRepository.save(job);
+        Project p;
+        if (jobDTO.getProjectId() != null) {
+            p = projectRepository.findById(jobDTO.getProjectId()).get();
+            p.addJob(job);
+            projectRepository.save(p);
         }
 
         job

@@ -56,6 +56,7 @@ export class JobUpdateComponent implements OnInit {
       e ? (this.currentAccount = e) : null;
     });
     this.activatedRoute.data.subscribe(({ job }) => {
+      console.log(job.appUsers);
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
         //by job Company!
         //users by company if admin

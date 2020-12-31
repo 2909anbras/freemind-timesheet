@@ -28,7 +28,7 @@ public class AppUser implements Serializable {
     @MapsId
     private User internalUser;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REFRESH)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JoinTable(
         name = "app_user_job",
@@ -37,11 +37,11 @@ public class AppUser implements Serializable {
     )
     private Set<Job> jobs = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = "appUsers", allowSetters = true)
     private Company company;
 
-    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Performance> performances = new HashSet<>();
 
@@ -161,16 +161,21 @@ public class AppUser implements Serializable {
         return 31;
     }
 
-    // prettier-ignore
     @Override
-    
     public String toString() {
-        return "AppUser{" +
-
-            "id=" + getId() +
-            ", phone=" + getPhone() +
-            ", customers= "+ getPerformances()+ "'"+
-            "Company="+getCompany()+""+
-            "}";
+        return (
+            "AppUser{" +
+            "id=" +
+            getId() +
+            ", phone=" +
+            getPhone() +
+            ", customers= " +
+            getPerformances() +
+            "'" +
+            "Company=" +
+            getCompany() +
+            "" +
+            "}"
+        );
     }
 }

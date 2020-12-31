@@ -38,7 +38,7 @@ public class Customer implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Project> projects = new HashSet<>();
 
-    @ManyToOne(cascade = CascadeType.REFRESH) //tester
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY) //tester
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE) //pas sûr
     private Company company;

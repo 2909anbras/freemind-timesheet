@@ -16,7 +16,7 @@ import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 @Component({
   selector: 'jhi-full-view',
-  templateUrl: './view.component.html',
+  templateUrl: './full-view.component.html',
 })
 export class FullViewComponent implements OnInit {
   showCompanies: ICompany[] = [];

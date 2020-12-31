@@ -81,7 +81,7 @@ public class JobResource {
         if (jobDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        JobDTO result = jobService.save(jobDTO);
+        JobDTO result = jobService.update(jobDTO);
         log.debug("JOB UPDATED : {}", result);
 
         return ResponseEntity
