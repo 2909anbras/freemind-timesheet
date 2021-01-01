@@ -26,6 +26,15 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSp
     )
     Page<Customer> findCustomersByUserId(Long appUsersId, Long currentCompanyId, Pageable pageable);
 
+    @Query(
+        "SELECT DISTINCT c FROM Customer c " +
+        "LEFT JOIN c.projects projects " +
+        "LEFT JOIN projects.jobs jobs " +
+        "LEFT JOIN jobs.appUsers ap " +
+        "WHERE ap.id=?1 and ap.company.id=c.company.id"
+    )
+    List<Customer> findCustomersByUserId(Long appUsersId, Long currentCompanyId);
+
     //    @Query("select distinct job.project.customer from Job job left join job.appUsers ap where ap=?1 ")
     //    List<Customer> findCustomersByUserId(Long appUsersId);
 

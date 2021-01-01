@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class JobService {
     private final CompanyRepository companyRepository;
 
-    private final CompanyService companyService;
+    private final CompanyRepository companyService;
 
     private final Logger log = LoggerFactory.getLogger(JobService.class);
 
@@ -48,7 +48,7 @@ public class JobService {
     private final JobMapper jobMapper;
 
     public JobService(
-        CompanyService companyService,
+        CompanyRepository companyService,
         JobRepository jobRepository,
         ProjectRepository projectRepository,
         AppUserRepository appUserRepository,

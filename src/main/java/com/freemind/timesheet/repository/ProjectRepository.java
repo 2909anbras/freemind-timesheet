@@ -33,4 +33,14 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpec
 
     @Query("select distinct job.project from Job job left join job.appUsers ap where ap.id IN ?1 ")
     List<Project> findProjectsByUserId(Long appUsersId, Pageable pageable);
+
+    //to test
+    @Query(
+        "SELECT DISTINCT p FROM Project p " +
+        "LEFT JOIN p.customer customer " +
+        "LEFT JOIN customer.company company " +
+        "LEFT JOIN company.appUsers ap " +
+        "WHERE ap.id=?1 and customer.id=?2"
+    )
+    List<Project> findProjectsByCustomerAndUserId(Long userId, Long customerId);
 }

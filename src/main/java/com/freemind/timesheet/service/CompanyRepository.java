@@ -4,30 +4,27 @@ import com.freemind.timesheet.domain.Company;
 import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.service.dto.CompanyDTO;
 import com.freemind.timesheet.service.mapper.CompanyMapper;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link Company}.
  */
 @Service
 @Transactional
-public class CompanyService {
-
-    private final Logger log = LoggerFactory.getLogger(CompanyService.class);
+public class CompanyRepository {
+    private final Logger log = LoggerFactory.getLogger(CompanyRepository.class);
 
     private final CompanyRepository companyRepository;
 
     private final CompanyMapper companyMapper;
 
-    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper) {
+    public CompanyRepository(CompanyRepository companyRepository, CompanyMapper companyMapper) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
     }
@@ -54,10 +51,8 @@ public class CompanyService {
     @Transactional(readOnly = true)
     public Page<CompanyDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Companies");
-        return companyRepository.findAll(pageable)
-            .map(companyMapper::toDto);
+        return companyRepository.findAll(pageable).map(companyMapper::toDto);
     }
-
 
     /**
      * Get one company by id.
@@ -68,8 +63,7 @@ public class CompanyService {
     @Transactional(readOnly = true)
     public Optional<CompanyDTO> findOne(Long id) {
         log.debug("Request to get Company : {}", id);
-        return companyRepository.findById(id)
-            .map(companyMapper::toDto);
+        return companyRepository.findById(id).map(companyMapper::toDto);
     }
 
     /**

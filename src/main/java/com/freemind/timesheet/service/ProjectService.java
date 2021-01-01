@@ -1,8 +1,10 @@
 package com.freemind.timesheet.service;
 
 import com.freemind.timesheet.domain.Customer;
+import com.freemind.timesheet.domain.Job;
 import com.freemind.timesheet.domain.Project;
 import com.freemind.timesheet.repository.CustomerRepository;
+import com.freemind.timesheet.repository.JobRepository;
 import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.service.dto.ProjectDTO;
 import com.freemind.timesheet.service.mapper.ProjectMapper;
@@ -27,11 +29,19 @@ public class ProjectService {
 
     private final CustomerRepository customerRepository;
 
+    private final JobRepository jobRepository;
+
     private final ProjectMapper projectMapper;
 
-    public ProjectService(ProjectRepository projectRepository, CustomerRepository customerRepository, ProjectMapper projectMapper) {
+    public ProjectService(
+        ProjectRepository projectRepository,
+        CustomerRepository customerRepository,
+        ProjectMapper projectMapper,
+        JobRepository jobRepository
+    ) {
         this.projectRepository = projectRepository;
         this.customerRepository = customerRepository;
+        this.jobRepository = jobRepository;
         this.projectMapper = projectMapper;
     }
 
@@ -85,6 +95,14 @@ public class ProjectService {
      */
     public void delete(Long id) {
         log.debug("Request to delete Project : {}", id);
+        //broke link between job & user if job don't have performances.
+        List<Job> jobs = jobRepository.getJobByProject(id);
+        for (Job j : jobs) {
+            if (j.getPerformances().size() > 0) {
+                j.removeAppUsers();
+                jobRepository.save(j);
+            }
+        }
         projectRepository.deleteById(id);
     }
 

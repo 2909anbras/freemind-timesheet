@@ -35,4 +35,7 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
 
     @Query("select distinct job from Job job left join job.performances")
     Page<Job> findAllWithEagearRelationship(Specification specification, Pageable pageable);
+
+    @Query("select distinct job from Job job left join job.project p where p =?1")
+    List<Job> getJobByProject(Long id);
 }

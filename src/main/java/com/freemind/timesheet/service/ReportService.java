@@ -1,13 +1,25 @@
 package com.freemind.timesheet.service;
 
+import com.freemind.timesheet.domain.AppUser;
+import com.freemind.timesheet.domain.Company;
+import com.freemind.timesheet.domain.Customer;
+import com.freemind.timesheet.domain.Job;
+import com.freemind.timesheet.domain.Performance;
+import com.freemind.timesheet.domain.Project;
+import com.freemind.timesheet.domain.User;
+import com.freemind.timesheet.repository.AppUserRepository;
 import com.freemind.timesheet.repository.CompanyRepository;
+import com.freemind.timesheet.repository.CustomerRepository;
 import com.freemind.timesheet.repository.JobRepository;
+import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.repository.UserRepository;
 import com.freemind.timesheet.web.rest.ReportRessource;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -35,23 +47,38 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ReportService {
     private final Logger log = LoggerFactory.getLogger(ReportRessource.class);
-    private final UserService userService;
-    private final AppUserService appUserService;
-    private final CompanyService companyService;
-    private final JobService jobService;
-
+    private final UserRepository userRepository;
+    private final AppUserRepository appUserRepository;
+    private final CompanyRepository companyRepository;
+    private final JobRepository jobRepository;
+    private final CustomerRepository customerRepository;
+    private final ProjectRepository projectRepository;
+    //    private  AppUser appUser;
+    //    private Company company;
+    //    private Customer customer;
+    //    private Job job;
+    private List<Performance> performances = new ArrayList<Performance>();
     private static int CPTV; //cpt vertical (for row)
     private static int CPTH; //cpt horizontal(for cell)
     private static int CPTHMAX; //total days of the month
 
-    public ReportService(CompanyService companyService, JobService jobService, AppUserService appUserService, UserService userService) {
-        this.userService = userService;
-        this.appUserService = appUserService;
-        this.companyService = companyService;
-        this.jobService = jobService;
+    public ReportService(
+        CompanyRepository companyRepository,
+        JobRepository jobRepository,
+        AppUserRepository appUserRepository,
+        UserRepository userRepository,
+        CustomerRepository customerRepository,
+        ProjectRepository projectRepository
+    ) {
+        this.userRepository = userRepository;
+        this.appUserRepository = appUserRepository;
+        this.companyRepository = companyRepository;
+        this.jobRepository = jobRepository;
+        this.customerRepository = customerRepository;
+        this.projectRepository = projectRepository;
     }
 
-    public void makeFullReport(LocalDate date, long userId) { //first, for one month
+    public void makeFullReport(LocalDate date, Long userId) { //first, for one month
         //number of column for the month
         CPTHMAX = date.lengthOfMonth();
         CPTH = 0;
@@ -60,13 +87,27 @@ public class ReportService {
         Workbook wb = new XSSFWorkbook();
         Map<String, CellStyle> styles = createStyles(wb);
         //Instantiate the excel. empty template
+        //make a copy of the template
+        //faire la première ligne, template
 
-        //faire la première ligne.
-        //0=>Company/ 1=>customer/ 2=>Project/ 3=> job => days of month
+        initiateDoc(wb);
+        //get the entities
+        AppUser apUser = this.appUserRepository.getOne(userId);
+        User user = userRepository.getOne(apUser.getId());
+        Company company = apUser.getCompany();
+        //get allCustomer
+        List<Customer> customers = customerRepository.findCustomersByUserId(userId, company.getId());
+        List<Project> projects = projectRepository.findProjectsByCustomerAndUserId(userId, (long) 0); //pour dans la boucle.
+        //put the names (employee, company etc..)
+        //        populateWithEntity(wb,styles,date,userId);
+        //0=>Company
+        // 1=>customer /
+        // 2=>Project
+        // 3=> job => days of month
 
     }
 
-    private void initiateDoc(Workbook wb, LocalDate date) {
+    private void initiateDoc(Workbook wb) {
         Sheet sheet = wb.createSheet("Timesheet");
 
         PrintSetup printSetup = sheet.getPrintSetup();
@@ -106,19 +147,27 @@ public class ReportService {
         CPTH++;
     }
 
-    private void SetDays(Workbook wb, Sheet sheet, Map<String, CellStyle> styles, Row headerRow, Cell headerCell, LocalDate date) {
+    private void SetDays(Workbook wb, Sheet sheet, Map<String, CellStyle> styles, Row headerRow, LocalDate date) {
         LocalDate dateCopy = date;
+        Cell headerCell;
         for (int i = 0; i < CPTHMAX; i++) {
             headerCell = headerRow.createCell(CPTH);
             headerCell.setCellValue(new SimpleDateFormat("EEE").format(dateCopy));
             CPTH++;
             dateCopy.plusDays(1);
         }
-        CPTV++;
-    }
+        CPTV++; //next row
+    } //end first line
 
-    private void populateWithEntity(Workbook wb, Sheet sheet, Map<String, CellStyle> styles, LocalDate date) {
+    private void getEntities() {}
+
+    private void populateWithEntity(Workbook wb, Map<String, CellStyle> styles, LocalDate date, Long userId) {
         //employee name
+        Sheet sheet = wb.getSheet("Timesheet");
+        Row headerRow = sheet.createRow(CPTV);
+        headerRow.setHeightInPoints(30);
+        Cell headerCell;
+        //        String userName
         //company name
         //customer name
         //project name

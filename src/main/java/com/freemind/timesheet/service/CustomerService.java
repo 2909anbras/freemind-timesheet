@@ -2,6 +2,7 @@ package com.freemind.timesheet.service;
 
 import com.freemind.timesheet.domain.Company;
 import com.freemind.timesheet.domain.Customer;
+import com.freemind.timesheet.domain.Project;
 import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.repository.CustomerRepository;
 import com.freemind.timesheet.service.dto.CustomerDTO;
@@ -23,13 +24,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomerService {
     private final Logger log = LoggerFactory.getLogger(CustomerService.class);
 
+    private final ProjectService projectService;
+
     private final CompanyRepository companyRepository;
 
     private final CustomerRepository customerRepository;
 
     private final CustomerMapper customerMapper;
 
-    public CustomerService(CustomerRepository customerRepository, CustomerMapper customerMapper, CompanyRepository companyRepository) {
+    public CustomerService(
+        CustomerRepository customerRepository,
+        CustomerMapper customerMapper,
+        CompanyRepository companyRepository,
+        ProjectService projectService
+    ) {
+        this.projectService = projectService;
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
         this.companyRepository = companyRepository;
@@ -93,6 +102,9 @@ public class CustomerService {
     public void delete(Long id) { //test
         log.debug("Request to delete Customer : {}", id);
         Customer customer = customerRepository.findById(id).get();
+        for (Project p : customer.getProjects()) {
+            projectService.delete(p.getId());
+        }
         customer.removeProjects();
         customerRepository.deleteById(id);
     }

@@ -227,15 +227,10 @@ public class Job implements Serializable {
         if (!this.appUsers.isEmpty() || this.appUsers.size() > 0) for (AppUser ap : this.appUsers) {
             ap.removeJob(this);
         }
-        if (!this.performances.isEmpty() || this.performances.size() > 0) for (Performance p : this.performances) {
-            p.setJob(null);
-        }
+        //        if (!this.performances.isEmpty() || this.performances.size() > 0) for (Performance p : this.performances) {
+        //            p.setJob(null);
+        //        }
     }
-
-    //    @PreUpdate
-    //    public void updateJob() {
-    //
-    //    }
 
     @Override
     public boolean equals(Object o) {

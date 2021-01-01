@@ -58,7 +58,7 @@ public class UserService {
 
     private final CompanyRepository companyRepository;
 
-    private final CompanyService companyService;
+    private final CompanyRepository companyService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -73,7 +73,7 @@ public class UserService {
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
         CacheManager cacheManager,
-        CompanyService companyService,
+        CompanyRepository companyService,
         CompanyRepository companyRepository,
         JobMapper jobMapper,
         PerformanceMapper performanceMapper
