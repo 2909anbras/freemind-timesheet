@@ -39,13 +39,11 @@ public class ReportRessource {
     @PostMapping("/report/fullReport/{userId}")
     @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\"+\"," + AuthoritiesConstants.CUSTOMER_ADMIN + "\")")
     //later map with two date=>the range
-    public ResponseEntity<Void> createFullReport(@Valid @RequestBody LocalDate date, @PathVariable long userId) throws URISyntaxException {
-        //check date valable?
-        try {
-            this.reportService.makeFullReport(date, userId);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public ResponseEntity<Void> createFullReport(@Valid @RequestBody LocalDate date, @PathVariable long userId)
+        throws URISyntaxException, IOException {
+        log.debug("REPORT DATE : {}", date);
+
+        this.reportService.makeFullReport(date, userId);
         return null;
     }
 }

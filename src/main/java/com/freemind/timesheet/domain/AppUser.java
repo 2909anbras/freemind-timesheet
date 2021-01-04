@@ -28,7 +28,7 @@ public class AppUser implements Serializable {
     @MapsId
     private User internalUser;
 
-    @ManyToMany(cascade = CascadeType.REFRESH)
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JoinTable(
         name = "app_user_job",
@@ -175,6 +175,8 @@ public class AppUser implements Serializable {
             "Company=" +
             getCompany() +
             "" +
+            "Jobs= " +
+            getJobs().size() +
             "}"
         );
     }

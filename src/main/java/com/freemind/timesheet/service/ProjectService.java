@@ -103,6 +103,9 @@ public class ProjectService {
                 jobRepository.save(j);
             }
         }
+        Project p = projectRepository.getOne(id);
+        log.debug("Request to find Project : {}", p);
+
         projectRepository.deleteById(id);
     }
 

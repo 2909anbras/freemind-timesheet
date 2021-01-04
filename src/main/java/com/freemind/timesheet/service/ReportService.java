@@ -1,5 +1,6 @@
 package com.freemind.timesheet.service;
 
+import com.freemind.timesheet.config.ApplicationProperties;
 import com.freemind.timesheet.domain.AppUser;
 import com.freemind.timesheet.domain.Company;
 import com.freemind.timesheet.domain.Customer;
@@ -14,6 +15,7 @@ import com.freemind.timesheet.repository.JobRepository;
 import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.repository.UserRepository;
 import com.freemind.timesheet.web.rest.ReportRessource;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -42,6 +44,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +67,9 @@ public class ReportService {
     private static int CPTH; //cpt horizontal(for cell)
     private static int CPTHMAX; //total days of the month
 
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
     public ReportService(
         CompanyRepository companyRepository,
         JobRepository jobRepository,
@@ -80,12 +86,12 @@ public class ReportService {
         this.projectRepository = projectRepository;
     }
 
-    public void makeFullReport(LocalDate date, Long userId) throws IOException { //first, for one month
+    public void makeFullReport(LocalDate date, Long userId) { //first, for one month
         //number of column for the month
         CPTHMAX = date.lengthOfMonth();
         CPTH = 0;
         CPTV = 0;
-
+        //        String outputPath = applicationProperties.getImportExport().getExportImportDir();
         Workbook wb = new XSSFWorkbook();
         Map<String, CellStyle> styles = createStyles(wb);
         initiateDoc(wb);
@@ -98,11 +104,30 @@ public class ReportService {
         fillSheet(wb, user, date);
 
         // Write the output to a file
-        String file = "timesheet employee:" + user.getLogin() + " " + date.toString() + ".xls";
+        //        String file = "timesheet employee:" + user.getLogin() + " " + date.toString() + ".xls";
+        String file = "C:\\Users\\FMC_08\\Desktop\\" + "timesheet employee:" + user.getLogin() + " " + date.toString() + ".xls";
+
         if (wb instanceof XSSFWorkbook) file += "x";
-        FileOutputStream out = new FileOutputStream(file);
-        wb.write(out);
-        out.close();
+        FileOutputStream out;
+
+        try {
+            out = new FileOutputStream(file);
+            try {
+                wb.write(out);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            try {
+                out.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     private void initiateDoc(Workbook wb) {

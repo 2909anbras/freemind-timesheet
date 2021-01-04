@@ -63,7 +63,7 @@ public class Job implements Serializable {
     @JsonIgnoreProperties(value = "jobs", allowSetters = true)
     private Project project;
 
-    @ManyToMany(mappedBy = "jobs", cascade = CascadeType.REFRESH)
+    @ManyToMany(mappedBy = "jobs", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnore
     private Set<AppUser> appUsers = new HashSet<>();
@@ -239,14 +239,12 @@ public class Job implements Serializable {
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
-    //    @PreRemove
     public void removeAppUsers() {
-        if (!this.appUsers.isEmpty() || this.appUsers.size() > 0) for (AppUser ap : this.appUsers) {
+        if (this.appUsers.size() > 0) for (AppUser ap : this.appUsers) {
+            log.debug("Request to delete Job from User : {}", ap);
             ap.removeJob(this);
+            log.debug("Request to delete Job from User : {}", ap);
         }
-        //        if (!this.performances.isEmpty() || this.performances.size() > 0) for (Performance p : this.performances) {
-        //            p.setJob(null);
-        //        }
     }
 
     @Override

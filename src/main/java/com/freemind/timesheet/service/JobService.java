@@ -104,11 +104,6 @@ public class JobService {
                     if (user.getId() != userDto.getId()) oldUsersBis.add(user);
                 }
             }
-            //        	oldUsers=job.getAppUsers().stream().
-            //        			filter(ap->jobDTO.getAppUsers().
-            //        					stream().
-            //        					noneMatch(apDTO->ap.getId()==apDTO.getId())).
-            //        					collect(Collectors.toList());
             log.debug("INSIDE OLDUSERS: {}", oldUsersBis);
             for (AppUser ap : oldUsersBis) {
                 log.debug("Old User removed job: {}", ap);
@@ -189,8 +184,20 @@ public class JobService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
-        log.debug("Request to delete Job : {}", id);
-        jobRepository.deleteById(id);
+        Job j = jobRepository.getOne(id);
+        log.debug("Request to delete Job : {}", j);
+
+        if (j.getPerformances().size() >= 0 && j.getAppUsers() != null) {
+            Set<AppUser> tmp = new HashSet(j.getAppUsers());
+            for (AppUser ap : tmp) {
+                ap.removeJob(j);
+                this.appUserRepository.save(ap);
+                log.debug("Request to delete Job from User : {}", ap);
+                log.debug("Request to delete Job : {}", j);
+            }
+            jobRepository.save(j);
+            jobRepository.deleteById(id);
+        } //else error:> can't delete job with perf
     }
 
     public List<Long> findProjectsByAppUsersId(List<Long> appUsersId) {

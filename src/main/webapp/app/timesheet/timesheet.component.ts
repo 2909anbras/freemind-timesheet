@@ -3,6 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 import { HttpResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
+import { TimesheetService } from 'app/timesheet/timesheet.service';
 
 import { CompanyService } from 'app/entities/company/company.service';
 import { AppUserService } from 'app/entities/app-user/app-user.service';
@@ -69,6 +70,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   disableTd = false;
 
   constructor(
+    protected timesheetService: TimesheetService,
     private cdRef: ChangeDetectorRef,
     protected jobService: JobService,
     protected customerService: CustomerService,
@@ -327,6 +329,14 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     const bool = true;
     return !(new Date() < new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1));
     // return bool;
+  }
+
+  public makeReport(): void {
+    console.log(this.currentEmployee!.id);
+    if (this.currentEmployee) {
+      console.log('dedans');
+      this.timesheetService.create(this.dateCopy, this.currentEmployee.id);
+    }
   }
 }
 // this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {
