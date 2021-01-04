@@ -98,12 +98,13 @@ public class JobService {
         List<AppUser> oldUsersBis = new ArrayList<AppUser>();
         if (oldUsers.size() >= jobDTO.getAppUsers().size()) {
             log.debug("INSIDE: {}");
-
-            for (AppUser user : oldUsers) {
-                for (AppUserDTO userDto : jobDTO.getAppUsers()) {
-                    if (user.getId() != userDto.getId()) oldUsersBis.add(user);
+            if (jobDTO.getAppUsers().size() > 0) {
+                for (AppUser user : oldUsers) {
+                    for (AppUserDTO userDto : jobDTO.getAppUsers()) {
+                        if (user.getId() != userDto.getId()) oldUsersBis.add(user);
+                    }
                 }
-            }
+            } else oldUsersBis = oldUsers;
             log.debug("INSIDE OLDUSERS: {}", oldUsersBis);
             for (AppUser ap : oldUsersBis) {
                 log.debug("Old User removed job: {}", ap);

@@ -7,8 +7,10 @@ import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.repository.CustomerRepository;
 import com.freemind.timesheet.service.dto.CustomerDTO;
 import com.freemind.timesheet.service.mapper.CustomerMapper;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -102,10 +104,14 @@ public class CustomerService {
     public void delete(Long id) { //test
         log.debug("Request to delete Customer : {}", id);
         Customer customer = customerRepository.findById(id).get();
-        for (Project p : customer.getProjects()) {
+        Set<Project> projects = new HashSet<Project>(customer.getProjects());
+        for (Project p : projects) {
             projectService.delete(p.getId());
         }
         customer.removeProjects();
+        Company company = customer.getCompany();
+        company.removeCustomer(customer);
+        companyRepository.save(company);
         customerRepository.deleteById(id);
     }
 
