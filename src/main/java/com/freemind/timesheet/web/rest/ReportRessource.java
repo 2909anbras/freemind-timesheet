@@ -5,6 +5,7 @@ import com.freemind.timesheet.service.ReportService;
 import com.freemind.timesheet.service.dto.CustomerDTO;
 import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -40,7 +41,11 @@ public class ReportRessource {
     //later map with two date=>the range
     public ResponseEntity<Void> createFullReport(@Valid @RequestBody LocalDate date, @PathVariable long userId) throws URISyntaxException {
         //check date valable?
-        this.reportService.makeFullReport(date, userId);
+        try {
+            this.reportService.makeFullReport(date, userId);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }

@@ -8,7 +8,9 @@ import com.freemind.timesheet.service.JobService;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
@@ -218,6 +220,21 @@ public class Job implements Serializable {
 
     public void setPerformances(Set<Performance> performances) {
         this.performances = performances;
+    }
+
+    public Performance getPerfByDateAndUserId(LocalDate date, Long userId) {
+        List<Performance> perfs = performances
+            .stream()
+            .filter(p -> p.getDate() == date && p.getAppUser().getId() == userId)
+            .collect(Collectors.toList());
+        if (perfs.size() > 0) {
+            throw new IllegalStateException();
+        }
+        Performance perf;
+        if (perfs.size() == 0) {
+            perf = perfs.get(0);
+        } else perf = null;
+        return perf;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

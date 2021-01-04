@@ -14,6 +14,8 @@ import com.freemind.timesheet.repository.JobRepository;
 import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.repository.UserRepository;
 import com.freemind.timesheet.web.rest.ReportRessource;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -78,7 +80,7 @@ public class ReportService {
         this.projectRepository = projectRepository;
     }
 
-    public void makeFullReport(LocalDate date, Long userId) { //first, for one month
+    public void makeFullReport(LocalDate date, Long userId) throws IOException { //first, for one month
         //number of column for the month
         CPTHMAX = date.lengthOfMonth();
         CPTH = 0;
@@ -86,25 +88,21 @@ public class ReportService {
 
         Workbook wb = new XSSFWorkbook();
         Map<String, CellStyle> styles = createStyles(wb);
-        //Instantiate the excel. empty template
-        //make a copy of the template
-        //faire la première ligne, template
-
         initiateDoc(wb);
-        //get the entities
-        AppUser apUser = this.appUserRepository.getOne(userId);
-        User user = userRepository.getOne(apUser.getId());
-        Company company = apUser.getCompany();
-        //get allCustomer
-        List<Customer> customers = customerRepository.findCustomersByUserId(userId, company.getId());
-        List<Project> projects = projectRepository.findProjectsByCustomerAndUserId(userId, (long) 0); //pour dans la boucle.
-        //put the names (employee, company etc..)
-        //        populateWithEntity(wb,styles,date,userId);
-        //0=>Company
-        // 1=>customer /
-        // 2=>Project
-        // 3=> job => days of month
+        Sheet sheet = wb.getSheet("Timesheet");
+        setTitle(sheet, styles, date);
+        makeHeader(sheet, styles);
+        SetDays(styles, sheet.getRow(CPTV), date);
+        //tout trier par ordre alphabétique par la suite cé po graf
+        User user = userRepository.getOne(userId);
+        fillSheet(wb, user, date);
 
+        // Write the output to a file
+        String file = "timesheet employee:" + user.getLogin() + " " + date.toString() + ".xls";
+        if (wb instanceof XSSFWorkbook) file += "x";
+        FileOutputStream out = new FileOutputStream(file);
+        wb.write(out);
+        out.close();
     }
 
     private void initiateDoc(Workbook wb) {
@@ -116,17 +114,79 @@ public class ReportService {
         sheet.setHorizontallyCenter(true);
     }
 
-    private void setTitle(Workbook wb, Sheet sheet, Map<String, CellStyle> styles, LocalDate date) {
-        Row titleRow = sheet.createRow(CPTH);
+    private void fillSheet(Workbook wb, User user, LocalDate date) {
+        AppUser apUser = this.appUserRepository.getOne(user.getId());
+        Row row = wb.getSheet("Timesheet").createRow(CPTV);
+        printString(row, user.getLogin());
+        Company company = apUser.getCompany();
+        printString(row, company.getName());
+        fillRows(row, company, user.getId(), date);
+    }
+
+    private void fillRows(Row row, Company company, Long userId, LocalDate date) {
+        List<Customer> customers = customerRepository.findCustomersByUserId(userId, company.getId());
+        for (Customer c : customers) {
+            printString(row, c.getName());
+            printProjects(projectRepository.findProjectsByCustomerAndUserId(userId, c.getId()), userId, row, date);
+            CPTV++; //next cust
+            CPTH = 1; //back to column c
+        }
+    }
+
+    private void printProjects(List<Project> projects, Long userId, Row row, LocalDate date) {
+        for (int i = 0; i < projects.size(); i++) {
+            //			for(Project p:projects) {
+            Project p = projects.get(i);
+            printString(row, p.getName());
+            printJobs(p.getJobsByUser(userId), userId, row, date);
+            if (i + 1 <= projects.size()) {
+                CPTV++; //next if last project dont do that.
+                CPTH = 2;
+            }
+        }
+    }
+
+    private void printJobs(List<Job> jobs, Long userId, Row row, LocalDate date) {
+        int i = 0;
+        //			for(Job j:jobs) {
+        for (int cptJ = 0; cptJ < jobs.size(); cptJ++) {
+            Job j = jobs.get(cptJ);
+
+            printString(row, j.getName());
+
+            while (i < CPTHMAX) {
+                Performance perf = j.getPerfByDateAndUserId(date, userId);
+                if (perf == null) printString(row, "0"); else printString(row, perf.getHours().toString());
+                i++;
+            }
+
+            if (cptJ + 1 <= jobs.size()) {
+                CPTH = 3; //reviens au niveau des jobs names
+                i = 0; //for the next perfs
+                CPTV++; //new row, new job
+            }
+        }
+    }
+
+    private void printString(Row row, String name) {
+        row.setHeightInPoints(35);
+        Cell cell;
+        cell = row.createCell(CPTH);
+        cell.setCellValue(name);
         CPTH++;
+    }
+
+    private void setTitle(Sheet sheet, Map<String, CellStyle> styles, LocalDate date) {
+        Row titleRow = sheet.createRow(CPTV);
+        CPTV++;
         titleRow.setHeightInPoints(45);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("Month Timesheet"); //user
+        titleCell.setCellValue("Month " + date.toString()); //user
         titleCell.setCellStyle(styles.get("title"));
         sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$Z$1"));
     }
 
-    private void makeHeader(Workbook wb, Sheet sheet, Map<String, CellStyle> styles, LocalDate date) {
+    private void makeHeader(Sheet sheet, Map<String, CellStyle> styles) {
         Row headerRow = sheet.createRow(CPTV);
         headerRow.setHeightInPoints(40);
         Cell headerCell;
@@ -147,7 +207,7 @@ public class ReportService {
         CPTH++;
     }
 
-    private void SetDays(Workbook wb, Sheet sheet, Map<String, CellStyle> styles, Row headerRow, LocalDate date) {
+    private void SetDays(Map<String, CellStyle> styles, Row headerRow, LocalDate date) {
         LocalDate dateCopy = date;
         Cell headerCell;
         for (int i = 0; i < CPTHMAX; i++) {
@@ -157,9 +217,8 @@ public class ReportService {
             dateCopy.plusDays(1);
         }
         CPTV++; //next row
+        CPTH = 0;
     } //end first line
-
-    private void getEntities() {}
 
     private void populateWithEntity(Workbook wb, Map<String, CellStyle> styles, LocalDate date, Long userId) {
         //employee name

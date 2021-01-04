@@ -11,7 +11,7 @@ import com.freemind.timesheet.domain.Company;
 import com.freemind.timesheet.domain.Customer;
 import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.service.CompanyQueryService;
-import com.freemind.timesheet.service.CompanyRepository;
+import com.freemind.timesheet.service.CompanyService;
 import com.freemind.timesheet.service.dto.CompanyCriteria;
 import com.freemind.timesheet.service.dto.CompanyDTO;
 import com.freemind.timesheet.service.mapper.CompanyMapper;

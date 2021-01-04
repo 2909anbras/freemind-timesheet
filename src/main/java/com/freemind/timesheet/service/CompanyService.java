@@ -17,14 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class CompanyRepository {
+public class CompanyService {
     private final Logger log = LoggerFactory.getLogger(CompanyRepository.class);
 
     private final CompanyRepository companyRepository;
 
     private final CompanyMapper companyMapper;
 
-    public CompanyRepository(CompanyRepository companyRepository, CompanyMapper companyMapper) {
+    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
     }

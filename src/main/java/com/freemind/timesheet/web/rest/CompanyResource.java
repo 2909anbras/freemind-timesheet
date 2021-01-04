@@ -2,7 +2,7 @@ package com.freemind.timesheet.web.rest;
 
 import com.freemind.timesheet.security.AuthoritiesConstants;
 import com.freemind.timesheet.service.CompanyQueryService;
-import com.freemind.timesheet.service.CompanyRepository;
+import com.freemind.timesheet.service.CompanyService;
 import com.freemind.timesheet.service.dto.CompanyCriteria;
 import com.freemind.timesheet.service.dto.CompanyDTO;
 import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
@@ -39,11 +39,11 @@ public class CompanyResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final CompanyRepository companyService;
+    private final CompanyService companyService;
 
     private final CompanyQueryService companyQueryService;
 
-    public CompanyResource(CompanyRepository companyService, CompanyQueryService companyQueryService) {
+    public CompanyResource(CompanyService companyService, CompanyQueryService companyQueryService) {
         this.companyService = companyService;
         this.companyQueryService = companyQueryService;
     }

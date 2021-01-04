@@ -3,8 +3,11 @@ package com.freemind.timesheet.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
@@ -115,6 +118,13 @@ public class Project implements Serializable {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public List<Job> getJobsByUser(Long userId) {
+        List<Job> jobs = new ArrayList<Job>();
+        jobs =
+            this.jobs.stream().filter(j -> j.getAppUsers().stream().anyMatch(user -> user.getId() == userId)).collect(Collectors.toList());
+        return jobs;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
