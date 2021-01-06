@@ -103,16 +103,22 @@ public class CustomerService {
      */
     public void delete(Long id) { //test
         log.debug("Request to delete Customer : {}", id);
-        Customer customer = customerRepository.findById(id).get();
+        boolean canDelete = true;
+        Customer customer = customerRepository.getOne(id);
         Set<Project> projects = new HashSet<Project>(customer.getProjects());
         for (Project p : projects) {
-            projectService.delete(p.getId());
+            if (canDelete) {
+                canDelete = p.getJobs().stream().anyMatch(j -> j.getPerformances().size() > 0);
+                if (canDelete) projectService.delete(p.getId());
+            }
         }
-        customer.removeProjects();
-        Company company = customer.getCompany();
-        company.removeCustomer(customer);
-        companyRepository.save(company);
-        customerRepository.deleteById(id);
+        if (canDelete) {
+            customer.removeProjects();
+            Company company = customer.getCompany();
+            company.removeCustomer(customer);
+            companyRepository.save(company);
+            customerRepository.deleteById(id);
+        }
     }
 
     public List<CustomerDTO> findByUserId(Long userId) {

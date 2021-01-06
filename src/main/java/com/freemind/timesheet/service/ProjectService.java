@@ -57,14 +57,15 @@ public class ProjectService {
      * @return the persisted entity.
      */
     public ProjectDTO save(ProjectDTO projectDTO) {
-        log.debug("Request to save Project : {}", projectDTO);
+        log.debug("Request to save ProjectDTO : {}", projectDTO);
         Project project = projectMapper.toEntity(projectDTO);
-        project = projectRepository.save(project);
-
-        Customer c = customerRepository.findById(project.getCustomer().getId()).get();
+        log.debug("Request to save Project : {}", project);
+        Customer c = customerRepository.findById(projectDTO.getCustomerId()).get();
+        log.debug("Request to save Customer : {}", c);
         c.addProject(project);
         customerRepository.save(c);
-        log.debug("Request to save Customer : {}", c);
+
+        project = projectRepository.save(project);
 
         return projectMapper.toDto(project);
     }
@@ -99,9 +100,11 @@ public class ProjectService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
+        boolean canDelete = true;
         log.debug("Request to delete Project : {}", id);
         List<Job> jobs = jobRepository.getJobByProject(id);
         for (Job j : jobs) {
+            if (j.getPerformances().size() > 0 && canDelete) canDelete = false;
             this.jobService.delete(j.getId());
             //            if (j.getPerformances().size() > 0) {
             //                j.removeAppUsers();
@@ -110,8 +113,7 @@ public class ProjectService {
         }
         Project p = projectRepository.getOne(id);
         log.debug("Request to find Project : {}", p);
-
-        projectRepository.deleteById(id);
+        if (canDelete) projectRepository.deleteById(id);
     }
 
     @Transactional(readOnly = true)
