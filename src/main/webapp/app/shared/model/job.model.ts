@@ -15,6 +15,8 @@ export interface IJob {
   projectName?: string;
   appUsers?: IAppUser[];
   performances?: IPerformance[];
+
+  canDelete: () => boolean;
 }
 
 export class Job implements IJob {
@@ -32,5 +34,9 @@ export class Job implements IJob {
     public performances?: Performance[]
   ) {
     this.enable = this.enable || false;
+  }
+
+  public canDelete(): boolean {
+    return this.performances?.length === 0;
   }
 }

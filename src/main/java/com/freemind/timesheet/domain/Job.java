@@ -58,7 +58,8 @@ public class Job implements Serializable {
     @Column(name = "enable")
     private Boolean enable;
 
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    //    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = { CascadeType.REFRESH, CascadeType.DETACH }, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties(value = "jobs", allowSetters = true)
     private Project project;

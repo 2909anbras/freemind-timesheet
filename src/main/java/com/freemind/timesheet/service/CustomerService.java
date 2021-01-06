@@ -106,18 +106,21 @@ public class CustomerService {
         boolean canDelete = true;
         Customer customer = customerRepository.getOne(id);
         Set<Project> projects = new HashSet<Project>(customer.getProjects());
-        for (Project p : projects) {
-            if (canDelete) {
-                canDelete = p.getJobs().stream().anyMatch(j -> j.getPerformances().size() > 0);
-                if (canDelete) projectService.delete(p.getId());
+        boolean cannotDeleteBis = customer.getProjects().stream().anyMatch(p -> p.canDelete());
+        log.debug("CanDelete : {}", !cannotDeleteBis);
+
+        if (!cannotDeleteBis) {
+            for (Project p : projects) {
+                canDelete = p.getJobs().stream().anyMatch(j -> j.getPerformances().size() == 0);
+                log.debug("Request to delete Project : {}", p);
+                projectService.delete(p.getId());
             }
-        }
-        if (canDelete) {
             customer.removeProjects();
             Company company = customer.getCompany();
             company.removeCustomer(customer);
             companyRepository.save(company);
-            customerRepository.deleteById(id);
+
+            customerRepository.delete(customer);
         }
     }
 

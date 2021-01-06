@@ -113,8 +113,14 @@ export class JobComponent implements OnInit, OnDestroy {
   }
 
   delete(job: IJob): void {
-    const modalRef = this.modalService.open(JobDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.job = job;
+    if (job.performances?.length === 0) {
+      const modalRef = this.modalService.open(JobDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+      modalRef.componentInstance.job = job;
+    }
+  }
+
+  canDelete(job: IJob): boolean {
+    return job.performances?.length === 0;
   }
 
   sort(): string[] {

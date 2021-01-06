@@ -187,8 +187,9 @@ public class JobService {
     public void delete(Long id) {
         Job j = jobRepository.getOne(id);
         log.debug("Request to delete Job : {}", j);
+        log.debug("Request to delete Job : {}", j.getPerformances().size() == 0);
 
-        if (j.getPerformances().size() > 0 && j.getAppUsers() != null) {
+        if (j.getPerformances().size() == 0 && j.getAppUsers() != null) {
             Set<AppUser> tmp = new HashSet(j.getAppUsers());
             for (AppUser ap : tmp) {
                 ap.removeJob(j);

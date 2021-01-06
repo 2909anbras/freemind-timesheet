@@ -39,12 +39,12 @@ public class Project implements Serializable {
     @Column(name = "enable", nullable = false)
     private Boolean enable;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", orphanRemoval = true, fetch = FetchType.EAGER)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Job> jobs = new HashSet<>();
 
-    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.LAZY)
+    //    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties(value = "projects", allowSetters = true)
     private Customer customer;
 
@@ -144,6 +144,10 @@ public class Project implements Serializable {
     @Override
     public int hashCode() {
         return 31;
+    }
+
+    public boolean canDelete() {
+        return this.jobs.stream().anyMatch(j -> j.getPerformances().size() == 0);
     }
 
     // prettier-ignore

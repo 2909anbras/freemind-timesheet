@@ -25,7 +25,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
   searchProject = '';
   searchProjectState = 'All';
   enabledStateList = ['Enable', 'Disabled', 'All'];
-
   eventSubscriber?: Subscription;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -145,6 +144,16 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
     this.projects = data || [];
     this.ngbPaginationPage = this.page;
+  }
+
+  public canDelete(project: IProject): boolean {
+    if (
+      project.jobs.some(j => {
+        if (j.performances) j.performances.length > 0;
+      })
+    )
+      return false;
+    else return true;
   }
 
   protected onError(): void {

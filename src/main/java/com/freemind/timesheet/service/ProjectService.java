@@ -105,13 +105,17 @@ public class ProjectService {
         List<Job> jobs = jobRepository.getJobByProject(id);
         for (Job j : jobs) {
             if (j.getPerformances().size() > 0 && canDelete) canDelete = false;
-            this.jobService.delete(j.getId());
+            log.debug("can size job : {}", j.getPerformances().size());
+            if (canDelete) this.jobService.delete(j.getId());
             //            if (j.getPerformances().size() > 0) {
             //                j.removeAppUsers();
             //                jobRepository.save(j);
             //            }
         }
         Project p = projectRepository.getOne(id);
+        Customer c = p.getCustomer();
+        c.removeProject(p);
+        customerRepository.save(c);
         log.debug("Request to find Project : {}", p);
         if (canDelete) projectRepository.deleteById(id);
     }
