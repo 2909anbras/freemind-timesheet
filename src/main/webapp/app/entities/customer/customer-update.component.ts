@@ -23,6 +23,7 @@ import { CompanyService } from 'app/entities/company/company.service';
 export class CustomerUpdateComponent implements OnInit {
   isSaving = false;
   companies: ICompany[] = [];
+  isAdmin = false;
 
   account?: Account;
 
@@ -45,6 +46,7 @@ export class CustomerUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ customer }) => {
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+        this.isAdmin = true;
         this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => (this.companies = res.body || []));
         this.updateForm(customer);
       } else {

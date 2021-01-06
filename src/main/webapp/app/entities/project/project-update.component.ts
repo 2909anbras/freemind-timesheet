@@ -23,7 +23,7 @@ export class ProjectUpdateComponent implements OnInit {
   isSaving = false;
   customers: ICustomer[] = [];
   currentAccount: Account | null = null;
-
+  isAdmin = false;
   editForm = this.fb.group({
     id: [],
     name: [null, [Validators.required, Validators.minLength(3)]],
@@ -48,6 +48,7 @@ export class ProjectUpdateComponent implements OnInit {
       this.updateForm(project);
 
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+        this.isAdmin = true;
         this.customerService.query().subscribe((res: HttpResponse<ICustomer[]>) => (this.customers = res.body || []));
       } else {
         if (this.currentAccount) {

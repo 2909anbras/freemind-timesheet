@@ -1,7 +1,7 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <div *ngIf="customer">
-            <h2><span jhiTranslate="freemindTimesheetApp.customer.detail.title">Customer</span> {{ customer.id }}</h2>
+            <h2><span jhiTranslate="freemindTimesheetApp.customer.detail.title">Customer</span> {{ customer.name }}</h2>
 
             <hr>
 
@@ -19,7 +19,7 @@
                 <dt><span jhiTranslate="freemindTimesheetApp.customer.company">Company</span></dt>
                 <dd>
                     <span *ngIf="customer.companyId">
-                        <a [routerLink]="['/company', customer.companyId, 'view']">{{ customer.companyId }}</a>
+                        <a [routerLink]="['/company', customer.companyId, 'view']">{{ customer.companyName }}</a>
                     </span>
                 </dd>
             </dl>

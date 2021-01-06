@@ -20,6 +20,8 @@ public class CustomerDTO implements Serializable {
 
     private Set<ProjectDTO> projects = new HashSet<>();
 
+    private String companyName;
+
     private Long companyId;
 
     public Long getId() {
@@ -36,6 +38,14 @@ public class CustomerDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCompanyName() {
+        return this.companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public Boolean isEnable() {

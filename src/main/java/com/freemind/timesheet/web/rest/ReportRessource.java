@@ -30,6 +30,8 @@ public class ReportRessource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private static final String ENTITY_NAME = "customer";
+
     private ReportService reportService;
 
     public ReportRessource(ReportService reportService) {
@@ -39,11 +41,14 @@ public class ReportRessource {
     @PostMapping("/report/fullReport/{userId}")
     @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\"+\"," + AuthoritiesConstants.CUSTOMER_ADMIN + "\")")
     //later map with two date=>the range
-    public ResponseEntity<Void> createFullReport(@Valid @RequestBody LocalDate date, @PathVariable long userId)
+    public ResponseEntity<Void> createFullReport(@PathVariable Long userId, @Valid @RequestBody LocalDate date)
         throws URISyntaxException, IOException {
         log.debug("REPORT DATE : {}", date);
 
         this.reportService.makeFullReport(date, userId);
-        return null;
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, userId.toString()))
+            .build();
     }
 }

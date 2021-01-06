@@ -28,6 +28,7 @@ export class JobUpdateComponent implements OnInit {
   endDateDp: any;
   currentAccount: Account | null = null;
   users: IUser[] = [];
+  isAdmin = false;
 
   editForm = this.fb.group({
     id: [],
@@ -60,6 +61,7 @@ export class JobUpdateComponent implements OnInit {
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
         //by job Company!
         //users by company if admin
+        this.isAdmin = true;
         this.projectService.query().subscribe((res: HttpResponse<IProject[]>) => {
           this.projects = res.body || [];
           this.updateForm(job);
