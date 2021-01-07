@@ -340,19 +340,28 @@ public class UserService {
         userRepository
             .findOneByLogin(login)
             .ifPresent(
-                user -> { // userApp repos=> chercher un appUser (qui existera d'office)=> et le delete
-                    Long id = user.getId();
-                    userRepository.delete(user);
-                    this.clearUserCaches(user);
-                    log.debug("Deleted User: {}", user);
-                    appUserRepository
-                        .findById(id)
-                        .ifPresent(
-                            appUser -> {
-                                appUserRepository.delete(appUser);
-                                log.debug("Deleted AppUser: {}", appUser);
+                user -> {
+                    boolean canDelete = true;
+                    AppUser appUser = appUserRepository.findById(user.getId()).get();
+                    if (appUser != null) {
+                        canDelete = appUser.getPerformances().size() == 0;
+                        if (canDelete) {
+                            Company c = appUser.getCompany();
+                            c.removeAppUser(appUser);
+                            companyRepository.save(c);
+                            for (Job j : appUser.getJobs()) {
+                                j.removeAppUser(appUser);
+                                jobRepository.save(j);
                             }
-                        );
+                            appUserRepository.delete(appUser);
+                            log.debug("Deleted AppUser: {}", appUser);
+                        }
+                    }
+                    if (canDelete) {
+                        userRepository.delete(user);
+                        this.clearUserCaches(user);
+                        log.debug("Deleted User: {}", user);
+                    }
                 }
             );
     }
@@ -450,9 +459,27 @@ public class UserService {
             .findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(Instant.now().minus(3, ChronoUnit.DAYS))
             .forEach(
                 user -> {
-                    log.debug("Deleting not activated user {}", user.getLogin());
-                    userRepository.delete(user);
-                    this.clearUserCaches(user);
+                    boolean canDelete = true;
+                    AppUser appUser = appUserRepository.findById(user.getId()).get();
+                    if (appUser != null) {
+                        canDelete = appUser.getPerformances().size() == 0;
+                        if (canDelete) {
+                            Company c = appUser.getCompany();
+                            c.removeAppUser(appUser);
+                            companyRepository.save(c);
+                            for (Job j : appUser.getJobs()) {
+                                j.removeAppUser(appUser);
+                                jobRepository.save(j);
+                            }
+                            appUserRepository.delete(appUser);
+                            log.debug("Deleted AppUser: {}", appUser);
+                        }
+                    }
+                    if (canDelete) {
+                        log.debug("Deleting not activated user {}", user.getLogin());
+                        userRepository.delete(user);
+                        this.clearUserCaches(user);
+                    }
                 }
             );
     }
@@ -496,9 +523,21 @@ public class UserService {
     public List<ManagedUserVM> getAllByCompany(Long companyId) { //noms,performances,company,jobs,id
         log.debug("companyid : {}", companyId);
 
-        List<AppUser> appUsers = this.appUserRepository.findByCompany(companyId, null, null).getContent();
+        List<AppUser> appUsers =
+            this.appUserRepository.findByCompany(companyId, null, null)
+                .getContent()
+                .stream()
+                .sorted((u1, u2) -> u1.getId().compareTo(u2.getId()))
+                .collect(Collectors.toList());
+        log.debug("APPUSERS BY COMPANY : {}", appUsers);
         List<User> users =
-            this.userRepository.findAllByIds(appUsers.stream().map(t -> t.getId()).collect(Collectors.toList()), null).getContent();
+            this.userRepository.findAllByIds(appUsers.stream().map(t -> t.getId()).collect(Collectors.toList()), null)
+                .getContent()
+                .stream()
+                .sorted((u1, u2) -> u1.getId().compareTo(u2.getId()))
+                .collect(Collectors.toList());
+        log.debug("USERS BY COMPANY : {}", users);
+
         List<ManagedUserVM> managedUsers = new ArrayList<ManagedUserVM>();
         for (int i = 0; i < appUsers.size(); i++) {
             User u = users.get(i);

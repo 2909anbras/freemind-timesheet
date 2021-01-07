@@ -74,6 +74,7 @@ export class JobUpdateComponent implements OnInit {
               this.currentAccount!.companyId = appUser.companyId;
               this.userService.findAllByCompany(this.currentAccount!.companyId).subscribe((users: HttpResponse<IUser[]>) => {
                 if (users.body) this.users = users.body;
+                console.log(this.users);
                 this.updateForm(job);
               });
               this.projectService.getProjectByCompanyId(this.currentAccount!.companyId, null).subscribe((res: HttpResponse<IProject[]>) => {

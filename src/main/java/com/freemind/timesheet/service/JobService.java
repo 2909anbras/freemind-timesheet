@@ -140,6 +140,7 @@ public class JobService {
             p.addJob(job);
             projectRepository.save(p);
         }
+        log.debug("APPUSERS : {}", job.getAppUsers());
 
         job
             .getAppUsers()

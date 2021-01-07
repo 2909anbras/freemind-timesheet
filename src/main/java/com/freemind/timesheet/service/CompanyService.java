@@ -77,12 +77,10 @@ public class CompanyService {
      *
      * @param id the id of the entity.
      */
-    public void delete(Long id) { //only the admin non?
+    public void delete(Long id) { //only the admin
         log.debug("Request to delete Company : {}", id);
         Company company = this.companyRepository.getOne(id);
-        Set<Customer> customers = new HashSet<Customer>(company.getCustomers());
-        //delete user
-        for (Customer c : customers) this.customerService.delete(c.getId());
+        //if don't delete all entities => make query
         companyRepository.deleteById(id);
     }
 }

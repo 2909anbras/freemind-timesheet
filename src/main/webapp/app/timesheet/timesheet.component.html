@@ -3,19 +3,24 @@
 </div>
 
 <div>
-    <div *jhiHasAnyAuthority="['ROLE_ADMIN']" >
-        <label jhiTranslate="global-view.company-filter">Company</label>
-        <select style="width: 10%;" class="form-control" (change)="onChangeCompany()" [(ngModel)]="companySelected" >
-            <option *ngFor="let company of companies" [ngValue]="company">{{company.name}}</option>
-        </select>
-        <div>{{companies.length}}</div>
+    <div style="  display: flex;
+    align-items: stretch;
+    align-content: space-between;">
+        <div *jhiHasAnyAuthority="['ROLE_ADMIN']" >
+            <label jhiTranslate="global-view.company-filter">Company</label>
+            <select style="width: 10%;" class="form-control" (change)="onChangeCompany()" [(ngModel)]="companySelected" >
+                <option *ngFor="let company of companies" [ngValue]="company">{{company.name}}</option>
+            </select>
+            <div>{{companies.length}}</div>
+        </div>
+        <label jhiTranslate="global-view.customer-filter">CUSTOMER</label>
+        <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">
+        <label jhiTranslate="global-view.project-filter">PROJECT</label>
+        <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchProject" placeholder="*">
+        <label jhiTranslate="global-view.job-filter">Job</label>
+        <input style="width: 10%;" type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
+     
     </div>
-    <label jhiTranslate="global-view.customer-filter">CUSTOMER</label>
-    <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">
-    <label jhiTranslate="global-view.project-filter">PROJECT</label>
-    <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchProject" placeholder="*">
-    <label jhiTranslate="global-view.job-filter">Job</label>
-    <input style="width: 10%;" type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
     <div *ngIf="employees != []">
         <div *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" >
             <label >Employee</label>
@@ -43,7 +48,6 @@
         <th style="text-indent: 3,5em;max-width: 10%;" colspan="3">
             Context
         </th>
-        <!-- [].constructor(nbrOfColumns) -->
         <ng-container *ngFor="let item of nbrOfColumns | keyvalue  ; index as i" >
             <th style="text-align: right; padding-right: 15px; max-width: 10%;">
                 {{getDay(i)}}
@@ -79,11 +83,11 @@
                         </td>
                         <!--loop qui va afficher tous les 0 ou les heures. Que ddes 0 pour le moment. Faire appel d'une fonction-->
                         <ng-container *ngFor="let item of nbrOfColumns | keyvalue; index as i">
-                            <td *ngIf="IsDisable(i);else Disable" (click)="encodeHours(project,job,customer,i)"style="border-color: black;cursor: pointer">{{getPerformanceHours(job,i)}}</td>
-
-                            <ng-template  #Disable>
+                            <td  (click)="encodeHours(project,job,customer,i)"style="border-color: black;cursor: pointer">{{getPerformanceHours(job,i)}}</td>
+                            <!-- *ngIf="IsDisable(i);else Disable" -->
+                            <!-- <ng-template  #Disable>
                                 <td style="border-color: black;background-color: rgb(221, 219, 219);">{{getPerformance(job,i)}}</td>
-                            </ng-template> 
+                            </ng-template>  -->
                           
                         </ng-container>
                     </tr>

@@ -118,16 +118,13 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
           this.currentEmployee = this.currentAccount;
           console.log(this.currentEmployee);
           if (this.isCustomerAdmin() && this.currentEmployee) {
-            this.currentEmployee.companyId //not working
+            this.currentEmployee.companyId
               ? this.userService.findAllByCompany(this.currentEmployee.companyId).subscribe((res: HttpResponse<IUser[]>) => {
                   console.log(res.body);
                   res.body ? (this.employees = res.body) : null;
                 })
               : null;
           }
-          // this.jobService.findJobsByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<IJob[]>) => {
-          //   res.body ? (this.jobs = res.body) : null;
-          // });
           this.setCustomers();
           this.currentEmployee?.companyId ? this.setCompany(this.currentEmployee.companyId) : null;
         });
@@ -146,10 +143,15 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public setCustomers(): void {
-    if (this.currentEmployee)
+    if (this.currentEmployee) {
+      console.log(this.currentEmployee.id);
       this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {
+        console.log('SETCUSTOMERS');
+        console.log(this.currentEmployee);
         res.body ? (this.customers = res.body) : (this.customers = []);
+        console.log(res.body);
       });
+    }
   }
 
   public getProjects(customer: ICustomer): IProject[] {
@@ -328,7 +330,6 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   public IsDisable(i: number): boolean {
     const bool = true;
     return !(new Date() < new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1));
-    // return bool;
   }
 
   public makeReport(): void {
