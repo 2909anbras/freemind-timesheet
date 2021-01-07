@@ -39,6 +39,13 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
           },
           loadChildren: () => import('./timesheet/timesheet.module').then(m => m.FreemindTimesheetTimesheetModule),
         },
+        {
+          path: 'login',
+          data: {
+            authorities: [],
+          },
+          loadChildren: () => import('./shared/login/login-page.module').then(m => m.LoginPageModule),
+        },
         ...LAYOUT_ROUTES,
       ],
       { enableTracing: DEBUG_INFO_ENABLED }

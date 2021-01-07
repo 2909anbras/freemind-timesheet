@@ -17,6 +17,6 @@ export const TimesheetRoute: Routes = [
       authorities: [Authority.USER],
       pageTitle: 'freemindTimesheetApp.appUser.home.title',
     },
-    canActivate: [UserRouteAccessService], //si qq'un de connecté je crois.
+    canActivate: [UserRouteAccessService],
   },
 ];
