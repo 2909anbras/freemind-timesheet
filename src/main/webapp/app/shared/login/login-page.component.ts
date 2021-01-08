@@ -28,7 +28,7 @@ export class LoginPageComponent {
     private fb: FormBuilder
   ) {}
 
-  login() {
+  login(): void {
     this.loginService
       .login({
         username: this.loginForm.get('username')!.value,
@@ -66,11 +66,11 @@ export class LoginPageComponent {
       );
   }
 
-  register() {
+  register(): void {
     this.router.navigate(['/account/register']);
   }
 
-  requestResetPassword() {
+  requestResetPassword(): void {
     this.router.navigate(['/account/reset', 'request']);
   }
 }

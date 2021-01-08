@@ -7,30 +7,29 @@
     align-items: stretch;
     align-content: space-between;">
         <div *jhiHasAnyAuthority="['ROLE_ADMIN']" >
-            <label jhiTranslate="global-view.company-filter">Company</label>
+            <label jhiTranslate="global-view.company-filter">Company</label>&nbsp;
             <select style="width: 10%;" class="form-control" (change)="onChangeCompany()" [(ngModel)]="companySelected" >
-                <option *ngFor="let company of companies" [ngValue]="company">{{company.name}}</option>
+                <option *ngFor="let company of companies" [ngValue]="company">{{company.name}}</option>&nbsp;
             </select>
-            <div>{{companies.length}}</div>
         </div>
-        <label jhiTranslate="global-view.customer-filter">CUSTOMER</label>
-        <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">
-        <label jhiTranslate="global-view.project-filter">PROJECT</label>
-        <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchProject" placeholder="*">
-        <label jhiTranslate="global-view.job-filter">Job</label>
-        <input style="width: 10%;" type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
+        <label jhiTranslate="global-view.customer-filter">CUSTOMER</label>&nbsp;
+        <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchCustomer" placeholder="*">&nbsp;&nbsp;
+        <label jhiTranslate="global-view.project-filter">PROJECT</label>&nbsp;
+        <input style="width: 10%;"  type="text" class="form-control" [(ngModel)]="searchProject" placeholder="*">&nbsp;&nbsp;
+        <label jhiTranslate="global-view.job-filter">Job</label>&nbsp;
+        <input style="width: 10%;" type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">&nbsp;
      
     </div>
-    <div *ngIf="employees != []">
+    <div *ngIf="employees != []" >
         <div *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" >
-            <label >Employee</label>
+            <label ><b>Employee:</b></label>
             <select style="width: 10%;" class="form-control" (change)="onChangeEmployee()" [(ngModel)]="currentEmployee" >
                 <option *ngFor="let employee of employees; trackBy: trackById" [ngValue]="employee">{{employee.login}}</option>
             </select>
         </div>
     </div>
     <div *ngIf="currentEmployee != null">
-        <p><b>Employee : </b> {{ currentEmployee!.login }}</p>
+        <p> {{ currentEmployee!.login }}</p>
     </div>
 </div>
 
@@ -57,33 +56,33 @@
     
     <tbody>
         <!--Customers-->
-        <ng-container *ngFor="let customer of customers | customerFilter: searchCustomer:'All'"> 
-            <tr>
-                <td style="max-width: 10%;">
+        <ng-container  style="border:none!"*ngFor="let customer of customers | customerFilter: searchCustomer:'All'"> 
+            <tr  style="border:none!">
+                <td style="max-width: 10%;border:none!">
                     {{customer.name}}
                 </td>
-                <td colspan="34"></td>
+                <td style="border:none!"colspan="34"></td>
             </tr>
             <!--Projects-->
             <ng-container *ngFor="let project of getProjects(customer) | projectFilter: searchProject:'All' ">
-                <tr>
-                    <td colspan="1">
+                <tr style="border:none!">
+                    <td style="border:none!" colspan="1">
                     </td>
-                    <td style="max-width: 10%;">
+                    <td style="max-width: 10%;border:none!">
                         {{project.name}}
                     </td>
-                    <td colspan="34"></td>
+                    <td style="border:none!"colspan="34"></td>
                 </tr>
                 <!--Jobs-->
                 <ng-container *ngFor="let job of getJobs(project)|jobFilter: searchJob: 'All'">
-                    <tr>
-                        <td colspan="2"></td>
-                        <td>
+                    <tr style="border-bottom: black;">
+                        <td style="border-bottom: black;" colspan="2"></td>
+                        <td style="border-bottom: black;">
                            {{job.name}}
                         </td>
                         <!--loop qui va afficher tous les 0 ou les heures. Que ddes 0 pour le moment. Faire appel d'une fonction-->
                         <ng-container *ngFor="let item of nbrOfColumns | keyvalue; index as i">
-                            <td  (click)="encodeHours(project,job,customer,i)"style="border-color: black;cursor: pointer">{{getPerformanceHours(job,i)}}</td>
+                            <td style="border-bottom: black;" (click)="encodeHours(project,job,customer,i)"style="border-color: black;cursor: pointer">{{getPerformanceHours(job,i)}}</td>
                             <!-- *ngIf="IsDisable(i);else Disable" -->
                             <!-- <ng-template  #Disable>
                                 <td style="border-color: black;background-color: rgb(221, 219, 219);">{{getPerformance(job,i)}}</td>
