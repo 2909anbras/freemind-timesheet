@@ -44,9 +44,14 @@ export class ProjectUpdateComponent implements OnInit {
     this.accountService.identity().subscribe(e => {
       e ? (this.currentAccount = e) : null;
     });
-    this.activatedRoute.data.subscribe(({ project }) => {
-      this.updateForm(project);
 
+    this.activatedRoute.data.subscribe(({ customer }) => {
+      if (customer !== undefined) {
+        this.patchCustomerId(customer.id);
+      }
+    });
+    this.activatedRoute.data.subscribe(({ project }) => {
+      project !== undefined ? this.updateForm(project) : null;
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
         this.isAdmin = true;
         this.customerService.query().subscribe((res: HttpResponse<ICustomer[]>) => (this.customers = res.body || []));
@@ -64,6 +69,13 @@ export class ProjectUpdateComponent implements OnInit {
         }
       }
     });
+  }
+
+  patchCustomerId(id: number): void {
+    this.editForm.patchValue({
+      customerId: id,
+    });
+    this.editForm.get('customerId')?.disable();
   }
 
   updateForm(project: IProject): void {

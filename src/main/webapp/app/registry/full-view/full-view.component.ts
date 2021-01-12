@@ -100,6 +100,13 @@ export class FullViewComponent implements OnInit {
     // });
   }
 
+  public customerId(id: number | undefined): string {
+    const customerId: any = id;
+    const route = '/project/new/customer/' + customerId;
+    console.log(route);
+    return route;
+  }
+
   public switchCompanyHidden(): void {
     this.companyHidden = !this.companyHidden;
   }

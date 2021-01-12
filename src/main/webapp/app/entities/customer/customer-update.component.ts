@@ -45,10 +45,16 @@ export class CustomerUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ customer }) => {
+      this.activatedRoute.data.subscribe(({ company }) => {
+        if (company !== undefined) {
+          this.patchCompanyId(company.id);
+        }
+      });
+
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
         this.isAdmin = true;
         this.companyService.query().subscribe((res: HttpResponse<ICompany[]>) => (this.companies = res.body || []));
-        this.updateForm(customer);
+        customer !== undefined ? this.updateForm(customer) : null;
       } else {
         this.accountService.identity().subscribe(account => {
           if (account) {
@@ -63,13 +69,19 @@ export class CustomerUpdateComponent implements OnInit {
                 });
               }
             });
-            this.updateForm(customer);
+            customer !== undefined ? this.updateForm(customer) : null;
           }
         });
       }
     });
   }
 
+  patchCompanyId(id: number): void {
+    this.editForm.patchValue({
+      companyId: id,
+    });
+    this.editForm.get('companyId')?.disable();
+  }
   updateForm(customer: ICustomer): void {
     let id = 0;
     if (this.account?.companyId) id = this.account?.companyId;

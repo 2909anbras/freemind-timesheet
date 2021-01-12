@@ -11,6 +11,7 @@ import { ProjectService } from './project.service';
 import { ProjectComponent } from './project.component';
 import { ProjectDetailComponent } from './project-detail.component';
 import { ProjectUpdateComponent } from './project-update.component';
+import { CustomerResolve } from '../customer/customer.route';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectResolve implements Resolve<IProject> {
@@ -39,7 +40,7 @@ export const projectRoute: Routes = [
     path: '',
     component: ProjectComponent,
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
       defaultSort: 'id,asc',
       pageTitle: 'freemindTimesheetApp.project.home.title',
     },
@@ -64,7 +65,19 @@ export const projectRoute: Routes = [
       project: ProjectResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
+      pageTitle: 'freemindTimesheetApp.project.home.title',
+    },
+    canActivate: [UserRouteAccessService],
+  },
+  {
+    path: 'new/customer/:id',
+    component: ProjectUpdateComponent,
+    resolve: {
+      customer: CustomerResolve,
+    },
+    data: {
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
       pageTitle: 'freemindTimesheetApp.project.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -76,7 +89,7 @@ export const projectRoute: Routes = [
       project: ProjectResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
       pageTitle: 'freemindTimesheetApp.project.home.title',
     },
     canActivate: [UserRouteAccessService],

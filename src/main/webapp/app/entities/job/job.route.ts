@@ -11,6 +11,7 @@ import { JobService } from './job.service';
 import { JobComponent } from './job.component';
 import { JobDetailComponent } from './job-detail.component';
 import { JobUpdateComponent } from './job-update.component';
+import { ProjectResolve } from '../project/project.route';
 
 @Injectable({ providedIn: 'root' })
 export class JobResolve implements Resolve<IJob> {
@@ -39,7 +40,7 @@ export const jobRoute: Routes = [
     path: '',
     component: JobComponent,
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
       defaultSort: 'id,asc',
       pageTitle: 'freemindTimesheetApp.job.home.title',
     },
@@ -64,8 +65,20 @@ export const jobRoute: Routes = [
       job: JobResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
       pageTitle: 'freemindTimesheetApp.job.home.title',
+    },
+    canActivate: [UserRouteAccessService],
+  },
+  {
+    path: 'new/project/:id',
+    component: JobUpdateComponent,
+    resolve: {
+      project: ProjectResolve,
+    },
+    data: {
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
+      pageTitle: 'freemindTimesheetApp.project.home.title',
     },
     canActivate: [UserRouteAccessService],
   },
@@ -76,7 +89,7 @@ export const jobRoute: Routes = [
       job: JobResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
       pageTitle: 'freemindTimesheetApp.job.home.title',
     },
     canActivate: [UserRouteAccessService],

@@ -11,6 +11,7 @@ import { CustomerService } from './customer.service';
 import { CustomerComponent } from './customer.component';
 import { CustomerDetailComponent } from './customer-detail.component';
 import { CustomerUpdateComponent } from './customer-update.component';
+import { CompanyResolve } from '../company/company.route';
 
 @Injectable({ providedIn: 'root' })
 export class CustomerResolve implements Resolve<ICustomer> {
@@ -39,7 +40,7 @@ export const customerRoute: Routes = [
     path: '',
     component: CustomerComponent,
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
       defaultSort: 'id,asc',
       pageTitle: 'freemindTimesheetApp.customer.home.title',
     },
@@ -57,6 +58,7 @@ export const customerRoute: Routes = [
     },
     canActivate: [UserRouteAccessService],
   },
+
   {
     path: 'new',
     component: CustomerUpdateComponent,
@@ -64,8 +66,20 @@ export const customerRoute: Routes = [
       customer: CustomerResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
       pageTitle: 'freemindTimesheetApp.customer.home.title',
+    },
+    canActivate: [UserRouteAccessService],
+  },
+  {
+    path: 'new/company/:id',
+    component: CustomerUpdateComponent,
+    resolve: {
+      company: CompanyResolve,
+    },
+    data: {
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
+      pageTitle: 'freemindTimesheetApp.project.home.title',
     },
     canActivate: [UserRouteAccessService],
   },
@@ -76,7 +90,7 @@ export const customerRoute: Routes = [
       customer: CustomerResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
       pageTitle: 'freemindTimesheetApp.customer.home.title',
     },
     canActivate: [UserRouteAccessService],

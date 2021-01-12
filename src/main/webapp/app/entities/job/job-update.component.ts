@@ -56,15 +56,20 @@ export class JobUpdateComponent implements OnInit {
     this.accountService.identity().subscribe(e => {
       e ? (this.currentAccount = e) : null;
     });
+    this.activatedRoute.data.subscribe(({ project }) => {
+      if (project !== undefined) {
+        this.patchProjectId(project.id);
+      }
+    });
+
     this.activatedRoute.data.subscribe(({ job }) => {
-      console.log(job.appUsers);
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
         //by job Company!
         //users by company if admin
         this.isAdmin = true;
         this.projectService.query().subscribe((res: HttpResponse<IProject[]>) => {
           this.projects = res.body || [];
-          this.updateForm(job);
+          job !== undefined ? this.updateForm(job) : null;
         });
       } else {
         if (this.currentAccount) {
@@ -74,8 +79,7 @@ export class JobUpdateComponent implements OnInit {
               this.currentAccount!.companyId = appUser.companyId;
               this.userService.findAllByCompany(this.currentAccount!.companyId).subscribe((users: HttpResponse<IUser[]>) => {
                 if (users.body) this.users = users.body;
-                console.log(this.users);
-                this.updateForm(job);
+                job !== undefined ? this.updateForm(job) : null;
               });
               this.projectService.getProjectByCompanyId(this.currentAccount!.companyId, null).subscribe((res: HttpResponse<IProject[]>) => {
                 this.projects = res.body || [];
@@ -85,6 +89,13 @@ export class JobUpdateComponent implements OnInit {
         }
       }
     });
+  }
+
+  patchProjectId(id: number): void {
+    this.editForm.patchValue({
+      projectId: id,
+    });
+    this.editForm.get('projectId')?.disable();
   }
 
   updateForm(job: IJob): void {
