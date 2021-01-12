@@ -29,7 +29,7 @@ public class Performance implements Serializable {
     private Integer hours;
 
     @Column(name = "description")
-    private String description;
+    private String description = "";
 
     @NotNull
     @Column(name = "date", nullable = false)
@@ -143,6 +143,9 @@ public class Performance implements Serializable {
             "id=" + getId() +
             ", hours=" + getHours() +
             ", date='" + getDate() + "'" +
+            ", description"+getDescription()+" "+
+            ", userID="+getAppUser().getId()+
+            "; jobId="+getJob().getId()+
             "}";
     }
 }

@@ -18,8 +18,10 @@ import com.freemind.timesheet.web.rest.ReportRessource;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,10 +60,6 @@ public class ReportService {
     private final JobRepository jobRepository;
     private final CustomerRepository customerRepository;
     private final ProjectRepository projectRepository;
-    //    private  AppUser appUser;
-    //    private Company company;
-    //    private Customer customer;
-    //    private Job job;
     private List<Performance> performances = new ArrayList<Performance>();
     private static int CPTV; //cpt vertical (for row)
     private static int CPTH; //cpt horizontal(for cell)
@@ -86,9 +84,14 @@ public class ReportService {
         this.projectRepository = projectRepository;
     }
 
-    public void makeFullReport(LocalDate date, Long userId) { //first, for one month
+    public void makeFullReport(LocalDate oldDate, Long userId) {
+        //first, for one month
         //number of column for the month
+        LocalDate date = LocalDate.of(oldDate.getYear(), oldDate.getMonthValue(), 1);
         CPTHMAX = date.lengthOfMonth();
+        log.debug("date : {}", date);
+
+        log.debug("CPTHMAX : {}", CPTHMAX);
         CPTH = 0;
         CPTV = 0;
         //        String outputPath = applicationProperties.getImportExport().getExportImportDir();
@@ -101,18 +104,21 @@ public class ReportService {
         SetDays(styles, sheet.getRow(CPTV), date);
         //tout trier par ordre alphabétique par la suite cé po graf
         User user = userRepository.getOne(userId);
-        fillSheet(wb, user, date);
+        fillSheet(wb, user, date, styles);
 
         // Write the output to a file
-        //        String file = "timesheet employee:" + user.getLogin() + " " + date.toString() + ".xls";
-        String file = "C:\\Users\\FMC_08\\Desktop\\" + "timesheet employee:" + user.getLogin() + " " + date.toString() + ".xls";
+        String file = "C:\\Users\\FMC_08\\Desktop\\" + "timesheet " + user.getLogin() + " " + date.toString() + ".xls";
 
         if (wb instanceof XSSFWorkbook) file += "x";
         FileOutputStream out;
 
+        log.debug("Path:{}", file);
+
         try {
             out = new FileOutputStream(file);
+            log.debug("FILE:{}", file.toString());
             try {
+                log.debug("Inside");
                 wb.write(out);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -139,66 +145,111 @@ public class ReportService {
         sheet.setHorizontallyCenter(true);
     }
 
-    private void fillSheet(Workbook wb, User user, LocalDate date) {
+    private void fillSheet(Workbook wb, User user, LocalDate date, Map<String, CellStyle> styles) {
+        LocalDate dateCopy = date;
         AppUser apUser = this.appUserRepository.getOne(user.getId());
         Row row = wb.getSheet("Timesheet").createRow(CPTV);
-        printString(row, user.getLogin());
+        Sheet sheet = wb.getSheet("Timesheet");
+        printString(row, user.getLogin(), styles);
+        CPTH++;
         Company company = apUser.getCompany();
-        printString(row, company.getName());
-        fillRows(row, company, user.getId(), date);
+        printString(row, company.getName(), styles);
+        CPTH++;
+        fillRows(sheet, row, company, user.getId(), date, styles);
     }
 
-    private void fillRows(Row row, Company company, Long userId, LocalDate date) {
+    private void fillRows(Sheet sheet, Row row, Company company, Long userId, LocalDate date, Map<String, CellStyle> styles) {
         List<Customer> customers = customerRepository.findCustomersByUserId(userId, company.getId());
         for (Customer c : customers) {
-            printString(row, c.getName());
-            printProjects(projectRepository.findProjectsByCustomerAndUserId(userId, c.getId()), userId, row, date);
+            printString(row, c.getName(), styles);
+            CPTH++;
+            printProjects(sheet, projectRepository.findProjectsByCustomerAndUserId(userId, c.getId()), userId, row, date, styles);
             CPTV++; //next cust
-            CPTH = 1; //back to column c
+            row = sheet.createRow(CPTV);
+            CPTH = 2; //back to column c
         }
     }
 
-    private void printProjects(List<Project> projects, Long userId, Row row, LocalDate date) {
+    private void printProjects(Sheet sheet, List<Project> projects, Long userId, Row row, LocalDate date, Map<String, CellStyle> styles) {
         for (int i = 0; i < projects.size(); i++) {
-            //			for(Project p:projects) {
             Project p = projects.get(i);
-            printString(row, p.getName());
-            printJobs(p.getJobsByUser(userId), userId, row, date);
-            if (i + 1 <= projects.size()) {
-                CPTV++; //next if last project dont do that.
-                CPTH = 2;
+            printString(row, p.getName(), styles);
+            CPTH++;
+            printJobs(sheet, p.getJobsByUser(userId), userId, row, date, styles);
+            if (i + 1 < projects.size()) {
+                if (sheet.getRow(CPTV + 1) == null) {
+                    CPTV++; //next if last project dont do that.
+                    row = sheet.createRow(CPTV);
+                } else row = sheet.getRow(CPTV);
+
+                CPTH = 3;
             }
         }
     }
 
-    private void printJobs(List<Job> jobs, Long userId, Row row, LocalDate date) {
+    private void printJobs(Sheet sheet, List<Job> jobs, Long userId, Row row, LocalDate date, Map<String, CellStyle> styles) {
+        LocalDate dateCopy = date;
         int i = 0;
-        //			for(Job j:jobs) {
+        int hours = 0;
+        int totalHours = 0;
         for (int cptJ = 0; cptJ < jobs.size(); cptJ++) {
             Job j = jobs.get(cptJ);
-
-            printString(row, j.getName());
-
+            log.debug("JOB:{}", j);
+            printString(row, j.getName(), styles);
+            CPTH++;
             while (i < CPTHMAX) {
-                Performance perf = j.getPerfByDateAndUserId(date, userId);
-                if (perf == null) printString(row, "0"); else printString(row, perf.getHours().toString());
+                log.debug("CPTH: {}", CPTH);
+                Performance perf = j.getPerfByDateAndUserId(dateCopy, userId); //get the perf
+
+                dateCopy = dateCopy.plusDays(1); //next day
+
+                if (perf == null) hours = 0; else hours = perf.getHours();
+
+                log.debug("Performance:{}", perf);
+
+                printString(row, hours + "", styles);
+
+                totalHours += hours; //total for the end of the row
+
+                if (perf != null && perf.getDescription() != "") {
+                    log.debug("CPTV AVANT:{}", row);
+                    row = sheet.getRow(CPTV + 1);
+                    log.debug("description:{}", perf.getDescription());
+                    if (row == null) {
+                        log.debug("CREATE ROW");
+                        row = sheet.createRow(CPTV + 1);
+                    }
+                    log.debug("CPTV après:{}", row);
+                    printString(row, perf.getDescription(), styles);
+                    row = sheet.getRow(CPTV);
+                }
+                CPTH++;
                 i++;
             }
-
-            if (cptJ + 1 <= jobs.size()) {
-                CPTH = 3; //reviens au niveau des jobs names
+            printString(row, totalHours + "", styles);
+            totalHours = 0;
+            if (cptJ < jobs.size()) {
+                dateCopy = date;
+                CPTH = 4; //reviens au niveau des jobs names
                 i = 0; //for the next perfs
-                CPTV++; //new row, new job
+                log.debug("ROW EXISTS?:{}", sheet.getRow(CPTV + 1) != null);
+
+                if (sheet.getRow(CPTV + 1) == null) CPTV++; //new row, new job
+                else CPTV += 2;
+
+                row = sheet.createRow(CPTV);
+                log.debug("NEW JOB ROW");
             }
         }
     }
 
-    private void printString(Row row, String name) {
+    private void printString(Row row, String name, Map<String, CellStyle> styles) {
+        log.debug("PRINT STRING:{}", name);
         row.setHeightInPoints(35);
         Cell cell;
         cell = row.createCell(CPTH);
         cell.setCellValue(name);
-        CPTH++;
+        cell.setCellStyle(styles.get("cell"));
     }
 
     private void setTitle(Sheet sheet, Map<String, CellStyle> styles, LocalDate date) {
@@ -206,9 +257,9 @@ public class ReportService {
         CPTV++;
         titleRow.setHeightInPoints(45);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("Month " + date.toString()); //user
+        titleCell.setCellValue(date.format(DateTimeFormatter.ofPattern("MMMM")) + " " + date.format(DateTimeFormatter.ofPattern("y")));
         titleCell.setCellStyle(styles.get("title"));
-        sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$Z$1"));
+        sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$AK$1"));
     }
 
     private void makeHeader(Sheet sheet, Map<String, CellStyle> styles) {
@@ -216,47 +267,52 @@ public class ReportService {
         headerRow.setHeightInPoints(40);
         Cell headerCell;
         headerCell = headerRow.createCell(CPTH);
-        headerCell.setCellValue("Employee Name");
+        headerCell.setCellValue("EMPLOYEE ");
+        headerCell.setCellStyle(styles.get("header"));
         CPTH++;
         headerCell = headerRow.createCell(CPTH);
-        headerCell.setCellValue("Company Name");
+        headerCell.setCellValue("COMPANY ");
+        headerCell.setCellStyle(styles.get("header"));
+
         CPTH++;
         headerCell = headerRow.createCell(CPTH);
-        headerCell.setCellValue("Customer Name");
+        headerCell.setCellValue("CUSTOMERS ");
+        headerCell.setCellStyle(styles.get("header"));
+
         CPTH++;
         headerCell = headerRow.createCell(CPTH);
-        headerCell.setCellValue("Project Name");
+        headerCell.setCellValue("PROJECTS ");
+        headerCell.setCellStyle(styles.get("header"));
+
         CPTH++;
         headerCell = headerRow.createCell(CPTH);
-        headerCell.setCellValue("Job Name");
+        headerCell.setCellValue("JOBS ");
+        headerCell.setCellStyle(styles.get("header"));
+
         CPTH++;
     }
 
     private void SetDays(Map<String, CellStyle> styles, Row headerRow, LocalDate date) {
         LocalDate dateCopy = date;
+        int total;
+
         Cell headerCell;
         for (int i = 0; i < CPTHMAX; i++) {
             headerCell = headerRow.createCell(CPTH);
-            headerCell.setCellValue(new SimpleDateFormat("EEE").format(dateCopy));
+            headerCell.setCellValue(dateCopy.format(DateTimeFormatter.ofPattern("EEE")));
+            headerCell.setCellStyle(styles.get("header"));
             CPTH++;
-            dateCopy.plusDays(1);
+            dateCopy = dateCopy.plusDays(1);
         }
+        headerCell = headerRow.createCell(CPTH);
+        headerCell.setCellValue("Total");
+        headerCell.setCellStyle(styles.get("header"));
         CPTV++; //next row
+        //        Row
         CPTH = 0;
     } //end first line
 
     private void populateWithEntity(Workbook wb, Map<String, CellStyle> styles, LocalDate date, Long userId) {
-        //employee name
-        Sheet sheet = wb.getSheet("Timesheet");
-        Row headerRow = sheet.createRow(CPTV);
-        headerRow.setHeightInPoints(30);
-        Cell headerCell;
-        //        String userName
-        //company name
-        //customer name
-        //project name
-        //job name
-        //perf hours or 0
         //tot hours
     }
 
@@ -273,28 +329,31 @@ public class ReportService {
         styles.put("title", style);
 
         Font monthFont = wb.createFont();
-        monthFont.setFontHeightInPoints((short) 11);
+        monthFont.setFontHeightInPoints((short) 15);
         monthFont.setColor(IndexedColors.WHITE.getIndex());
         style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
-        style.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
+        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setFont(monthFont);
         style.setWrapText(true);
         styles.put("header", style);
 
         style = wb.createCellStyle();
+        Font cellFont = wb.createFont();
+        monthFont.setFontHeightInPoints((short) 13);
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setWrapText(true);
-        style.setBorderRight(BorderStyle.THIN);
-        style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderTop(BorderStyle.THIN);
-        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+        //        style.setBorderRight(BorderStyle.THIN);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        //        style.setRightBorderColor(IndexedColors.BLACK.getIndex());
+        //        style.setBorderLeft(BorderStyle.THIN);
+        //        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        //        style.setBorderTop(BorderStyle.THIN);
+        //        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+        //        style.setBorderBottom(BorderStyle.THIN);
+        //        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
         styles.put("cell", style);
 
         style = wb.createCellStyle();

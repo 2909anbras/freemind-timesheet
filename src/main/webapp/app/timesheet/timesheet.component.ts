@@ -98,9 +98,11 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnInit(): void {
     this.timesheetChange();
-    this.setNumberOfColumns(this.date.getMonth() + 1, this.date.getFullYear());
-    const tmpArray: [] = [].constructor(this.nbrOfColumns);
-    this.loop = tmpArray;
+    this.setNumberOfColumns(this.date.getMonth(), this.date.getFullYear());
+
+    this.dateCopy = new Date(this.date);
+    // const tmpArray: [] = [].constructor(this.nbrOfColumns);
+    // this.loop = tmpArray;
     this.cptTd = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), 1).getDay();
     this.monthName = this.months[this.date.getMonth()];
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
@@ -110,17 +112,14 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
       if (this.isAdmin()) {
         this.companyService.query(null).subscribe((res: HttpResponse<ICompany[]>) => {
           res.body ? (this.companies = res.body) : null;
-          console.log(this.companies);
         });
       } else {
         this.appUserService.find(this.currentAccount.id).subscribe((res: HttpResponse<IAppUser>) => {
           this.currentAccount && res.body ? (this.currentAccount.companyId = res.body.companyId) : null;
           this.currentEmployee = this.currentAccount;
-          console.log(this.currentEmployee);
           if (this.isCustomerAdmin() && this.currentEmployee) {
             this.currentEmployee.companyId
               ? this.userService.findAllByCompany(this.currentEmployee.companyId).subscribe((res: HttpResponse<IUser[]>) => {
-                  console.log(res.body);
                   res.body ? (this.employees = res.body) : null;
                 })
               : null;
@@ -136,7 +135,6 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (companyId)
       this.userService.findAllByCompany(companyId).subscribe((res: HttpResponse<IUser[]>) => {
         res.body ? (this.employees = res.body) : null;
-        console.log(this.employees);
         return res.body;
       });
     return [];
@@ -144,12 +142,8 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   public setCustomers(): void {
     if (this.currentEmployee) {
-      console.log(this.currentEmployee.id);
       this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {
-        console.log('SETCUSTOMERS');
-        console.log(this.currentEmployee);
         res.body ? (this.customers = res.body) : (this.customers = []);
-        console.log(res.body);
       });
     }
   }
@@ -209,13 +203,15 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   private setNumberOfColumns(mounth: number, year: number): void {
-    this.nbrOfColumns = this.getNumberOfDays(mounth, year);
+    console.log(mounth);
+    this.nbrOfColumns = this.getNumberOfDays(mounth + 1, year);
     const tmpArray: [] = [].constructor(this.nbrOfColumns);
     this.loop = tmpArray;
   }
 
   private getNumberOfDays(mounth: number, year: number): number {
-    return new Date(year, mounth + 1, 0).getDate();
+    console.log(new Date(year, mounth, 0));
+    return new Date(year, mounth, 0).getDate();
   }
 
   public nextMonth(): void {
@@ -258,21 +254,15 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   onChangeEmployee(): void {
-    //change currentEmployee
-    console.log(this.currentEmployee);
     this.setCustomers();
   }
 
   onChangeCompany(): void {
-    console.log('COMPANY CHANGE');
-    console.log(this.companySelected);
     this.employees = this.setEmployees(this.companySelected?.id);
     if (this.employees.length === 0) {
       this.customers = [];
       this.currentEmployee = null;
     }
-    console.log('CUSTOMERS CHANGE');
-    console.log(this.customers);
   }
 
   trackById(index: number, item: SelectableEntity): any {
@@ -334,9 +324,10 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   public makeReport(): void {
     console.log(this.currentEmployee!.id);
+
     if (this.currentEmployee) {
       console.log('dedans');
-      this.timesheetService.create(this.dateCopy, this.currentEmployee.id);
+      this.timesheetService.create(this.dateCopy, this.currentEmployee.id).subscribe(res => console.log(res));
     }
   }
 }

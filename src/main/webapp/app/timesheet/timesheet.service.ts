@@ -16,6 +16,8 @@ export class TimesheetService {
 
   create(date: Date, userId: number): Observable<HttpResponse<any>> {
     console.log('DEDANS LE SERVICE');
+    console.log(date);
+
     return this.http.post<any>(`${this.resourceUrl + '/fullReport'}/${userId}`, date, { observe: 'response' });
   }
 }

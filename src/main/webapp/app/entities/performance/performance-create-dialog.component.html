@@ -1,11 +1,11 @@
-<form   (ngSubmit)="create()" [formGroup]="createForm">
+<form   (ngSubmit)="save()" [formGroup]="createForm">
     <!-- *ngIf="customer" -->
     <div class="modal-header">
         <h4 class="modal-title" jhiTranslate="entity.create.title">Confirm create operation</h4>
-        <p class="modal-title">{{customerToString}}</p>&nbsp;
-        <p class="modal-title">{{projectToString}}</p>&nbsp;
-        <p class="modal-title">{{jobToString}}</p>&nbsp;
-        <p class="modal-title">{{dateToString}}</p>&nbsp;
+        <p class="modal-title">{{customerToString}}</p>&nbsp;&nbsp;
+        <p class="modal-title">{{projectToString}}</p>&nbsp;&nbsp;
+        <p class="modal-title">{{jobToString}}</p>&nbsp;&nbsp;
+        <p class="modal-title">{{dateToString}}</p>&nbsp;&nbsp;
         <button  type="button" class="close" data-dismiss="modal" aria-hidden="true"
                 (click)="cancel()">&times;</button>
     </div>

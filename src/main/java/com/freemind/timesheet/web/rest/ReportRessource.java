@@ -2,6 +2,7 @@ package com.freemind.timesheet.web.rest;
 
 import com.freemind.timesheet.security.AuthoritiesConstants;
 import com.freemind.timesheet.service.ReportService;
+import com.freemind.timesheet.service.dto.AppUserDTO;
 import com.freemind.timesheet.service.dto.CustomerDTO;
 import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
@@ -41,7 +42,7 @@ public class ReportRessource {
     @PostMapping("/report/fullReport/{userId}")
     @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\"+\"," + AuthoritiesConstants.CUSTOMER_ADMIN + "\")")
     //later map with two date=>the range
-    public ResponseEntity<Void> createFullReport(@PathVariable Long userId, @Valid @RequestBody LocalDate date)
+    public ResponseEntity<Boolean> createFullReport(@PathVariable Long userId, @Valid @RequestBody LocalDate date)
         throws URISyntaxException, IOException {
         log.debug("REPORT DATE : {}", date);
 

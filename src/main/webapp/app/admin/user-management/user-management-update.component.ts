@@ -143,7 +143,6 @@ export class UserManagementUpdateComponent implements OnInit {
     this.isSaving = true;
     this.updateUser(this.user);
     if (this.user.id !== undefined) {
-      console.log(this.user.id);
       this.userService.update(this.user).subscribe(
         () => this.onSaveSuccess(),
         () => this.onSaveError()
@@ -157,6 +156,13 @@ export class UserManagementUpdateComponent implements OnInit {
   }
 
   private updateForm(user: User): void {
+    let id: number;
+
+    if (!this.accountService.hasAnyAuthority('ROLE_ADMIN') && this.account?.companyId) id = this.account.companyId;
+    else id = user.companyId!;
+    this.editForm.patchValue({
+      companyId: id,
+    });
     this.editForm.patchValue({
       id: user.id,
       login: user.login,
@@ -168,7 +174,6 @@ export class UserManagementUpdateComponent implements OnInit {
       authorities: user.authorities,
       phone: user.phone,
       jobs: user.jobs,
-      companyId: user.companyId,
     });
   }
 

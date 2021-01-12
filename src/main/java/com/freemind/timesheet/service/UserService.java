@@ -343,8 +343,11 @@ public class UserService {
                 user -> {
                     boolean canDelete = true;
                     AppUser appUser = appUserRepository.findById(user.getId()).get();
+                    log.debug("AppUser to delete:{}", appUser);
                     if (appUser != null) {
                         canDelete = appUser.getPerformances().size() == 0;
+                        log.debug("Can DELETE:{}", appUser);
+
                         if (canDelete) {
                             Company c = appUser.getCompany();
                             c.removeAppUser(appUser);

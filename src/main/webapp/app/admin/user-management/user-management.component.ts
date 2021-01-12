@@ -47,6 +47,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     if (this.accountService.hasAnyAuthority('ROLE_ADMIN'))
       this.userListSubscription = this.eventManager.subscribe('userListModification', () => this.loadAll());
     else {
+      this.userListSubscription = this.eventManager.subscribe('userListModification', () => this.loadAllCompany());
+
       this.loadAllCompany();
       const reqBis = { page: this.page - 1, size: this.itemsPerPage, sort: this.sortAppUser() };
       if (this.currentAccount) {

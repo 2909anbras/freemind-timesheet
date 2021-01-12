@@ -74,6 +74,22 @@ export class PerformanceCreateDialogComponent implements OnInit {
     this.activeModal.dismiss('cancel');
   }
 
+  update(): void {
+    this.performanceService
+      .update({
+        id: this.performance?.id,
+        hours: this.createForm?.get('hours')!.value,
+        description: this.createForm?.get('description')!.value,
+        date: this.date!,
+        jobId: this.job?.id,
+        appUserId: this.currentEmployee?.id,
+      })
+      .subscribe(() => {
+        this.eventManager.broadcast('timesheetModification');
+        this.activeModal.close();
+      });
+  }
+
   create(): void {
     this.performanceService
       .create({
@@ -87,5 +103,9 @@ export class PerformanceCreateDialogComponent implements OnInit {
         this.eventManager.broadcast('timesheetModification');
         this.activeModal.close();
       });
+  }
+
+  save(): void {
+    this.isNew ? this.create() : this.update();
   }
 }

@@ -7,6 +7,7 @@ import com.freemind.timesheet.domain.enumeration.Status;
 import com.freemind.timesheet.service.JobService;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -224,18 +225,23 @@ public class Job implements Serializable {
     }
 
     public Performance getPerfByDateAndUserId(LocalDate date, Long userId) {
-        List<Performance> perfs = performances
-            .stream()
-            .filter(p -> p.getDate() == date && p.getAppUser().getId() == userId)
-            .collect(Collectors.toList());
-        if (perfs.size() > 0) {
+        List<Performance> perfs = new ArrayList<Performance>();
+        if (performances.size() > 0) {
+            perfs =
+                performances
+                    .stream()
+                    .filter(p -> p.getDate().compareTo(date) == 0 && p.getAppUser().getId() == userId)
+                    .collect(Collectors.toList());
+        }
+        log.debug("PERFORMANCE:{}", perfs);
+        if (perfs.size() > 1) {
             throw new IllegalStateException();
         }
-        Performance perf;
-        if (perfs.size() == 0) {
-            perf = perfs.get(0);
-        } else perf = null;
-        return perf;
+
+        if (perfs.size() == 1) {
+            return perfs.get(0);
+        }
+        return null;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

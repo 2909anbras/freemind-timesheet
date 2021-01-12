@@ -70,6 +70,27 @@ public class PerformanceService {
         return performanceMapper.toDto(performance);
     }
 
+    public PerformanceDTO update(PerformanceDTO performanceDTO) {
+        log.debug("Request to save Performance : {}", performanceDTO);
+        Performance performance = performanceRepository.getOne(performanceDTO.getId());
+
+        performance.setDescription(performanceDTO.getDescription());
+        performance.setHours(performanceDTO.getHours());
+        performance = performanceRepository.save(performance);
+
+        AppUser ap = appUserRepository.findById(performance.getAppUser().getId()).get();
+        ap.removePerformance(performance);
+        ap.addPerformance(performance);
+        appUserRepository.save(ap);
+
+        Job j = jobRepository.findById(performance.getJob().getId()).get();
+        j.removePerformance(performance);
+        j.addPerformance(performance);
+        jobRepository.save(j);
+
+        return performanceMapper.toDto(performance);
+    }
+
     /**
      * Get all the performances.
      *
