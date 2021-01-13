@@ -92,15 +92,16 @@
                     <tr id="{{project.id}}"*ngIf="!companyHidden && !customerHidden"  >
                         <td colspan="2" style="border-left: none!important;border-right: none!important;background-color: #fdfdfd"></td>
                         <div *ngIf="!projectHidden; else hiddeProject" style="background-color: #fdfdfd">
-                            <td style="border-left: none!important;border-right: none!important;">
+                            <td style="border-left: none!important;border-right: none!important;text-align: right!important;">
                                 <fa-icon (click)="switchProjectHidden()" style="cursor: pointer"  [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
                                 <a [routerLink]="['/project', project.id, 'edit']">   {{project.name}}</a>
-                            </td>
-                            <td colspan="1"style="border-left: none!important;border-right: none!important">
-                                <a [routerLink]="['/job/new/project', project.id]">
+                                <a   [routerLink]="['/job/new/project', project.id]">
                                     <fa-icon  style="cursor: pointer" [icon]="'plus-circle'" [fixedWidth]="true"></fa-icon>
                                 </a>
                             </td>
+                            <!-- <td colspan="1"style="border-left: none!important;border-right: none!important"> -->
+                               
+                            <!-- </td> -->
                         </div>
                         <ng-template #hiddeProject>
                             <td style="border-left: none!important;border-right: none!important;background-color: #fdfdfd" >
