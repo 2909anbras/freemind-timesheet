@@ -7,6 +7,7 @@ export interface ICustomer {
   projects: IProject[];
   companyId?: number;
   companyName?: string;
+  // hidden?:boolean;
 }
 
 export class Customer implements ICustomer {
@@ -17,7 +18,9 @@ export class Customer implements ICustomer {
     public projects: IProject[] = []!,
     public companyId?: number,
     public companyName?: string
-  ) {
+  ) // public hidden:boolean=false,
+
+  {
     this.enable = this.enable || false;
   }
 }

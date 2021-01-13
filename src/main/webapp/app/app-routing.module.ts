@@ -16,7 +16,7 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
         {
           path: 'admin',
           data: {
-            authorities: [Authority.CUSTOMER_ADMIN, Authority.ADMIN],
+            authorities: [Authority.CUSTOMER_ADMIN, Authority.ADMIN, Authority.INSPECTOR],
           },
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./admin/admin-routing.module').then(m => m.AdminRoutingModule),
@@ -28,7 +28,7 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
         {
           path: 'registry',
           data: {
-            authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN],
+            authorities: [Authority.ADMIN, Authority.CUSTOMER_ADMIN, Authority.INSPECTOR],
           },
           loadChildren: () => import('./registry/registry-routing.module').then(m => m.RegistryRoutingModule),
         },

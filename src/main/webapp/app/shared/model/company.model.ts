@@ -6,8 +6,15 @@ export interface ICompany {
   name?: string;
   appUsers?: IAppUser[];
   customers: ICustomer[];
+  // hidden?:boolean;
 }
 
 export class Company implements ICompany {
-  constructor(public id?: number, public name?: string, public appUsers?: IAppUser[], public customers: ICustomer[] = []!) {}
+  constructor(
+    public id?: number,
+    public name?: string,
+    public appUsers?: IAppUser[],
+    public customers: ICustomer[] = []!
+  ) // public hidden:boolean=false,
+  {}
 }

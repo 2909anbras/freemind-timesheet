@@ -7,6 +7,7 @@ export interface IProject {
   jobs: IJob[];
   customerId?: number;
   customerName?: string;
+  // hidden?:boolean;
 }
 
 export class Project implements IProject {
@@ -17,7 +18,8 @@ export class Project implements IProject {
     public jobs: IJob[] = []!,
     public customerName?: string,
     public customerId?: number
-  ) {
+  ) // public hidden:boolean=false,
+  {
     this.enable = this.enable || false;
   }
 }

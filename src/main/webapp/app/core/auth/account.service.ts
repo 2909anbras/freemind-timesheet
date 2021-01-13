@@ -43,6 +43,16 @@ export class AccountService {
     return this.userIdentity.authorities.some((authority: string) => authorities.includes(authority));
   }
 
+  hasNotThoseAuthorities(authorities: string[] | string): boolean {
+    if (!this.userIdentity || !this.userIdentity.authorities) {
+      return false;
+    }
+    if (!Array.isArray(authorities)) {
+      authorities = [authorities];
+    }
+    return !this.userIdentity.authorities.some((authority: string) => authorities.includes(authority));
+  }
+
   identity(force?: boolean): Observable<Account | null> {
     if (!this.accountCache$ || force || !this.isAuthenticated()) {
       this.accountCache$ = this.fetch().pipe(

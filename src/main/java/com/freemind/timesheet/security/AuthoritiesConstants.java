@@ -12,5 +12,7 @@ public final class AuthoritiesConstants {
 
     public static final String CUSTOMER_ADMIN = "ROLE_CUSTOMER_ADMIN";
 
+    public static final String INSPECTOR = "ROLE_INSPECTOR";
+
     private AuthoritiesConstants() {}
 }

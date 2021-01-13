@@ -9,11 +9,13 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { Subscription, combineLatest } from 'rxjs';
 import { ICompany } from 'app/shared/model/company.model';
 import { CompanyService } from 'app/entities/company/company.service';
+import { ICustomer } from 'app/shared/model/customer.model';
 
 import { AppUserService } from 'app/entities/app-user/app-user.service';
 import { IAppUser } from 'app/shared/model/app-user.model';
 import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
+import { IProject } from 'app/shared/model/project.model';
 @Component({
   selector: 'jhi-full-view',
   templateUrl: './full-view.component.html',
@@ -94,21 +96,9 @@ export class FullViewComponent implements OnInit {
         } else return 1;
       } else return 1;
     });
-
-    // this.showCompanies.sort((a, b) => {
-    //   if (a.customers.length === 0) return 1;
-    //   else return -1;
-    // });
   }
 
-  public customerId(id: number | undefined): string {
-    const customerId: any = id;
-    const route = '/project/new/customer/' + customerId;
-    console.log(route);
-    return route;
-  }
-
-  public switchCompanyHidden(): void {
+  public switchCompanyHidden(c: ICompany): void {
     this.companyHidden = !this.companyHidden;
   }
   public switchCustomerHidden(): void {
@@ -118,13 +108,25 @@ export class FullViewComponent implements OnInit {
     this.projectHidden = !this.projectHidden;
   }
 
-  showHide(id: number): void {
-    const el = <HTMLElement>document.querySelector(`#${id}`);
-    if (el.classList.contains('hidden')) el.classList.remove('hidden');
-    else {
-      el.classList.add('hidden');
-    }
-  }
+  // showHide(id?:number):void {
+  //   console.log("coucou "+id);
+  //   const el:HTMLElement |null= document.getElementById(`${id}`);
+  //   if(el){
+  //   if (el.classList.contains('hidden')) {
+  //     el.classList.remove('hidden');
+  //   } else {
+  //     el.classList.add('hidden');
+  //   }
+  // }
+  // }
+
+  // showHide(id: number): void {
+  //   const el = <HTMLElement>document.querySelector(`#${id}`);
+  //   if (el.classList.contains('hidden')) el.classList.remove('hidden');
+  //   else {
+  //     el.classList.add('hidden');
+  //   }
+  // }
 
   public newCompany(): void {}
 }

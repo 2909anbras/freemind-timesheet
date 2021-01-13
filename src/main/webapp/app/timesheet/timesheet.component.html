@@ -21,7 +21,7 @@
      
     </div>
     <div *ngIf="employees != []" >
-        <div *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN']" >
+        <div *jhiHasAnyAuthority="['ROLE_ADMIN','ROLE_CUSTOMER_ADMIN','ROLE_INSPECTOR']" >
             <label ><b>Employee:</b></label>
             <select style="width: 10%;" class="form-control" (change)="onChangeEmployee()" [(ngModel)]="currentEmployee" >
                 <option *ngFor="let employee of employees; trackBy: trackById" [ngValue]="employee">{{employee.login}}</option>

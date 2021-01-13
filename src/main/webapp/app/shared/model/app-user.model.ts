@@ -6,8 +6,16 @@ export interface IAppUser {
   internalUserId?: number;
   jobs?: IJob[];
   companyId?: number;
+  // hidden:boolean;
 }
 
 export class AppUser implements IAppUser {
-  constructor(public id?: number, public phone?: string, public internalUserId?: number, public jobs?: IJob[], public companyId?: number) {}
+  constructor(
+    // public hidden: boolean= false,
+    public id?: number,
+    public phone?: string,
+    public internalUserId?: number,
+    public jobs?: IJob[],
+    public companyId?: number
+  ) {}
 }
