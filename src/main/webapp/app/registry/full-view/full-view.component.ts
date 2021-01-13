@@ -17,6 +17,7 @@ import { AccountService } from 'app/core/auth/account.service';
 @Component({
   selector: 'jhi-full-view',
   templateUrl: './full-view.component.html',
+  styleUrls: ['full-view.scss'],
 })
 export class FullViewComponent implements OnInit {
   showCompanies: ICompany[] = [];
@@ -116,5 +117,14 @@ export class FullViewComponent implements OnInit {
   public switchProjectHidden(): void {
     this.projectHidden = !this.projectHidden;
   }
+
+  showHide(id: number): void {
+    const el = <HTMLElement>document.querySelector(`#${id}`);
+    if (el.classList.contains('hidden')) el.classList.remove('hidden');
+    else {
+      el.classList.add('hidden');
+    }
+  }
+
   public newCompany(): void {}
 }

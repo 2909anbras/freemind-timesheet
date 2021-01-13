@@ -40,13 +40,15 @@
         <ng-container *ngFor="let company of showCompanies | companyFilter: searchCompany">
           
             <tr id="{{company.id}}"style="border: none!important;background-color: #cacaca"> 
+
                 <td *ngIf="showCompanies && showCompanies.length>0" style="border: none!important;">
+
                     <div *ngIf="!companyHidden; else hiddeCompany">
                         <fa-icon (click)="switchCompanyHidden()"  style="cursor: pointer" [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
                         <a [routerLink]="['/company', company.id, 'edit']">{{ company.name }}</a>
                     </div>
+
                     <td colspan="1"style="border-left: none!important;border-right: none!important">
-                        <!-- <a routerLink="{{customerId(customer.id)}}">  -->
                         <a [routerLink]="['/customer/new/company', company.id]">
                             <fa-icon  style="cursor: pointer" [icon]="'plus-circle'" [fixedWidth]="true"></fa-icon>
                         </a>
@@ -72,8 +74,7 @@
                                 <fa-icon (click)="switchCustomerHidden()" style="cursor: pointer" [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
                                 <a [routerLink]="['/customer', customer.id, 'edit']">{{customer.name}}</a>
                             </td>
-                            <td colspan="1"style="border-left: none!important;border-right: none!important">
-                                <!-- <a routerLink="{{customerId(customer.id)}}">  -->
+                            <td colspan="3"style="border-left: none!important;border-right: none!important">
                                 <a [routerLink]="['/project/new/customer', customer.id]">
                                     <fa-icon  style="cursor: pointer" [icon]="'plus-circle'" [fixedWidth]="true"></fa-icon>
                                 </a>
@@ -89,9 +90,13 @@
                     </tr>
                 <!-- project container -->
                 <ng-container *ngFor=" let project of customer.projects| projectFilter: searchProject: searchProjectState">
+                    
                     <tr id="{{project.id}}"*ngIf="!companyHidden && !customerHidden"  >
+                    
                         <td colspan="2" style="border-left: none!important;border-right: none!important;background-color: #fdfdfd"></td>
+                    
                         <div *ngIf="!projectHidden; else hiddeProject" style="background-color: #fdfdfd">
+                        
                             <td style="border-left: none!important;border-right: none!important;text-align: right!important;">
                                 <fa-icon (click)="switchProjectHidden()" style="cursor: pointer"  [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
                                 <a [routerLink]="['/project', project.id, 'edit']">   {{project.name}}</a>
@@ -99,9 +104,7 @@
                                     <fa-icon  style="cursor: pointer" [icon]="'plus-circle'" [fixedWidth]="true"></fa-icon>
                                 </a>
                             </td>
-                            <!-- <td colspan="1"style="border-left: none!important;border-right: none!important"> -->
-                               
-                            <!-- </td> -->
+                            
                         </div>
                         <ng-template #hiddeProject>
                             <td style="border-left: none!important;border-right: none!important;background-color: #fdfdfd" >
