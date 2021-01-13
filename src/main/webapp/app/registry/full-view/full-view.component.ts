@@ -98,7 +98,7 @@ export class FullViewComponent implements OnInit {
     });
   }
 
-  public switchCompanyHidden(c: ICompany): void {
+  public switchCompanyHidden(): void {
     this.companyHidden = !this.companyHidden;
   }
   public switchCustomerHidden(): void {
