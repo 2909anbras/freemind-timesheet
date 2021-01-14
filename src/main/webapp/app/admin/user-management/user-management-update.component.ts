@@ -196,13 +196,11 @@ export class UserManagementUpdateComponent implements OnInit {
   }
 
   private setUserAuthorities(authorities: string[] | undefined): string[] | undefined {
-    console.log(authorities);
     if (authorities?.some(e => e === 'ROLE_ADMIN')) {
       return ['ROLE_ADMIN', 'ROLE_CUSTOMER_ADMIN', 'ROLE_USER']; //add inspector when refresh
     } else if (authorities?.some(e => e === 'ROLE_CUSTOMER_ADMIN')) {
-      console.log('INSIDE');
       return ['ROLE_CUSTOMER_ADMIN', 'ROLE_USER'];
-    } else return undefined;
+    } else return authorities;
     // else if()
   }
 
