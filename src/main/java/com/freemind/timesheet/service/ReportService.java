@@ -107,8 +107,9 @@ public class ReportService {
         fillSheet(wb, user, date, styles);
 
         // Write the output to a file
-        String file = "C:\\Users\\FMC_08\\Desktop\\" + "timesheet " + user.getLogin() + " " + date.toString() + ".xls";
-
+        //        String file = "C:\\Users\\FMC_08\\Desktop\\" + "timesheet " + user.getLogin() + " " + date.toString() + ".xls";
+        String file = System.getProperty("user.home");
+        file = file + "\\Downloads\\" + "timesheet " + user.getLogin() + " " + date.toString() + ".xls";
         if (wb instanceof XSSFWorkbook) file += "x";
         FileOutputStream out;
 
