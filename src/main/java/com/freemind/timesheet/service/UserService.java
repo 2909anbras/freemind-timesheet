@@ -220,6 +220,12 @@ public class UserService {
         user.setResetKey(RandomUtil.generateResetKey());
         user.setResetDate(Instant.now());
         user.setActivated(true);
+        Authority authUser = new Authority();
+        authUser.setName("ROLE_USER");
+        Authority authCust = new Authority();
+        authCust.setName("ROLE_CUSTOMER_ADMIN");
+        Authority authInspec = new Authority();
+        authInspec.setName("ROLE_INSPECTOR");
         if (userDTO.getAuthorities() != null) {
             Set<Authority> authorities = userDTO
                 .getAuthorities()
@@ -228,6 +234,18 @@ public class UserService {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
+
+            log.debug("AUTHORITIES:{}", authorities);
+            if (authorities.contains("ROLE_ADMIN")) {
+                authorities.add(authUser);
+                authorities.add(authInspec);
+                authorities.add(authCust);
+            } else if (authorities.contains("ROLE_CUSTOMER_ADMIN")) {
+                authorities.add(authUser);
+                authorities.add(authInspec);
+            } else if (authorities.contains("ROLE_INSPECTOR")) {
+                authorities.add(authUser);
+            }
             user.setAuthorities(authorities);
         }
         userRepository.save(user);
@@ -262,6 +280,8 @@ public class UserService {
 
         return user;
     }
+
+    private void setAuthorities() {}
 
     /**
      * Update all information for a specific user, and return the modified user.

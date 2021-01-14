@@ -107,6 +107,9 @@ export class UserManagementUpdateComponent implements OnInit {
   private setAuthorities(): void {
     this.userService.authorities().subscribe(authorities => {
       this.authorities = authorities;
+      if (this.accountService.hasAnyAuthority('ROLE_CUSTOMER_ADMIN')) {
+        this.authorities = authorities.filter(aut => aut !== 'ROLE_ADMIN');
+      }
       console.log(this.authorities);
     });
   }
@@ -185,9 +188,22 @@ export class UserManagementUpdateComponent implements OnInit {
     user.activated = this.editForm.get(['activated'])!.value;
     user.langKey = this.editForm.get(['langKey'])!.value;
     user.authorities = this.editForm.get(['authorities'])!.value;
+    user.authorities = this.setUserAuthorities(user.authorities);
+    console.log(user.authorities);
     user.phone = this.editForm.get(['phone'])!.value;
     user.companyId = this.editForm.get(['companyId'])!.value;
     user.jobs = this.editForm.get(['jobs'])!.value;
+  }
+
+  private setUserAuthorities(authorities: string[] | undefined): string[] | undefined {
+    console.log(authorities);
+    if (authorities?.some(e => e === 'ROLE_ADMIN')) {
+      return ['ROLE_ADMIN', 'ROLE_CUSTOMER_ADMIN', 'ROLE_USER']; //add inspector when refresh
+    } else if (authorities?.some(e => e === 'ROLE_CUSTOMER_ADMIN')) {
+      console.log('INSIDE');
+      return ['ROLE_CUSTOMER_ADMIN', 'ROLE_USER'];
+    } else return undefined;
+    // else if()
   }
 
   private onSaveSuccess(): void {
