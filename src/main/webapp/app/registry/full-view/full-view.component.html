@@ -65,41 +65,46 @@
             <!-- customer container-->
             <ng-container  *ngFor="let customer of company.customers | customerFilter: searchCustomer: searchCustomerState">
                 <!-- else hiddeCustomer -->
-                <tr *ngIf="(!customerHidden && !companyHidden); " id="{{company.id}}"style="border: none!important;border-radius: 1%;"> 
-                    <td colspan="1" style="border: none!important;border-radius: 3%;"></td>
+                <ng-container *ngIf="(!companyHidden)">
+
+                <tr *ngIf="(!customerHidden && !companyHidden); " id="{{company.id}}"style="border: none!important;border-radius: 5% 0% 0% 5%"> 
+                    <td colspan="1" style="border: none!important;"></td>
                            
-                    <td style="border-left: none!important;border-right: none!important;background-color:  #f5f5ee;border-radius: 1%;" >
+                    <td style="border: none!important;background-color: #f5f5ee;border-radius: 5% 0% 0% 5%" >
                         <fa-icon (click)="switchCustomerHidden()" style="cursor: pointer" [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
                         <a [routerLink]="['/customer', customer.id, 'edit']">{{customer.name}}</a>
                     </td>
-                    <td colspan="3"style="border-left: none!important;border-right: none!important;background-color:  #f5f5ee;">
+                    <td colspan="3" style="border: none!important;background-color: #f5f5ee;;">
                         <a [routerLink]="['/project/new/customer', customer.id]">
                             <fa-icon  style="cursor: pointer" [icon]="'plus-circle'" [fixedWidth]="true"></fa-icon>
                         </a>
                     </td>
                 </tr>
                     <tr *ngIf="customerHidden">
-                        <td colspan="1" style="border: none!important;border-radius: 3%;"></td>
+                        <td colspan="1" style="border: none!important;border-radius: 5% 0% 0% 5%;"></td>
 
-                        <td  style="border-left: none!important;border-right: none!important;background-color:  #f5f5ee;">
+                        <td  style="border: none!important;background-color:  #f5f5ee;">
                             <fa-icon (click)="switchCustomerHidden()" style="cursor: pointer" [icon]="'chevron-circle-up'" [fixedWidth]="true"></fa-icon> 
                             <a [routerLink]="['/customer', customer.id, 'edit']">{{customer.name}}</a>
                         </td>
                     
-                        <td colspan="4"style="border-left: none!important;border-right: none!important;background-color:  #f5f5ee;border-radius: 1%;">
+                        <td colspan="4" style="border: none!important;background-color:  #f5f5ee;border-radius: 5%;">
                         </td>
                     </tr>
+                </ng-container>
+
                 <!-- project container -->
                 <ng-container  *ngFor=" let project of customer.projects| projectFilter: searchProject: searchProjectState">
-                        <tr id="{{project.id}}"*ngIf=" (!customerHidden && !companyHidden&&!projectHidden)"  >
+                    <ng-container *ngIf="(!customerHidden && !companyHidden)">
+                        <tr id="{{project.id}}"*ngIf=" (!customerHidden && !companyHidden && !projectHidden)"  >
                         
                             <td colspan="2" style="border: none!important;"></td>
-                            <td style="border-left: none!important;border-right: none!important;background-color: #e7e2e2">
+                            <td style="border: none!important;background-color: #ecece6;border-radius: 5% 0% 0% 5%">
                                 <fa-icon (click)="switchProjectHidden()" style="cursor: pointer"  [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
                                 <a [routerLink]="['/project', project.id, 'edit']">   {{project.name}}</a>
                                     
                             </td>
-                            <td colspan="3"style="border-left: none!important;border-right: none!important;background-color: #e7e2e2"">
+                            <td colspan="3" style="border: none!important;background-color: #ecece6;">
                                 <a   [routerLink]="['/job/new/project', project.id]">
                                     <fa-icon  style="cursor: pointer" [icon]="'plus-circle'" [fixedWidth]="true"></fa-icon>
                                 </a>
@@ -107,22 +112,22 @@
                         </tr>
                     
                         <!-- <ng-template #hiddeProject> -->
-                        <tr *ngIf="projectHidden">
-                            <td colspan="2" style="border: none!important;"></td>
-                            <td style="border-left: none!important;border-right: none!important;background-color: #fdfdfd" >
-                                <fa-icon (click)="switchProjectHidden()" style="cursor: pointer"  [icon]="'chevron-circle-up'" [fixedWidth]="true"></fa-icon> 
-                                <a [routerLink]="['/project', project.id, 'edit']">   {{project.name}}</a>
-                            </td>
-                            <td colspan="4"style="border-left: none!important;border-right: none!important; background-color:#fdfdfd; border-radius: 1%;">
-                            </td>
-                        </tr>
+                            <tr *ngIf="projectHidden">
+                                <td colspan="2" style="border: none!important;"></td>
+                                <td style="border: none!important;background-color: #ecece6;border-radius: 5% 0% 0% 5%;" >
+                                    <fa-icon (click)="switchProjectHidden()" style="cursor: pointer"  [icon]="'chevron-circle-up'" [fixedWidth]="true"></fa-icon> 
+                                    <a [routerLink]="['/project', project.id, 'edit']">   {{project.name}}</a>
+                                </td>
+                                <td colspan="4" style="border: none!important;background-color: #ecece6;">
+                                </td>
+                            </tr>
                         <!-- </ng-template> -->
-                    
+                        </ng-container>
                     <ng-container *ngFor=" let job of project.jobs| jobFilter: searchJob: searchJobState">
 
                         <tr *ngIf="!companyHidden && !customerHidden && !projectHidden"style="border-left: none!important;" >
                             <td colspan="3" style="border: none!important;"></td>
-                            <td style="border-bottom: none!important;border-left: none!important;">
+                            <td style="border: none!important;">
                                 <a [routerLink]="['/job', job.id, 'edit']">   {{job.name}}</a>
                             </td>
                         </tr>
