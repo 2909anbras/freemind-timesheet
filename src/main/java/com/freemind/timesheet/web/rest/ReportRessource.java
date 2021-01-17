@@ -4,6 +4,7 @@ import com.freemind.timesheet.security.AuthoritiesConstants;
 import com.freemind.timesheet.service.ReportService;
 import com.freemind.timesheet.service.dto.AppUserDTO;
 import com.freemind.timesheet.service.dto.CustomerDTO;
+import com.freemind.timesheet.service.dto.ReportDTO;
 import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import java.io.IOException;
@@ -39,17 +40,44 @@ public class ReportRessource {
         this.reportService = reportService;
     }
 
-    @PostMapping("/report/fullReport/{userId}")
-    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\"+\"," + AuthoritiesConstants.CUSTOMER_ADMIN + "\")")
-    //later map with two date=>the range
-    public ResponseEntity<Boolean> createFullReport(@PathVariable Long userId, @Valid @RequestBody LocalDate date)
+    @PostMapping("/report/monthReport/{userId}")
+    @PreAuthorize(
+        "hasAnyAuthority(\"" +
+        AuthoritiesConstants.ADMIN +
+        "\"+\"," +
+        AuthoritiesConstants.CUSTOMER_ADMIN +
+        "\"+\"," +
+        AuthoritiesConstants.INSPECTOR +
+        "\")"
+    )
+    public ResponseEntity<Boolean> createMonthReport(@PathVariable Long userId, @Valid @RequestBody LocalDate date)
         throws URISyntaxException, IOException {
         log.debug("REPORT DATE : {}", date);
 
-        this.reportService.makeFullReport(date, userId);
+        this.reportService.makeMonthReport(date, userId);
         return ResponseEntity
             .noContent()
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, userId.toString()))
+            .build();
+    }
+
+    @PostMapping("/report/monthReport}")
+    @PreAuthorize(
+        "hasAnyAuthority(\"" +
+        AuthoritiesConstants.ADMIN +
+        "\"+\"," +
+        AuthoritiesConstants.CUSTOMER_ADMIN +
+        "\"+\"," +
+        AuthoritiesConstants.INSPECTOR +
+        "\")"
+    )
+    public ResponseEntity<Boolean> createFullReport(@Valid @RequestBody ReportDTO report) throws URISyntaxException, IOException {
+        log.debug("REPORTDTO : {}", report);
+
+        this.reportService.makeFullReport(report);
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, report.toString()))
             .build();
     }
 }

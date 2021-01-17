@@ -14,6 +14,7 @@ import com.freemind.timesheet.repository.CustomerRepository;
 import com.freemind.timesheet.repository.JobRepository;
 import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.repository.UserRepository;
+import com.freemind.timesheet.service.dto.ReportDTO;
 import com.freemind.timesheet.web.rest.ReportRessource;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -84,17 +85,13 @@ public class ReportService {
         this.projectRepository = projectRepository;
     }
 
-    public void makeFullReport(LocalDate oldDate, Long userId) {
-        //first, for one month
-        //number of column for the month
+    public void makeMonthReport(LocalDate oldDate, Long userId) { //fullMonthReport for on user
         LocalDate date = LocalDate.of(oldDate.getYear(), oldDate.getMonthValue(), 1);
         CPTHMAX = date.lengthOfMonth();
         log.debug("date : {}", date);
-
         log.debug("CPTHMAX : {}", CPTHMAX);
         CPTH = 0;
         CPTV = 0;
-        //        String outputPath = applicationProperties.getImportExport().getExportImportDir();
         Workbook wb = new XSSFWorkbook();
         Map<String, CellStyle> styles = createStyles(wb);
         initiateDoc(wb);
@@ -105,16 +102,17 @@ public class ReportService {
         //tout trier par ordre alphabétique par la suite cé po graf
         User user = userRepository.getOne(userId);
         fillSheet(wb, user, date, styles);
-
         // Write the output to a file
-        //        String file = "C:\\Users\\FMC_08\\Desktop\\" + "timesheet " + user.getLogin() + " " + date.toString() + ".xls";
         String file = System.getProperty("user.home");
         file = file + "\\Downloads\\" + "timesheet " + user.getLogin() + " " + date.toString() + ".xls";
+        this.fillFile(wb, file);
+    }
+
+    public void makeFullReport(ReportDTO report) {}
+
+    private void fillFile(Workbook wb, String file) {
         if (wb instanceof XSSFWorkbook) file += "x";
         FileOutputStream out;
-
-        log.debug("Path:{}", file);
-
         try {
             out = new FileOutputStream(file);
             log.debug("FILE:{}", file.toString());
@@ -245,7 +243,6 @@ public class ReportService {
     }
 
     private void printString(Row row, String name, Map<String, CellStyle> styles) {
-        log.debug("PRINT STRING:{}", name);
         row.setHeightInPoints(35);
         Cell cell;
         cell = row.createCell(CPTH);
@@ -263,34 +260,50 @@ public class ReportService {
         sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$AK$1"));
     }
 
+    private void printHeader(Row headerRow, String string, Map<String, CellStyle> styles) {
+        Cell headerCell;
+        headerCell = headerRow.createCell(CPTH);
+        headerCell.setCellValue(string);
+        headerCell.setCellStyle(styles.get("header"));
+    }
+
     private void makeHeader(Sheet sheet, Map<String, CellStyle> styles) {
         Row headerRow = sheet.createRow(CPTV);
         headerRow.setHeightInPoints(40);
-        Cell headerCell;
-        headerCell = headerRow.createCell(CPTH);
-        headerCell.setCellValue("EMPLOYEE ");
-        headerCell.setCellStyle(styles.get("header"));
+        this.printHeader(headerRow, "EMPLOYEE", styles);
         CPTH++;
-        headerCell = headerRow.createCell(CPTH);
-        headerCell.setCellValue("COMPANY ");
-        headerCell.setCellStyle(styles.get("header"));
+        this.printHeader(headerRow, "COMPANY", styles);
+        CPTH++;
+        this.printHeader(headerRow, "PROJECTS", styles);
+        CPTH++;
+        this.printHeader(headerRow, "JOBS", styles);
+        CPTH++;
+        //        headerRow.setHeightInPoints(40);
+        //        Cell headerCell;
+        //        headerCell = headerRow.createCell(CPTH);
+        //        headerCell.setCellValue("EMPLOYEE ");
+        //        headerCell.setCellStyle(styles.get("header"));
+        //        CPTH++;
+        //        headerCell = headerRow.createCell(CPTH);
+        //        headerCell.setCellValue("COMPANY ");
+        //        headerCell.setCellStyle(styles.get("header"));
+        //
+        //        CPTH++;
+        //        headerCell = headerRow.createCell(CPTH);
+        //        headerCell.setCellValue("CUSTOMERS ");
+        //        headerCell.setCellStyle(styles.get("header"));
+        //
+        //        CPTH++;
+        //        headerCell = headerRow.createCell(CPTH);
+        //        headerCell.setCellValue("PROJECTS ");
+        //        headerCell.setCellStyle(styles.get("header"));
+        //
+        //        CPTH++;
+        //        headerCell = headerRow.createCell(CPTH);
+        //        headerCell.setCellValue("JOBS ");
+        //        headerCell.setCellStyle(styles.get("header"));
 
-        CPTH++;
-        headerCell = headerRow.createCell(CPTH);
-        headerCell.setCellValue("CUSTOMERS ");
-        headerCell.setCellStyle(styles.get("header"));
-
-        CPTH++;
-        headerCell = headerRow.createCell(CPTH);
-        headerCell.setCellValue("PROJECTS ");
-        headerCell.setCellStyle(styles.get("header"));
-
-        CPTH++;
-        headerCell = headerRow.createCell(CPTH);
-        headerCell.setCellValue("JOBS ");
-        headerCell.setCellStyle(styles.get("header"));
-
-        CPTH++;
+        //        CPTH++;
     }
 
     private void SetDays(Map<String, CellStyle> styles, Row headerRow, LocalDate date) {
@@ -346,15 +359,7 @@ public class ReportService {
         monthFont.setFontHeightInPoints((short) 13);
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setWrapText(true);
-        //        style.setBorderRight(BorderStyle.THIN);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
-        //        style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-        //        style.setBorderLeft(BorderStyle.THIN);
-        //        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-        //        style.setBorderTop(BorderStyle.THIN);
-        //        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
-        //        style.setBorderBottom(BorderStyle.THIN);
-        //        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
         styles.put("cell", style);
 
         style = wb.createCellStyle();
