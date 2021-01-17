@@ -27,8 +27,16 @@
             </select>
         </th>
         <th style="width: 20%" >
-            <label jhiTranslate="global-view.job-filter">PROJECT</label>
+            <label jhiTranslate="global-view.job-filter">JOB</label>
             <input  type="text" class="form-control" [(ngModel)]="searchJob" placeholder="*">
+            <label >Enable?</label>
+            <select class="form-control" [(ngModel)]="searchJobState" >
+                <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
+            </select>
+        </th>
+        <th style="width: 20%" >
+            <label jhiTranslate="global-view.user-filter">USER</label>
+            <input  type="text" class="form-control" [(ngModel)]="searchUser" placeholder="*">
             <label >Enable?</label>
             <select class="form-control" [(ngModel)]="searchJobState" >
                 <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
@@ -128,10 +136,20 @@
                         <tr *ngIf="!companyHidden && !customerHidden && !projectHidden"style="border-left: none!important;" >
                             <td colspan="3" style="border: none!important;"></td>
                             <td style="border: none!important;">
-                                <a [routerLink]="['/job', job.id, 'edit']">   {{job.name}}</a>
+                                <p>   {{job.name}}</p>
                             </td>
                         </tr>
-                        
+                                            <!-- Début user container-->
+                        <ng-container *ngFor=" let user of job.users| userFilter: searchUser: searchUserState">
+
+                            <tr *ngIf="!companyHidden && !customerHidden && !projectHidden"style="border-left: none!important;" >
+                                <td colspan="3" style="border: none!important;"></td>
+                                <td style="border: none!important;">
+                                    <a [routerLink]="['/job', job.id, 'edit']">   {{job.name}}</a>
+                                </td>
+                            </tr>
+                            <!-- fin user container -->
+                        </ng-container>
                         <!-- fin job container -->
                     </ng-container>
                     <!-- end project -->
