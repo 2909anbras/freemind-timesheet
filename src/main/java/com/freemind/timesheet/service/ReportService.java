@@ -87,28 +87,41 @@ public class ReportService {
 
     public void makeMonthReport(LocalDate oldDate, Long userId) { //fullMonthReport for on user
         LocalDate date = LocalDate.of(oldDate.getYear(), oldDate.getMonthValue(), 1);
-        CPTHMAX = date.lengthOfMonth();
-        log.debug("date : {}", date);
-        log.debug("CPTHMAX : {}", CPTHMAX);
-        CPTH = 0;
-        CPTV = 0;
+        this.initSheetData(date);
+
         Workbook wb = new XSSFWorkbook();
         Map<String, CellStyle> styles = createStyles(wb);
+
         initiateDoc(wb);
         Sheet sheet = wb.getSheet("Timesheet");
         setTitle(sheet, styles, date);
         makeHeader(sheet, styles);
         SetDays(styles, sheet.getRow(CPTV), date);
-        //tout trier par ordre alphabétique par la suite cé po graf
+        //tout trier par ordre alphabétique par la suite
         User user = userRepository.getOne(userId);
         fillSheet(wb, user, date, styles);
         // Write the output to a file
-        String file = System.getProperty("user.home");
-        file = file + "\\Downloads\\" + "timesheet " + user.getLogin() + " " + date.toString() + ".xls";
+        String file = this.createMonthPath(user.getLogin(), date.toString());
         this.fillFile(wb, file);
     }
 
-    public void makeFullReport(ReportDTO report) {}
+    public void makeFullReport(ReportDTO report) {
+        //1 page/mois => nom de la page= mois+année (for nbr de mois => les mois triés à l'avance)
+        //fill template (title, header
+        // fill data
+        //create file en dehors du for
+    }
+
+    private void initSheetData(LocalDate date) { //for each sheet
+        CPTHMAX = date.lengthOfMonth();
+        CPTH = 0;
+        CPTV = 0;
+    }
+
+    private String createMonthPath(String userName, String date) {
+        String file = System.getProperty("user.home");
+        return file + "\\Downloads\\" + "timesheet " + userName + " " + date + ".xls";
+    }
 
     private void fillFile(Workbook wb, String file) {
         if (wb instanceof XSSFWorkbook) file += "x";
@@ -137,7 +150,6 @@ public class ReportService {
 
     private void initiateDoc(Workbook wb) {
         Sheet sheet = wb.createSheet("Timesheet");
-
         PrintSetup printSetup = sheet.getPrintSetup();
         printSetup.setLandscape(true);
         sheet.setFitToPage(true);
