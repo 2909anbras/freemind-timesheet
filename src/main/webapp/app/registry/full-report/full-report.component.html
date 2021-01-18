@@ -51,12 +51,9 @@
                 
                 <td *ngIf="showCompanies && showCompanies.length>0" style="border: none!important;border-radius: 1%;">    
                     <fa-icon (click)="switchCompanyHidden()"  style="cursor: pointer" [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
-                    <a [routerLink]="['/company', company.id, 'edit']">{{ company.name }}</a>                   
+                    <p>{{ company.name }}</p>                   
                 </td>
                 <td colspan="4"style="border-left: none!important;border-right: none!important">
-                    <a [routerLink]="['/customer/new/company', company.id]">
-                        <fa-icon  style="cursor: pointer" [icon]="'plus-circle'" [fixedWidth]="true"></fa-icon>
-                    </a>
                 </td>
             
             </tr> 
@@ -64,7 +61,7 @@
                 <tr style="border: none!important;background-color: #cacaca;border-radius: 1%;">
                     <td style="border: none!important;">
                         <fa-icon (click)="switchCompanyHidden()" style="cursor: pointer" [icon]="'chevron-circle-up'" [fixedWidth]="true"></fa-icon> 
-                        <a [routerLink]="['/company', company.id, 'edit']">{{ company.name }}</a>
+                        <p>{{ company.name }}</p>
                     </td>
                     <td colspan="4"style="border-left: none!important;border-right: none!important;background-color: #cacaca;border-radius: 1%;">
                     </td>
@@ -80,12 +77,9 @@
                            
                     <td style="border: none!important;background-color: #f5f5ee;border-radius: 5% 0% 0% 5%" >
                         <fa-icon (click)="switchCustomerHidden()" style="cursor: pointer" [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
-                        <a [routerLink]="['/customer', customer.id, 'edit']">{{customer.name}}</a>
+                        <p>{{customer.name}}</p>
                     </td>
                     <td colspan="3" style="border: none!important;background-color: #f5f5ee;;">
-                        <a [routerLink]="['/project/new/customer', customer.id]">
-                            <fa-icon  style="cursor: pointer" [icon]="'plus-circle'" [fixedWidth]="true"></fa-icon>
-                        </a>
                     </td>
                 </tr>
                     <tr *ngIf="customerHidden">
@@ -93,7 +87,7 @@
 
                         <td  style="border: none!important;background-color:  #f5f5ee;">
                             <fa-icon (click)="switchCustomerHidden()" style="cursor: pointer" [icon]="'chevron-circle-up'" [fixedWidth]="true"></fa-icon> 
-                            <a [routerLink]="['/customer', customer.id, 'edit']">{{customer.name}}</a>
+                            <p>{{customer.name}}</p>
                         </td>
                     
                         <td colspan="4" style="border: none!important;background-color:  #f5f5ee;border-radius: 5%;">
@@ -109,13 +103,7 @@
                             <td colspan="2" style="border: none!important;"></td>
                             <td style="border: none!important;background-color: #ecece6;border-radius: 5% 0% 0% 5%">
                                 <fa-icon (click)="switchProjectHidden()" style="cursor: pointer"  [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
-                                <a [routerLink]="['/project', project.id, 'edit']">   {{project.name}}</a>
-                                    
-                            </td>
-                            <td colspan="3" style="border: none!important;background-color: #ecece6;">
-                                <a   [routerLink]="['/job/new/project', project.id]">
-                                    <fa-icon  style="cursor: pointer" [icon]="'plus-circle'" [fixedWidth]="true"></fa-icon>
-                                </a>
+                                <p>{{project.name}}</p>
                             </td>
                         </tr>
                     
@@ -124,7 +112,7 @@
                                 <td colspan="2" style="border: none!important;"></td>
                                 <td style="border: none!important;background-color: #ecece6;border-radius: 5% 0% 0% 5%;" >
                                     <fa-icon (click)="switchProjectHidden()" style="cursor: pointer"  [icon]="'chevron-circle-up'" [fixedWidth]="true"></fa-icon> 
-                                    <a [routerLink]="['/project', project.id, 'edit']">   {{project.name}}</a>
+                                    <p >{{project.name}}</p>
                                 </td>
                                 <td colspan="4" style="border: none!important;background-color: #ecece6;">
                                 </td>

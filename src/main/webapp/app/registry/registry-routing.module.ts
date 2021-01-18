@@ -7,12 +7,12 @@ import { RouterModule } from '@angular/router';
     /* jhipster-needle-add-admin-module - JHipster will add admin modules here */
     RouterModule.forChild([
       {
-        path: 'global-view',
-        loadChildren: () => import('./global-view/global-view.module').then(m => m.GlobalViewModule),
-      },
-      {
         path: 'full-view',
         loadChildren: () => import('./full-view/full-view.module').then(m => m.FullViewModule),
+      },
+      {
+        path: 'full-report',
+        loadChildren: () => import('./full-report/full-report.module').then(m => m.FullReportModule),
       },
     ]),
   ],

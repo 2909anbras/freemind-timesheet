@@ -40,6 +40,7 @@ import {
   faChevronCircleDown,
   faClock,
   faPlusCircle,
+  faArchive,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -84,4 +85,6 @@ export const fontAwesomeIcons = [
   faChevronCircleDown,
   faClock,
   faPlusCircle,
+  faArchive,
+  faCalendarAlt,
 ];

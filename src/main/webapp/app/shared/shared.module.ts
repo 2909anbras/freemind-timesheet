@@ -13,6 +13,7 @@ import { ProjectFilterPipe } from './pipe/filter/projectFilterPipe';
 import { CustomerFilterPipe } from './pipe/filter/customerFilterPipe';
 import { CompanyFilterPipe } from './pipe/filter/companyFilterPipe';
 import { KeyvaluePipe } from './pipe/filter/keyvaluePipe';
+import { UserFilterPipe } from './pipe/filter/userFilterPipe';
 // import { RegistryRoutingModule} from '../registry/registry-routing.module';
 @NgModule({
   imports: [FreemindTimesheetSharedLibsModule],
@@ -26,6 +27,7 @@ import { KeyvaluePipe } from './pipe/filter/keyvaluePipe';
     JobFilterPipe,
     ProjectFilterPipe,
     CustomerFilterPipe,
+    UserFilterPipe,
     CompanyFilterPipe,
     KeyvaluePipe,
   ],
@@ -39,6 +41,7 @@ import { KeyvaluePipe } from './pipe/filter/keyvaluePipe';
     PerformanceCreateDialogComponent,
     HasAnyAuthorityDirective,
     JobFilterPipe,
+    UserFilterPipe,
     ProjectFilterPipe,
     CustomerFilterPipe,
     CompanyFilterPipe,
