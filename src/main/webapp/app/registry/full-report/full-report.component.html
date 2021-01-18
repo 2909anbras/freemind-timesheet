@@ -1,5 +1,19 @@
 <div >
-    <h4 jhiTranslate="global-view.companies">Company</h4>
+    <h4 jhiTranslate="global-view.report">Full view for timereporting</h4>
+    <label class="form-control-label" jhiTranslate="freemindTimesheetApp.job.startDate" for="field_startDate">Start Date</label>
+        <div class="input-group">
+
+            <input id="field_startDate" type="text" name="startDate" ngbDatepicker #startDateDp="ngbDatepicker" [(ngModel)]="startDate"/>
+            <span class="input-group-append">
+                <button type="button" class="btn btn-secondary" (click)="startDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+            </span>
+
+            <input id="field_endDate" type="text" name="endDate" ngbDatepicker #endDateDp="ngbDatepicker" [(ngModel)]="endDate"/>
+            <span class="input-group-append">
+                <button type="button" class="btn btn-secondary" (click)="endDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+            </span>
+        </div>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="makeReport()">Report</button>
 </div>
 <table class="table table-bordered table-condensed table-responsive" style="border-radius: 1%;">
     <thead>
@@ -38,7 +52,7 @@
             <label jhiTranslate="global-view.user-filter">USER</label>
             <input  type="text" class="form-control" [(ngModel)]="searchUser" placeholder="*">
             <label >Enable?</label>
-            <select class="form-control" [(ngModel)]="searchJobState" >
+            <select class="form-control" [(ngModel)]="searchUserState" >
                 <option *ngFor="let item of enabledStateList" [ngValue]="item">{{item}}</option>
             </select>
         </th>
@@ -68,7 +82,7 @@
                 </tr>
             </ng-template>
             <!-- customer container-->
-            <ng-container  *ngFor="let customer of company.customers | customerFilter: searchCustomer: searchCustomerState">
+            <ng-container  *ngFor="let customer of getCustomers(company)">
                 <!-- else hiddeCustomer -->
                 <ng-container *ngIf="(!companyHidden)">
 
@@ -96,7 +110,7 @@
                 </ng-container>
 
                 <!-- project container -->
-                <ng-container  *ngFor=" let project of customer.projects| projectFilter: searchProject: searchProjectState">
+                <ng-container  *ngFor=" let project of getProjects(customer)">
                     <ng-container *ngIf="(!customerHidden && !companyHidden)">
                         <tr id="{{project.id}}"*ngIf=" (!customerHidden && !companyHidden && !projectHidden)"  >
                         
@@ -104,6 +118,8 @@
                             <td style="border: none!important;background-color: #ecece6;border-radius: 5% 0% 0% 5%">
                                 <fa-icon (click)="switchProjectHidden()" style="cursor: pointer"  [icon]="'chevron-circle-down'" [fixedWidth]="true"></fa-icon> 
                                 <p>{{project.name}}</p>
+                            </td>
+                            <td colspan="4" style="border: none!important;background-color: #ecece6;">
                             </td>
                         </tr>
                     
@@ -119,21 +135,22 @@
                             </tr>
                         <!-- </ng-template> -->
                         </ng-container>
-                    <ng-container *ngFor=" let job of project.jobs| jobFilter: searchJob: searchJobState">
+                    <ng-container *ngFor=" let job of getJobs(project)">
 
                         <tr *ngIf="!companyHidden && !customerHidden && !projectHidden"style="border-left: none!important;" >
                             <td colspan="3" style="border: none!important;"></td>
-                            <td style="border: none!important;">
+                            <td style="border: none!important;background-color: #f7f7ef;border-radius: 5% 0% 0% 5%;">
                                 <p>   {{job.name}}</p>
                             </td>
+                            <td colspan="5" style="border: none!important;background-color: #f7f7ef"></td>
                         </tr>
                                             <!-- Début user container-->
-                        <ng-container *ngFor=" let user of job.users| userFilter: searchUser: searchUserState">
+                        <ng-container *ngFor=" let user of getUsers(job)">
 
                             <tr *ngIf="!companyHidden && !customerHidden && !projectHidden"style="border-left: none!important;" >
-                                <td colspan="3" style="border: none!important;"></td>
+                                <td colspan="4" style="border: none!important;"></td>
                                 <td style="border: none!important;">
-                                    <a [routerLink]="['/job', job.id, 'edit']">   {{job.name}}</a>
+                                    <p>   {{user.login}}</p>
                                 </td>
                             </tr>
                             <!-- fin user container -->

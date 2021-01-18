@@ -61,7 +61,7 @@ public class ReportRessource {
             .build();
     }
 
-    @PostMapping("/report/monthReport}")
+    @PostMapping("/report/fullReport}")
     @PreAuthorize(
         "hasAnyAuthority(\"" +
         AuthoritiesConstants.ADMIN +

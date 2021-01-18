@@ -101,8 +101,6 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.setNumberOfColumns(this.date.getMonth(), this.date.getFullYear());
 
     this.dateCopy = new Date(this.date);
-    // const tmpArray: [] = [].constructor(this.nbrOfColumns);
-    // this.loop = tmpArray;
     this.cptTd = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), 1).getDay();
     this.monthName = this.months[this.date.getMonth()];
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
@@ -166,7 +164,6 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     project.jobs.forEach(j => {
       if (j.appUsers?.some(ap => ap.id === this.currentEmployee?.id)) {
         jobs.push(j);
-        console.log(j);
       }
     });
     return jobs;
@@ -184,13 +181,11 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
           res.body ? (this.employees = res.body) : null;
         })
       : null;
-    console.log(this.employees);
   }
 
   public setCompany(companyId: number): void {
     this.companyService.find(companyId).subscribe((res: HttpResponse<ICompany>) => {
       res.body ? (this.company = res.body) : null;
-      console.log(this.company);
     });
   }
 
@@ -203,14 +198,12 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   private setNumberOfColumns(mounth: number, year: number): void {
-    console.log(mounth);
     this.nbrOfColumns = this.getNumberOfDays(mounth + 1, year);
     const tmpArray: [] = [].constructor(this.nbrOfColumns);
     this.loop = tmpArray;
   }
 
   private getNumberOfDays(mounth: number, year: number): number {
-    console.log(new Date(year, mounth, 0));
     return new Date(year, mounth, 0).getDate();
   }
 

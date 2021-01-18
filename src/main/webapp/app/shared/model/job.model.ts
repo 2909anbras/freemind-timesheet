@@ -13,7 +13,7 @@ export interface IJob {
   enable?: boolean;
   projectId?: number;
   projectName?: string;
-  appUsers?: IAppUser[];
+  appUsers: IAppUser[];
   performances?: IPerformance[];
   // hidden?:boolean;
 }
@@ -29,10 +29,9 @@ export class Job implements IJob {
     public endDate?: Moment,
     public enable?: boolean,
     public projectId?: number,
-    public appUsers?: IAppUser[],
-    public performances?: Performance[]
-  ) // public hidden:boolean=false,
-  {
+    public appUsers: IAppUser[] = [],
+    public performances?: Performance[] // public hidden:boolean=false,
+  ) {
     this.enable = this.enable || false;
   }
 }
