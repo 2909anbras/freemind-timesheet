@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ReportDTO {
+    private Set<Long> companiesId = new HashSet<>();
     private Set<Long> jobsId = new HashSet<>();
-    private Set<Long> projectsId = new HashSet<>();
     private Set<Long> customersId = new HashSet<>();
     private Set<Long> usersId = new HashSet<>();
     private Set<LocalDate> dates = new HashSet<>();
-    private Set<Long> companiesId = new HashSet<>();
+    private Set<Long> projectsId = new HashSet<>();
 
     public ReportDTO() {
         // Empty constructor needed for Jackson.

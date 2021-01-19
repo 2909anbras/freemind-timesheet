@@ -14,7 +14,6 @@ export class CustomerFilterPipe implements PipeTransform {
     if (!isEnable || isEnable === 'All') return customers;
     const bool = isEnable === 'Enable';
     customers = [...customers.filter(c => c.enable === bool)];
-    // customers = [...customers.filter(customer => customer.projects.length > 0)];
 
     return customers;
   }

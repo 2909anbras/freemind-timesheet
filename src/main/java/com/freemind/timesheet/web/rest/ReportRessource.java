@@ -32,7 +32,7 @@ public class ReportRessource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private static final String ENTITY_NAME = "customer";
+    private static final String NAME = "report";
 
     private ReportService reportService;
 
@@ -57,11 +57,11 @@ public class ReportRessource {
         this.reportService.makeMonthReport(date, userId);
         return ResponseEntity
             .noContent()
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, userId.toString()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, NAME, userId.toString()))
             .build();
     }
 
-    @PostMapping("/report/fullReport}")
+    @PostMapping("/report")
     @PreAuthorize(
         "hasAnyAuthority(\"" +
         AuthoritiesConstants.ADMIN +
@@ -71,13 +71,13 @@ public class ReportRessource {
         AuthoritiesConstants.INSPECTOR +
         "\")"
     )
-    public ResponseEntity<Boolean> createFullReport(@Valid @RequestBody ReportDTO report) throws URISyntaxException, IOException {
+    public ResponseEntity<Boolean> createFullReport(@Valid @RequestBody ReportDTO report) {
         log.debug("REPORTDTO : {}", report);
 
-        this.reportService.makeFullReport(report);
+        //        this.reportService.makeFullReport(report);
         return ResponseEntity
             .noContent()
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, report.toString()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, NAME, report.toString()))
             .build();
     }
 }

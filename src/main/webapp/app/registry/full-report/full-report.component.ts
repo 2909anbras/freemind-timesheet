@@ -29,7 +29,7 @@ import { UserService } from 'app/core/user/user.service';
 import { AppUserService } from 'app/entities/app-user/app-user.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { FullReportService } from './full-report.service';
-
+import { TimesheetService } from 'app/timesheet/timesheet.service';
 import { Moment } from 'moment';
 
 @Component({
@@ -43,7 +43,7 @@ export class FullReportComponent implements OnInit {
   endDate: any;
   startDate: any;
 
-  projects: IProject[] = [];
+  projectsReport: IProject[] = [];
   projectsFiltered: IProject[] = [];
   customers: ICustomer[] = [];
   customersFiltered: ICustomer[] = [];
@@ -51,6 +51,11 @@ export class FullReportComponent implements OnInit {
   jobsFiltered: IJob[] = [];
   users: IUser[] = [];
   usersFiltered: IUser[] = [];
+
+  reportCustomers: ICustomer[] = [];
+  reportProjects: IProject[] = [];
+  reportJobs: IJob[] = [];
+  reportUsers: IUser[] = [];
 
   userHidden = false;
   companyHidden = false;
@@ -82,6 +87,7 @@ export class FullReportComponent implements OnInit {
     private userFilter: UserFilterPipe,
     private companyFilter: CompanyFilterPipe,
 
+    protected timesheetService: TimesheetService,
     protected reportService: FullReportService,
     protected userService: UserService,
     protected companyService: CompanyService,
@@ -138,8 +144,8 @@ export class FullReportComponent implements OnInit {
   }
 
   public getProjects(customer: ICustomer): IProject[] {
-    this.projects = this.projectFilter.transform(customer.projects, this.searchProject, this.searchProjectState);
-    return this.projects;
+    this.projectsFiltered = this.projectFilter.transform(customer.projects, this.searchProject, this.searchProjectState);
+    return this.projectsFiltered;
   }
   public getJobs(project: IProject): IJob[] {
     this.jobs = this.jobFilter.transform(project.jobs, this.searchJob, this.searchJobState);
@@ -161,14 +167,6 @@ export class FullReportComponent implements OnInit {
     return this.showCompanies;
   }
 
-  get filterProject(): string {
-    return this.searchProject;
-  }
-  set filterProject(val: string) {
-    this.searchProject = val;
-    this.projects = this.projectFilter.transform(this.projects, val, this.searchProjectState);
-  }
-
   public switchCompanyHidden(): void {
     this.companyHidden = !this.companyHidden;
   }
@@ -184,15 +182,79 @@ export class FullReportComponent implements OnInit {
   public makeReport(): void {
     //id? ou object? id pour request, ça sera plus propre.
     this.fillReport();
-    this.reportService.create(this.report);
+    this.reportService.create(this.report).subscribe();
   }
   private fillReport(): void {
-    this.report.customersId = this.customersFiltered.map(c => c.id!);
-    this.report.projectsId = this.projects.map(c => c.id!);
-    this.report.usersId = this.usersFiltered.map(c => c.id!);
-    this.report.jobsId = this.projects.map(c => c.id!);
     this.report.companiesId = this.showCompanies.map(c => c.id!);
-    console.log(this.startDate, '      ' + this.endDate);
+    this.fillCustomers();
+    this.fillProjects();
+    this.fillJobs();
+    this.fillUsers();
+    // this.report.customersId = this.customersFiltered.map(c => c.id!);
+    // this.report.projectsId = this.projectsReport.map(c => c.id!);
+    // this.report.usersId = this.usersFiltered.map(c => c.id!);
+    // this.report.jobsId = this.jobs.map(c => c.id!);
+    // this.report.companiesId = this.showCompanies.map(c => c.id!);
     this.report.setDates(this.startDate, this.endDate);
+  }
+
+  private fillCustomers(): void {
+    //toujours qu'une company
+    //récupérer tous les customers de la company
+    this.reportCustomers = this.customerFilter.transform(this.showCompanies[0].customers, this.searchCustomer, this.searchCustomerState);
+    this.report.customersId = this.reportCustomers.map(c => c.id!);
+  }
+
+  private fillProjects(): void {
+    //dans la liste de customer on récupère tous les projects qui sont dans le filtre
+    let bool: boolean;
+    this.searchProjectState === 'All' ? null : this.searchProjectState === 'Enable' ? (bool = true) : (bool = false);
+    this.reportCustomers.forEach(c => {
+      c.projects.forEach(p => {
+        p.name?.toLocaleLowerCase().includes(this.searchProject) && !this.reportProjects.find(x => x.id === p.id)
+          ? this.reportProjects.push(p)
+          : null;
+      });
+    });
+    if (this.searchProjectState !== 'All') {
+      this.reportProjects = [...this.reportProjects.filter(p => p.enable === bool)];
+    }
+    this.report.projectsId = this.reportProjects.map(c => c.id!);
+  }
+
+  private fillJobs(): void {
+    let bool: boolean;
+    this.searchJobState === 'All' ? null : this.searchJobState === 'Enable' ? (bool = true) : (bool = false);
+    this.reportProjects.forEach(p => {
+      p.jobs.forEach(j => {
+        j.name?.toLocaleLowerCase().includes(this.searchJob) && !this.reportJobs.find(x => x.id === j.id) ? this.reportJobs.push(j) : null;
+      });
+    });
+    if (this.searchJobState !== 'All') {
+      this.reportJobs = [...this.reportJobs.filter(j => j.enable === bool)];
+    }
+    this.report.jobsId = this.reportJobs.map(c => c.id!);
+  }
+
+  private fillUsers(): void {
+    //à partir des users, filtrer avec les arguments du filtre
+    //et voir si présents dans les jobs.
+    let bool: boolean;
+    this.searchUserState === 'All' ? null : this.searchUserState === 'Enable' ? (bool = true) : (bool = false);
+    //1 liste de users à partir de jobs 2 filtrer
+    let tmp: IUser[] = [];
+    this.users.forEach(u => {
+      this.reportJobs.forEach(j => {
+        j.appUsers.forEach(ap => {
+          if (ap.id === u.id && !tmp.includes(u)) tmp.push(u);
+        });
+      });
+    });
+
+    this.reportUsers = [...tmp.filter(c => c.login?.toLocaleLowerCase().includes(this.searchUser))];
+    if (this.searchUserState !== 'All') {
+      this.reportUsers = [...this.reportUsers.filter(u => u.activated === bool)];
+    }
+    this.report.usersId = this.reportUsers.map(c => c.id!);
   }
 }
