@@ -2,6 +2,7 @@ package com.freemind.timesheet.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.freemind.timesheet.web.rest.ReportRessource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,6 +16,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Project.
@@ -23,6 +26,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "project", schema = "public")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Project implements Serializable {
+    private static Logger log = LoggerFactory.getLogger(Project.class);
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -121,10 +126,9 @@ public class Project implements Serializable {
         this.customer = customer;
     }
 
-    public List<Job> getJobsByUser(Long userId) {
+    public List<Job> getJobsByUser(AppUser user) {
         List<Job> jobs = new ArrayList<Job>();
-        jobs =
-            this.jobs.stream().filter(j -> j.getAppUsers().stream().anyMatch(user -> user.getId() == userId)).collect(Collectors.toList());
+        jobs = this.jobs.stream().filter(j -> j.getAppUsers().contains(user)).collect(Collectors.toList());
         return jobs;
     }
 

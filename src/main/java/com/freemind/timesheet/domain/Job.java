@@ -230,10 +230,10 @@ public class Job implements Serializable {
             perfs =
                 performances
                     .stream()
-                    .filter(p -> p.getDate().compareTo(date) == 0 && p.getAppUser().getId() == userId)
+                    .filter(p -> p.getDate().compareTo(date) == 0 && p.getAppUser().getId().compareTo(userId) == 0)
                     .collect(Collectors.toList());
         }
-        log.debug("PERFORMANCE:{}", perfs);
+        //        log.debug("PERFORMANCE:{}", perfs);
         if (perfs.size() > 1) {
             throw new IllegalStateException();
         }

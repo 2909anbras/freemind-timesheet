@@ -190,25 +190,23 @@ export class FullReportComponent implements OnInit {
     this.fillProjects();
     this.fillJobs();
     this.fillUsers();
-    // this.report.customersId = this.customersFiltered.map(c => c.id!);
-    // this.report.projectsId = this.projectsReport.map(c => c.id!);
-    // this.report.usersId = this.usersFiltered.map(c => c.id!);
-    // this.report.jobsId = this.jobs.map(c => c.id!);
-    // this.report.companiesId = this.showCompanies.map(c => c.id!);
     this.report.setDates(this.startDate, this.endDate);
   }
 
   private fillCustomers(): void {
     //toujours qu'une company
     //récupérer tous les customers de la company
+    this.reportCustomers = [];
     this.reportCustomers = this.customerFilter.transform(this.showCompanies[0].customers, this.searchCustomer, this.searchCustomerState);
     this.report.customersId = this.reportCustomers.map(c => c.id!);
   }
 
   private fillProjects(): void {
+    this.reportProjects = [];
     //dans la liste de customer on récupère tous les projects qui sont dans le filtre
     let bool: boolean;
     this.searchProjectState === 'All' ? null : this.searchProjectState === 'Enable' ? (bool = true) : (bool = false);
+    console.log(this.reportCustomers);
     this.reportCustomers.forEach(c => {
       c.projects.forEach(p => {
         p.name?.toLocaleLowerCase().includes(this.searchProject) && !this.reportProjects.find(x => x.id === p.id)
@@ -223,6 +221,7 @@ export class FullReportComponent implements OnInit {
   }
 
   private fillJobs(): void {
+    this.reportJobs = [];
     let bool: boolean;
     this.searchJobState === 'All' ? null : this.searchJobState === 'Enable' ? (bool = true) : (bool = false);
     this.reportProjects.forEach(p => {
@@ -237,11 +236,11 @@ export class FullReportComponent implements OnInit {
   }
 
   private fillUsers(): void {
+    this.reportUsers = [];
     //à partir des users, filtrer avec les arguments du filtre
     //et voir si présents dans les jobs.
     let bool: boolean;
     this.searchUserState === 'All' ? null : this.searchUserState === 'Enable' ? (bool = true) : (bool = false);
-    //1 liste de users à partir de jobs 2 filtrer
     let tmp: IUser[] = [];
     this.users.forEach(u => {
       this.reportJobs.forEach(j => {

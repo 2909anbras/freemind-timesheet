@@ -23,7 +23,12 @@ export class Report implements IReport {
 
   public setDates(startDate: Moment, endDate: Moment): void {
     const tmp = [];
+    if (startDate === undefined) {
+      startDate = moment().date(1);
+      endDate = startDate;
+    } else tmp.push(startDate);
     tmp.push(startDate);
+
     while (startDate < endDate) {
       const tmpDate = moment(startDate.add(1, 'months'));
       tmp.push(tmpDate);

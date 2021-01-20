@@ -4,6 +4,7 @@ import com.freemind.timesheet.domain.Company;
 import com.freemind.timesheet.domain.Project;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -43,4 +44,14 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpec
         "WHERE ap.id=?1 and customer.id=?2"
     )
     List<Project> findProjectsByCustomerAndUserId(Long userId, Long customerId);
+
+    @Query(
+        "SELECT DISTINCT p FROM Project p " +
+        "LEFT JOIN p.customer customer " +
+        "LEFT JOIN customer.company company " +
+        "LEFT JOIN company.appUsers ap " +
+        "LEFT JOIN customer.projects pro " +
+        "WHERE ap.id=?1 and customer.id=?2 and pro.id in ?3"
+    )
+    List<Project> findProjectsByCustomerAndUserIdAndProjectIds(Long id, Long id2, Set<Long> projectsId);
 }

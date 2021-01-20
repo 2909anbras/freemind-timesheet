@@ -74,7 +74,7 @@ public class ReportRessource {
     public ResponseEntity<Boolean> createFullReport(@Valid @RequestBody ReportDTO report) {
         log.debug("REPORTDTO : {}", report);
 
-        //        this.reportService.makeFullReport(report);
+        this.reportService.makeFullReport(report);
         return ResponseEntity
             .noContent()
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, NAME, report.toString()))
