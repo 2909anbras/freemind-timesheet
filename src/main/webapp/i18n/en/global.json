@@ -5,8 +5,9 @@
     "menu": {
       "registry": {
         "global-view": "Global-view",
-        "registry": "registry",
-        "full-view": "full-view"
+        "registry": "Registry",
+        "full-view": "Full-view",
+        "full-report": "Report"
       },
       "timesheet": "Timesheet",
       "home": "Home",

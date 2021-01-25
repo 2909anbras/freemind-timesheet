@@ -3,6 +3,7 @@
     "title": "Global view of the company",
     "company-filter": "Company Filter",
     "job-filter": "Job filter",
+    "user-filter": "User filter",
     "customer-filter": "Customer Filter",
     "project-filter": "Project filter",
     "companies": "Company full view",

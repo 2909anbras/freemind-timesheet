@@ -42,7 +42,7 @@
 
 <button type="button" class="btn btn-secondary btn-sm" (click)="makeReport()">Report</button>
 
-<table class="table table-condensed table-responsive">
+<table style="border:none!" class="table table-condensed table-responsive">
     <tr>
         <th style="text-indent: 3,5em;max-width: 10%;" colspan="3">
             Context
@@ -56,33 +56,33 @@
     
     <tbody>
         <!--Customers-->
-        <ng-container  style="border:none!"*ngFor="let customer of customers | customerFilter: searchCustomer:'All'"> 
-            <tr  style="border:none!">
-                <td style="max-width: 10%;border:none!">
+        <ng-container  *ngFor="let customer of customers | customerFilter: searchCustomer:'All'"> 
+            <tr  style="border:none!important">
+                <td style="max-width: 10%;border:none!important">
                     {{customer.name}}
                 </td>
-                <td style="border:none!"colspan="34"></td>
+                <td style="border:none!important"colspan="34"></td>
             </tr>
             <!--Projects-->
             <ng-container *ngFor="let project of getProjects(customer) | projectFilter: searchProject:'All' ">
-                <tr style="border:none!">
-                    <td style="border:none!" colspan="1">
+                <tr style="border:none!important">
+                    <td style="border:none!important" colspan="1">
                     </td>
-                    <td style="max-width: 10%;border:none!">
+                    <td style="max-width: 10%; border:none!important">
                         {{project.name}}
                     </td>
-                    <td style="border:none!"colspan="34"></td>
+                    <td style="border:none!important"colspan="34"></td>
                 </tr>
                 <!--Jobs-->
                 <ng-container *ngFor="let job of getJobs(project)|jobFilter: searchJob: 'All'">
-                    <tr style="border-bottom: black;">
-                        <td style="border-bottom: black;" colspan="2"></td>
-                        <td style="border-bottom: black;">
+                    <tr style="border:none!important">
+                        <td style="border:none!important" colspan="2"></td>
+                        <td style="border:none!important">
                            {{job.name}}
                         </td>
                         <!--loop qui va afficher tous les 0 ou les heures. Que ddes 0 pour le moment. Faire appel d'une fonction-->
                         <ng-container *ngFor="let item of nbrOfColumns | keyvalue; index as i">
-                            <td style="border-bottom: black;" (click)="encodeHours(project,job,customer,i)"style="border-color: black;cursor: pointer">{{getPerformanceHours(job,i)}}</td>
+                            <td  (click)="encodeHours(project,job,customer,i)"style="border: none;cursor: pointer">{{getPerformanceHours(job,i)}}</td>
                             <!-- *ngIf="IsDisable(i);else Disable" -->
                             <!-- <ng-template  #Disable>
                                 <td style="border-color: black;background-color: rgb(221, 219, 219);">{{getPerformance(job,i)}}</td>

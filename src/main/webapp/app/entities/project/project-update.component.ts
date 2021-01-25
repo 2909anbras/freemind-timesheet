@@ -79,10 +79,11 @@ export class ProjectUpdateComponent implements OnInit {
   }
 
   updateForm(project: IProject): void {
+    project.id == null ? this.editForm.patchValue({ enable: false }) : this.editForm.patchValue({ enable: project.enable });
     this.editForm.patchValue({
       id: project.id,
       name: project.name,
-      enable: project.enable,
+      // enable: project.enable,
       customerId: project.customerId,
     });
   }
@@ -94,6 +95,7 @@ export class ProjectUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const project = this.createFromForm();
+    if (project.id == null) project.id = undefined;
     if (project.id !== undefined) {
       this.subscribeToSaveResponse(this.projectService.update(project));
     } else {

@@ -125,7 +125,9 @@ export class JobUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const job = this.createFromForm();
-    if (job.id !== undefined) {
+    if (job.id == null) job.id = undefined;
+
+    if (job.id !== undefined || job.id) {
       this.subscribeToSaveResponse(this.jobService.update(job));
     } else {
       this.subscribeToSaveResponse(this.jobService.create(job));

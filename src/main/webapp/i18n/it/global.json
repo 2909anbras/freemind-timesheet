@@ -4,8 +4,12 @@
     "browsehappy": "Stai utilizzando un browser <strong> non aggiornato </ strong> <a href=\"http://browsehappy.com/?locale=it\"> Aggiorna il tuo browser per </a> migliorare la tua esperienza.",
     "menu": {
       "timesheet": "Orario",
-
-      "registry": "registro",
+      "registry": {
+        "global-view": "Vista generale",
+        "registry": "registro",
+        "full-view": "Vista generale",
+        "full-report": "rapporto"
+      },
       "home": "Home",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {

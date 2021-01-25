@@ -41,6 +41,7 @@ import {
   faClock,
   faPlusCircle,
   faArchive,
+  faAlignLeft,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -87,4 +88,5 @@ export const fontAwesomeIcons = [
   faPlusCircle,
   faArchive,
   faCalendarAlt,
+  faAlignLeft,
 ];

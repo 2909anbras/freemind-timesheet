@@ -15,7 +15,7 @@ export const TimesheetRoute: Routes = [
     component: TimesheetComponent,
     data: {
       authorities: [Authority.USER],
-      pageTitle: 'freemindTimesheetApp.appUser.home.title',
+      pageTitle: 'timesheet.title',
     },
     canActivate: [UserRouteAccessService],
   },
