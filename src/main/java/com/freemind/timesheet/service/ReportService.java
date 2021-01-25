@@ -102,16 +102,11 @@ public class ReportService {
         User user = userRepository.getOne(userId);
         //        fillSheet(wb, user, date, styles);
         // Write the output to a file
-        String file = this.createMonthPath(user.getLogin(), date.toString());
+        String file = this.createMonthPath(date.toString());
         this.fillFile(wb, file);
     }
 
     public void makeFullReport(ReportDTO report) {
-        //1 page/mois => nom de la page= mois+année (for nbr de mois => les mois triés à l'avance)
-        //init sheet
-        //fill template (title, header)
-        // fill data
-        //create file en dehors du for
         Workbook wb = new XSSFWorkbook();
         Map<String, CellStyle> styles = createStyles(wb);
         for (LocalDate date : report.getDates()) {
@@ -120,6 +115,7 @@ public class ReportService {
             String sheetName =
                 "Timesheet" + date.format(DateTimeFormatter.ofPattern("MMMM")) + " " + date.format(DateTimeFormatter.ofPattern("y"));
             initiateDoc(wb, sheetName);
+            log.debug("NEW SHEET:{}", sheetName);
             Sheet sheet = wb.getSheet(sheetName);
             setTitle(sheet, styles, dateBis);
             makeHeader(sheet, styles);
@@ -128,7 +124,7 @@ public class ReportService {
             fillByUsers(report, wb, date, styles, sheet);
         }
         // Write the output to a file
-        String file = this.createMonthPath("tartenfion", "test");
+        String file = this.createMonthPath("test");
         this.fillFile(wb, file);
     }
 
@@ -138,9 +134,9 @@ public class ReportService {
         CPTV = 0;
     }
 
-    private String createMonthPath(String userName, String date) {
+    private String createMonthPath(String date) {
         String file = System.getProperty("user.home");
-        return file + "\\Downloads\\" + "timesheet " + userName + " " + date + ".xls";
+        return file + "\\Downloads\\" + "timesheet " + " " + date + ".xls";
     }
 
     private void fillFile(Workbook wb, String file) {
@@ -148,9 +144,7 @@ public class ReportService {
         FileOutputStream out;
         try {
             out = new FileOutputStream(file);
-            log.debug("FILE:{}", file.toString());
             try {
-                log.debug("Inside");
                 wb.write(out);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -190,7 +184,6 @@ public class ReportService {
                     row = sheet.createRow(CPTV);
                 } else row = sheet.getRow(CPTV);
             }
-            //            CPTV++;
         }
     }
 
@@ -299,16 +292,23 @@ public class ReportService {
             Job j = jobs.get(i);
             printString(row, j.getName(), styles);
             CPTH++;
-            fillPerformances(user, j, dateCopy, row, sheet, styles);
+            fillPerformances(company, user, j, dateCopy, row, sheet, styles);
             dateCopy = date;
             if (sheet.getRow(CPTV + 1) == null) CPTV++; //new row, new job
             else CPTV = CPTV + 2;
             row = sheet.createRow(CPTV);
-            //        	}
         }
     }
 
-    private void fillPerformances(User user, Job j, LocalDate dateCopy, Row row, Sheet sheet, Map<String, CellStyle> styles) {
+    private void fillPerformances(
+        Company company,
+        User user,
+        Job j,
+        LocalDate dateCopy,
+        Row row,
+        Sheet sheet,
+        Map<String, CellStyle> styles
+    ) {
         int i = 0;
         int hours = 0;
         int totalHours = 0;
@@ -323,18 +323,27 @@ public class ReportService {
             printString(row, hours + "", styles);
 
             totalHours += hours; //total for the end of the row
-
-            if (
-                perf != null &&
-                perf.getDescription() != null &&
-                !perf.getDescription().trim().isEmpty() &&
-                !perf.getDescription().trim().isBlank()
-            ) {
+            //            &&
+            //            !perf.getDescription().trim().isEmpty() &&
+            //            !perf.getDescription().trim().isBlank()
+            if (perf != null && perf.getDescription() != null) {
                 CPTV++;
                 row = sheet.getRow(CPTV);
                 if (row == null) {
-                    log.debug("DESCRIPTION:{}", perf.getDescription());
                     row = sheet.createRow(CPTV);
+                    int tmpCpth = CPTH;
+                    CPTH = 0;
+                    printString(row, user.getLogin(), styles);
+                    CPTH++; //0=>1
+                    printString(row, company.getName(), styles);
+                    CPTH++; //1=>2
+                    printString(row, j.getProject().getCustomer().getName(), styles);
+                    CPTH++; //2=>3
+                    printString(row, j.getProject().getName(), styles);
+                    CPTH++; //3=>4
+                    printString(row, j.getName(), styles);
+                    CPTH++; //4=>5
+                    CPTH = tmpCpth;
                 }
                 printString(row, perf.getDescription(), styles);
                 CPTV--;
@@ -345,15 +354,6 @@ public class ReportService {
         }
         printString(row, totalHours + "", styles);
     }
-
-    //    public static boolean isRowEmpty(Row row) {
-    //        for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
-    //            Cell cell = row.getCell(c);
-    //            if (cell != null && cell.getCellType().BLANK.name()=='BLANK')
-    //                return false;
-    //        }
-    //        return true;
-    //    }
 
     private void printString(Row row, String name, Map<String, CellStyle> styles) {
         row.setHeightInPoints(35);

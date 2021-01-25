@@ -26,14 +26,20 @@ export class Report implements IReport {
     if (startDate === undefined) {
       startDate = moment().date(1);
       endDate = startDate;
-    } else tmp.push(startDate);
-    tmp.push(startDate);
-
-    while (startDate < endDate) {
-      const tmpDate = moment(startDate.add(1, 'months'));
-      tmp.push(tmpDate);
+      tmp.push(startDate);
+    } else {
+      startDate = moment().date(1).month(startDate.month()).year(startDate.year());
+      if (endDate !== undefined) endDate = moment().date(1).month(endDate.month()).year(endDate.year());
+      tmp.push(moment(startDate));
+      startDate.add(1, 'months');
+    }
+    if (startDate !== endDate && endDate !== undefined) {
+      while (startDate <= endDate) {
+        const tmpDate = moment(startDate);
+        tmp.push(tmpDate);
+        startDate.add(1, 'months');
+      }
     }
     this.dates = tmp;
-    console.log(this.dates);
   }
 }

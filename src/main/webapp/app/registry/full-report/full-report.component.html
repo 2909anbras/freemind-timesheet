@@ -1,6 +1,7 @@
 <div >
     <h4 jhiTranslate="global-view.report">Full view for timereporting</h4>
-    <label class="form-control-label" jhiTranslate="freemindTimesheetApp.job.startDate" for="field_startDate">Start Date</label>
+    <!-- <form name="editForm" role="form" novalidate (ngSubmit)="makeReport()" [formGroup]="editForm"> -->
+        <label class="form-control-label" jhiTranslate="freemindTimesheetApp.job.startDate" for="field_startDate">Start Date</label>
         <div class="input-group">
 
             <input id="field_startDate" type="text" name="startDate" ngbDatepicker #startDateDp="ngbDatepicker" [(ngModel)]="startDate"/>
@@ -14,6 +15,7 @@
             </span>
         </div>
     <button type="button" class="btn btn-secondary btn-sm" (click)="makeReport()">Report</button>
+    <!-- </form> -->
 </div>
 <table class="table table-bordered table-condensed table-responsive" style="border-radius: 1%;">
     <thead>

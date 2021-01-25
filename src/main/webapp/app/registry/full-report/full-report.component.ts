@@ -241,7 +241,7 @@ export class FullReportComponent implements OnInit {
     //et voir si présents dans les jobs.
     let bool: boolean;
     this.searchUserState === 'All' ? null : this.searchUserState === 'Enable' ? (bool = true) : (bool = false);
-    let tmp: IUser[] = [];
+    const tmp: IUser[] = [];
     this.users.forEach(u => {
       this.reportJobs.forEach(j => {
         j.appUsers.forEach(ap => {

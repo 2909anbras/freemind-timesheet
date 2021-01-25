@@ -4,6 +4,8 @@ import { JhiEventManager } from 'ng-jhipster';
 import { HttpResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { TimesheetService } from 'app/timesheet/timesheet.service';
+import { Moment } from 'moment';
+import * as moment from 'moment';
 
 import { CompanyService } from 'app/entities/company/company.service';
 import { AppUserService } from 'app/entities/app-user/app-user.service';
@@ -24,6 +26,8 @@ import { AccountService } from 'app/core/auth/account.service';
 import { IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
 import { IPerformance } from 'app/shared/model/performance.model';
+import { FullReportService } from 'app/registry/full-report/full-report.service';
+import { Report } from 'app/shared/model/report.model';
 
 type SelectableEntity = IUser;
 
@@ -70,6 +74,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   disableTd = false;
 
   constructor(
+    protected reportService: FullReportService,
     protected timesheetService: TimesheetService,
     private cdRef: ChangeDetectorRef,
     protected jobService: JobService,
@@ -121,6 +126,9 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
                   res.body ? (this.employees = res.body) : null;
                 })
               : null;
+            // this.currentEmployee.companyId?this.companyService.find(this.currentEmployee.companyId).
+            //   subscribe((c:HttpResponse<ICompany>)=>
+            //     this.companySelected=c.body):null;
           }
           this.setCustomers();
           this.currentEmployee?.companyId ? this.setCompany(this.currentEmployee.companyId) : null;
@@ -251,7 +259,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   onChangeCompany(): void {
-    this.employees = this.setEmployees(this.companySelected?.id);
+    this.employees = this.setEmployees(this.company?.id);
     if (this.employees.length === 0) {
       this.customers = [];
       this.currentEmployee = null;
@@ -316,28 +324,34 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public makeReport(): void {
-    console.log(this.currentEmployee!.id);
+    const report: Report = new Report();
+    report.dates = [moment(new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), 1)).date(2)];
+    report.usersId = [this.currentEmployee!.id];
+    report.companiesId = [this.company!.id!];
+    console.log(this.currentEmployee);
+    report.jobsId = this.getJobsForReport();
+    report.projectsId = this.getProjectsForReport();
+    const tmpCust: number[] = [];
+    this.company!.customers.forEach(c => tmpCust.push(c.id!));
+    report.customersId = tmpCust;
+    this.getProjectsForReport();
 
-    if (this.currentEmployee) {
-      console.log('dedans');
-      this.timesheetService.create(this.dateCopy, this.currentEmployee.id).subscribe(res => console.log(res));
-    }
+    this.reportService.create(report).subscribe(res => console.log(res.body));
+
+    // if (this.currentEmployee) {
+    //   this.timesheetService.create(this.dateCopy, this.currentEmployee.id).subscribe(res => console.log(res));
+    // }
+  }
+
+  private getJobsForReport(): number[] {
+    const jobsId: number[] = [];
+    this.company?.customers?.forEach(c => c.projects.forEach(p => p.jobs.forEach(j => jobsId.push(j.id!))));
+    return jobsId;
+  }
+
+  private getProjectsForReport(): number[] {
+    const projectsId: number[] = [];
+    this.company?.customers?.forEach(c => c.projects.forEach(p => projectsId.push(p.id!)));
+    return projectsId;
   }
 }
-// this.customerService.findCustomersByUserId(this.currentEmployee?.id).subscribe((res: HttpResponse<ICustomer[]>) => {
-//   res.body ? (this.customers = res.body) : null;
-//   console.log(this.customers);
-// });
-// if(this.currentEmployee)
-// this.currentEmployee.companyId ? this.setCompany(this.currentEmployee.companyId) : null;
-
-//getAllUsersByCompany=>changer model, rajouter les performances
-// else{
-//   //company=find company By id
-// }
-// console.log(this.company);
-
-// job.performances?.some(p => {
-//   p.date === date;
-//   perf = p;
-// });
