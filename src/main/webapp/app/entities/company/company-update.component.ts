@@ -4,6 +4,7 @@ import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
+import { AccountService } from 'app/core/auth/account.service';
 
 import { ICompany, Company } from 'app/shared/model/company.model';
 import { CompanyService } from './company.service';
@@ -14,18 +15,26 @@ import { CompanyService } from './company.service';
 })
 export class CompanyUpdateComponent implements OnInit {
   isSaving = false;
-
+  isAdmin = false;
   editForm = this.fb.group({
     id: [],
     name: [null, [Validators.required]],
   });
 
-  constructor(protected companyService: CompanyService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
+  constructor(
+    protected companyService: CompanyService,
+    protected accountService: AccountService,
+    protected activatedRoute: ActivatedRoute,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ company }) => {
       this.updateForm(company);
     });
+    if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+      this.isAdmin = true;
+    }
   }
 
   updateForm(company: ICompany): void {

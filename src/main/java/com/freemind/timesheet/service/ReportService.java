@@ -19,6 +19,9 @@ import com.freemind.timesheet.web.rest.ReportRessource;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -49,12 +52,18 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class ReportService {
+    @Autowired
+    private Environment env;
+
     private final Logger log = LoggerFactory.getLogger(ReportRessource.class);
     private final UserRepository userRepository;
     private final AppUserRepository appUserRepository;
@@ -86,27 +95,17 @@ public class ReportService {
         this.projectRepository = projectRepository;
     }
 
-    public void makeMonthReport(LocalDate oldDate, Long userId) { //fullMonthReport for on user
-        LocalDate date = LocalDate.of(oldDate.getYear(), oldDate.getMonthValue(), 1);
-        this.initSheetData(date);
-
-        Workbook wb = new XSSFWorkbook();
-        Map<String, CellStyle> styles = createStyles(wb);
-
-        initiateDoc(wb, "Timesheet");
-        Sheet sheet = wb.getSheet("Timesheet");
-        setTitle(sheet, styles, date);
-        makeHeader(sheet, styles);
-        SetDays(styles, sheet.getRow(CPTV), date);
-        //tout trier par ordre alphabétique par la suite
-        User user = userRepository.getOne(userId);
-        //        fillSheet(wb, user, date, styles);
-        // Write the output to a file
-        String file = this.createMonthPath(date.toString());
-        this.fillFile(wb, file);
+    public Resource loadFileAsResource(String fileName) throws MalformedURLException {
+        Path fileStorageLocation = Paths.get(env.getProperty("file.upload-dir")).toAbsolutePath().normalize();
+        Path filePath = fileStorageLocation.resolve(fileName).normalize();
+        Resource resource = new UrlResource(filePath.toUri());
+        if (resource.exists()) {
+            return resource;
+        }
+        return null;
     }
 
-    public void makeFullReport(ReportDTO report) {
+    public Resource makeFullReport(ReportDTO report) throws MalformedURLException {
         Workbook wb = new XSSFWorkbook();
         Map<String, CellStyle> styles = createStyles(wb);
         for (LocalDate date : report.getDates()) {
@@ -115,17 +114,18 @@ public class ReportService {
             String sheetName =
                 "Timesheet" + date.format(DateTimeFormatter.ofPattern("MMMM")) + " " + date.format(DateTimeFormatter.ofPattern("y"));
             initiateDoc(wb, sheetName);
-            log.debug("NEW SHEET:{}", sheetName);
             Sheet sheet = wb.getSheet(sheetName);
             setTitle(sheet, styles, dateBis);
             makeHeader(sheet, styles);
             SetDays(styles, sheet.getRow(CPTV), date);
-            //for user in users
             fillByUsers(report, wb, date, styles, sheet);
         }
         // Write the output to a file
-        String file = this.createMonthPath("test");
+        String file = this.createPath("test");
         this.fillFile(wb, file);
+        Resource r = this.loadFileAsResource(file);
+        //delete le xlsx. D'abord le stocker dans le dossier du projet puis le virer
+        return r;
     }
 
     private void initSheetData(LocalDate date) { //for each sheet
@@ -134,9 +134,9 @@ public class ReportService {
         CPTV = 0;
     }
 
-    private String createMonthPath(String date) {
+    private String createPath(String word) {
         String file = System.getProperty("user.home");
-        return file + "\\Downloads\\" + "timesheet " + " " + date + ".xls";
+        return file + "\\Downloads\\" + "timesheet " + " " + word + ".xls";
     }
 
     private void fillFile(Workbook wb, String file) {
@@ -314,18 +314,12 @@ public class ReportService {
         int totalHours = 0;
 
         while (i < CPTHMAX) {
-            Performance perf = j.getPerfByDateAndUserId(dateCopy, user.getId()); //get the perf
-
+            Performance perf = j.getPerfByDateAndUserId(dateCopy, user.getId());
             dateCopy = dateCopy.plusDays(1); //next day
-
             if (perf == null) hours = 0; else hours = perf.getHours();
-
             printString(row, hours + "", styles);
 
             totalHours += hours; //total for the end of the row
-            //            &&
-            //            !perf.getDescription().trim().isEmpty() &&
-            //            !perf.getDescription().trim().isBlank()
             if (perf != null && perf.getDescription() != null) {
                 CPTV++;
                 row = sheet.getRow(CPTV);
@@ -393,32 +387,6 @@ public class ReportService {
         CPTH++;
         this.printHeader(headerRow, "JOB", styles);
         CPTH++;
-        //        headerRow.setHeightInPoints(40);
-        //        Cell headerCell;
-        //        headerCell = headerRow.createCell(CPTH);
-        //        headerCell.setCellValue("EMPLOYEE ");
-        //        headerCell.setCellStyle(styles.get("header"));
-        //        CPTH++;
-        //        headerCell = headerRow.createCell(CPTH);
-        //        headerCell.setCellValue("COMPANY ");
-        //        headerCell.setCellStyle(styles.get("header"));
-        //
-        //        CPTH++;
-        //        headerCell = headerRow.createCell(CPTH);
-        //        headerCell.setCellValue("CUSTOMERS ");
-        //        headerCell.setCellStyle(styles.get("header"));
-        //
-        //        CPTH++;
-        //        headerCell = headerRow.createCell(CPTH);
-        //        headerCell.setCellValue("PROJECTS ");
-        //        headerCell.setCellStyle(styles.get("header"));
-        //
-        //        CPTH++;
-        //        headerCell = headerRow.createCell(CPTH);
-        //        headerCell.setCellValue("JOBS ");
-        //        headerCell.setCellStyle(styles.get("header"));
-
-        //        CPTH++;
     }
 
     private void SetDays(Map<String, CellStyle> styles, Row headerRow, LocalDate date) {
@@ -440,10 +408,6 @@ public class ReportService {
         //        Row
         CPTH = 0;
     } //end first line
-
-    private void populateWithEntity(Workbook wb, Map<String, CellStyle> styles, LocalDate date, Long userId) {
-        //tot hours
-    }
 
     private static Map<String, CellStyle> createStyles(Workbook wb) {
         Map<String, CellStyle> styles = new HashMap<>();
