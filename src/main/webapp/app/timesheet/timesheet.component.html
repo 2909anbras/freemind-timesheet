@@ -80,9 +80,10 @@
                         <td style="border:none!important">
                            {{job.name}}
                         </td>
-                        <!--loop qui va afficher tous les 0 ou les heures. Que ddes 0 pour le moment. Faire appel d'une fonction-->
+                        <!--loop qui va afficher tous les 0 ou les heures. Que ddes 0 pour le moment. Faire appel d'une fonction
+                        (mouseover)='over(project,job,customer,i)' (mouseout)='out()'-->
                         <ng-container *ngFor="let item of nbrOfColumns | keyvalue; index as i">
-                            <td  (click)="encodeHours(project,job,customer,i)"style="border: none;cursor: pointer">{{getPerformanceHours(job,i)}}</td>
+                            <td  ngbTooltip="{{over(project,job,customer,i)}}"(click)="encodeHours(project,job,customer,i)"style="border: none;cursor: pointer">{{getPerformanceHours(job,i)}}</td>
                             <!-- *ngIf="IsDisable(i);else Disable" -->
                             <!-- <ng-template  #Disable>
                                 <td style="border-color: black;background-color: rgb(221, 219, 219);">{{getPerformance(job,i)}}</td>

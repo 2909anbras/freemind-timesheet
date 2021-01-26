@@ -354,4 +354,12 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.company?.customers?.forEach(c => c.projects.forEach(p => projectsId.push(p.id!)));
     return projectsId;
   }
+
+  public over(p: IProject, j: IJob, c: ICustomer, i: number): any {
+    const perf: IPerformance = this.getPerformance(j, i);
+    if (perf) return perf.description;
+    else return null;
+  }
+
+  public out(): any {}
 }
