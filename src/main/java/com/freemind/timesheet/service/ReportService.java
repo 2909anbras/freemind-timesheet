@@ -19,9 +19,6 @@ import com.freemind.timesheet.web.rest.ReportRessource;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -52,18 +49,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class ReportService {
-    @Autowired
-    private Environment env;
-
     private final Logger log = LoggerFactory.getLogger(ReportRessource.class);
     private final UserRepository userRepository;
     private final AppUserRepository appUserRepository;
@@ -95,17 +86,7 @@ public class ReportService {
         this.projectRepository = projectRepository;
     }
 
-    public Resource loadFileAsResource(String fileName) throws MalformedURLException {
-        Path fileStorageLocation = Paths.get(env.getProperty("file.upload-dir")).toAbsolutePath().normalize();
-        Path filePath = fileStorageLocation.resolve(fileName).normalize();
-        Resource resource = new UrlResource(filePath.toUri());
-        if (resource.exists()) {
-            return resource;
-        }
-        return null;
-    }
-
-    public Resource makeFullReport(ReportDTO report) throws MalformedURLException {
+    public void makeFullReport(ReportDTO report) {
         Workbook wb = new XSSFWorkbook();
         Map<String, CellStyle> styles = createStyles(wb);
         for (LocalDate date : report.getDates()) {
@@ -123,9 +104,6 @@ public class ReportService {
         // Write the output to a file
         String file = this.createPath("test");
         this.fillFile(wb, file);
-        Resource r = this.loadFileAsResource(file);
-        //delete le xlsx. D'abord le stocker dans le dossier du projet puis le virer
-        return r;
     }
 
     private void initSheetData(LocalDate date) { //for each sheet
