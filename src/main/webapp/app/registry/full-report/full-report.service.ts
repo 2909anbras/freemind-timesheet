@@ -14,6 +14,7 @@ export class FullReportService {
 
   create(report: IReport): Observable<HttpResponse<any>> {
     console.log(report);
-    return this.http.post<IReport>(this.resourceUrl, report, { observe: 'response' });
+    // return this.http.post<IReport>(this.resourceUrl, report, { observe: 'response' });
+    return this.http.post<any>(this.resourceUrl, report, { observe: 'response' });
   }
 }

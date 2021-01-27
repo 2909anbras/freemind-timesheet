@@ -16,6 +16,7 @@ import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.repository.UserRepository;
 import com.freemind.timesheet.service.dto.ReportDTO;
 import com.freemind.timesheet.web.rest.ReportRessource;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,6 +47,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.aspectj.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +88,7 @@ public class ReportService {
         this.projectRepository = projectRepository;
     }
 
-    public void makeFullReport(ReportDTO report) {
+    public File makeFullReport(ReportDTO report) {
         Workbook wb = new XSSFWorkbook();
         Map<String, CellStyle> styles = createStyles(wb);
         for (LocalDate date : report.getDates()) {
@@ -103,7 +105,8 @@ public class ReportService {
         }
         // Write the output to a file
         String file = this.createPath("test");
-        this.fillFile(wb, file);
+        File f = this.fillFile(wb, file);
+        return f;
     }
 
     private void initSheetData(LocalDate date) { //for each sheet
@@ -117,27 +120,27 @@ public class ReportService {
         return file + "\\Downloads\\" + "timesheet " + " " + word + ".xls";
     }
 
-    private void fillFile(Workbook wb, String file) {
+    private File fillFile(Workbook wb, String file) {
         if (wb instanceof XSSFWorkbook) file += "x";
+        File f = null;
         FileOutputStream out;
         try {
             out = new FileOutputStream(file);
             try {
                 wb.write(out);
+                wb.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             try {
                 out.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        return new File(file);
     }
 
     private void initiateDoc(Workbook wb, String string) {

@@ -7,6 +7,9 @@ import com.freemind.timesheet.service.dto.CustomerDTO;
 import com.freemind.timesheet.service.dto.ReportDTO;
 import com.freemind.timesheet.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,6 +17,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,21 +56,30 @@ public class ReportRessource {
         AuthoritiesConstants.INSPECTOR +
         "\")"
     )
-    public ResponseEntity<Boolean> createFullReport(@Valid @RequestBody ReportDTO report, HttpServletResponse response) {
+    public void createFullReport(@Valid @RequestBody ReportDTO report, HttpServletResponse response) throws IOException {
         log.debug("REPORTDTO : {}", report);
 
-        this.reportService.makeFullReport(report);
-        String contentType = outputFile.getName().contains(".xlsm")
-            ? "application/vnd.ms-excel.sheet.macroEnabled.12"
-            : "application/vnd.ms-excel";
+        File outputFile = this.reportService.makeFullReport(report);
+
+        log.debug("FILEEXIST:{}", outputFile.exists());
+        log.debug("ISFILE:{}", outputFile.isFile());
+        log.debug("ISFILE:{}", outputFile.getName());
+
         FileInputStream stream = new FileInputStream(outputFile);
-        response.setContentType(contentType);
+        response.setContentType("application/vnd.ms-excel");
         response.setHeader("Content-disposition", "attachment; filename=" + outputFile.getName());
         IOUtils.copy(stream, response.getOutputStream());
         stream.close();
-        return ResponseEntity
-            .noContent()
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, NAME, report.toString()))
-            .build();
+        outputFile.delete();
     }
 }
+//byte[] byteArray =  FileUtils.readFileToByteArray(outputFile);
+//String contentType = outputFile.getName().contains(".xls")
+//? "application/vnd.ms-excel.sheet.macroEnabled.12"
+//: "application/vnd.ms-excel";
+//this.reportService.makeFullReport(report);
+//ResponseEntity<Boolean>
+//return ResponseEntity
+//.noContent()
+//.headers(HeaderUtil.createEntityCreationAlert(applicationName, true, NAME, report.toString()))
+//.build();

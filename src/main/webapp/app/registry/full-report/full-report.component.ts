@@ -182,8 +182,14 @@ export class FullReportComponent implements OnInit {
   public makeReport(): void {
     //id? ou object? id pour request, ça sera plus propre.
     this.fillReport();
-    this.reportService.create(this.report).subscribe();
+    this.reportService.create(this.report).subscribe((response: any) => {
+      console.log(response);
+      let mediatype = 'application/vnd.ms-excel;charset=UTF-8';
+      const data = new Blob();
+      var blob = new Blob([response._body], { type: 'application/vnd.ms-excel' });
+    });
   }
+
   private fillReport(): void {
     this.report.companiesId = this.showCompanies.map(c => c.id!);
     this.fillCustomers();
