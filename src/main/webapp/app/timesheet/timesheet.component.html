@@ -8,7 +8,7 @@
     align-content: space-between;">
         <div *jhiHasAnyAuthority="['ROLE_ADMIN']" >
             <label jhiTranslate="global-view.company-filter">Company</label>&nbsp;
-            <select style="width: 10%;" class="form-control" (change)="onChangeCompany()" [(ngModel)]="company" >
+            <select style="width: 50%;" class="form-control" (change)="onChangeCompany()" [(ngModel)]="company" >
                 <option *ngFor="let company of companies" [ngValue]="company">{{company.name}}</option>&nbsp;
             </select>
         </div>
