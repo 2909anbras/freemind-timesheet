@@ -33,7 +33,7 @@
                     <td>{{ user.email }}</td>
                     <td>
                         <button class="btn btn-danger btn-sm" (click)="setActive(user, true)" *ngIf="!user.activated"
-                                jhiTranslate="userManagement.deactivated">Deactivated</button>
+                        [disabled]="!currentAccount || currentAccount.login === user.login || user.companyId===undefined" jhiTranslate="userManagement.deactivated">Deactivated</button>
                         <button class="btn btn-success btn-sm" (click)="setActive(user, false)" *ngIf="user.activated"
                                 [disabled]="!currentAccount || currentAccount.login === user.login || user.companyId===undefined" jhiTranslate="userManagement.activated">Activated</button>
                     </td>
@@ -54,7 +54,7 @@
                                 <fa-icon icon="eye"></fa-icon>
                                 <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                             </button>
-                            <div *jhiHasAnyAuthority="['ROLE_CUSTOMER_ADMIN']">
+                            <div *jhiHasAnyAuthority="['ROLE_CUSTOMER_ADMIN','ROLE_ADMIN']">
                                 <button type="submit"
                                         [routerLink]="['./', user.login, 'edit']"
                                         queryParamsHandling="merge"
@@ -62,7 +62,8 @@
                                     <fa-icon icon="pencil-alt"></fa-icon>
                                     <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
                                 </button>
-
+                            </div>
+                            <div *jhiHasAnyAuthority="['ROLE_CUSTOMER_ADMIN','ROLE_ADMIN']">
                                 <button type="button" (click)="deleteUser(user)"
                                         class="btn btn-danger btn-sm" [disabled]="!currentAccount || currentAccount.login === user.login">
                                     <fa-icon icon="times"></fa-icon>

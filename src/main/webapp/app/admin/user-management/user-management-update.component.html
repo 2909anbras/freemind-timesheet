@@ -74,6 +74,9 @@
                     <label class="form-control-label" jhiTranslate="userManagement.email">Email</label>
                     <input type="email" class="form-control" name="email" formControlName="email">
 
+                    <!-- <div *ngIf="editForm.get('companyId')!.errors?.companyRequired">
+                        Company is required
+                    </div> -->
                     <div *ngIf="editForm.get('email')!.invalid && (editForm.get('email')!.dirty || editForm.get('email')!.touched)">
                         <small class="form-text text-danger"
                                *ngIf="editForm.get('email')?.errors?.required"

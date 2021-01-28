@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { companyRequired } from 'app/shared/form-validations/companyRequired.directive';
 
 import { HttpResponse } from '@angular/common/http';
 
@@ -36,6 +37,7 @@ export class UserManagementUpdateComponent implements OnInit {
   jobs: IJob[] = [];
   showJobs = false;
   isNew = false;
+  // editForm:any;
   editForm = this.fb.group({
     id: [],
     login: [
@@ -50,10 +52,10 @@ export class UserManagementUpdateComponent implements OnInit {
     firstName: ['', [Validators.maxLength(50)]],
     lastName: ['', [Validators.maxLength(50)]],
     email: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(254), Validators.email]],
-    activated: [],
+    activated: [''],
     langKey: [],
     authorities: [],
-    companyId: [],
+    companyId: ['', [Validators.required]],
     jobs: [],
     phone: [],
   });
@@ -82,12 +84,32 @@ export class UserManagementUpdateComponent implements OnInit {
       }
       this.setCurrentAccount();
       this.setAuthorities();
+      // this.editForm = this.fb.group({
+      //   id: [],
+      //   login: [
+      //     '',
+      //     [
+      //       Validators.required,
+      //       Validators.minLength(1),
+      //       Validators.maxLength(50),
+      //       Validators.pattern('^[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$|^[_.@A-Za-z0-9-]+$'),
+      //     ],
+      //   ],
+      //   firstName: ['', [Validators.maxLength(50)]],
+      //   lastName: ['', [Validators.maxLength(50)]],
+      //   email: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(254), Validators.email]],
+      //   activated: ['',[[companyRequired(this.isAdmin)]]],
+      //   langKey: [],
+      //   authorities: [],
+      //   companyId: ['',[companyRequired(this.isAdmin)]],
+      //   jobs: [],
+      //   phone: [],
+      // });
       this.jobService.query().subscribe((res: HttpResponse<IJob[]>) => (this.jobs = res.body || [])); //by company
 
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) this.getAllCompanies();
 
       if (this.account!.companyId) this.editForm.patchValue({ companyId: this.account?.companyId });
-
       this.showJobs = this.isNew || !user.authorities.some((x: string) => x === 'ROLE_ADMIN');
 
       if (this.showJobs && !this.isNew) {
@@ -114,6 +136,12 @@ export class UserManagementUpdateComponent implements OnInit {
     });
   }
 
+  companyRequired(): any {
+    return (ctl: FormControl) => {
+      this.isAdmin ? { companyRequired: false } : { companyRequired: true };
+    };
+  }
+
   private setCurrentAccount(): void {
     this.accountService.identity().subscribe((account: any) => {
       this.account = account;
@@ -125,6 +153,10 @@ export class UserManagementUpdateComponent implements OnInit {
     this.companyService.find(this.account!.companyId).subscribe((c: HttpResponse<ICompany>) => {
       this.companies.push(c.body!);
     });
+  }
+
+  private hasAdminAuthority(): any {
+    return this.accountService.hasAnyAuthority('ROLE_ADMIN');
   }
 
   private getAllCompanies(): void {
@@ -201,7 +233,6 @@ export class UserManagementUpdateComponent implements OnInit {
     } else if (authorities?.some(e => e === 'ROLE_CUSTOMER_ADMIN')) {
       return ['ROLE_CUSTOMER_ADMIN', 'ROLE_USER'];
     } else return authorities;
-    // else if()
   }
 
   private onSaveSuccess(): void {

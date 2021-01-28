@@ -16,6 +16,24 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
+import sendinblue.ApiClient;
+import sendinblue.ApiException;
+import sendinblue.Configuration;
+import sendinblue.auth.*;
+import sibApi.AccountApi;
+import sibApi.ContactsApi;
+//import sibApi.SmtpApi;
+
+import sibModel.CreateContact;
+//import sibApi.SmtpApi;
+import sibModel.CreateSmtpEmail;
+import sibModel.GetAccount;
+import sibModel.SendSmtpEmail;
+import sibModel.SendSmtpEmailAttachment;
+import sibModel.SendSmtpEmailBcc;
+import sibModel.SendSmtpEmailReplyTo;
+import sibModel.SendSmtpEmailSender;
+import sibModel.SendSmtpEmailTo;
 
 /**
  * Service for sending emails.
@@ -60,6 +78,26 @@ public class MailService {
             subject,
             content
         );
+        log.debug("ICI JE SUIS DANS SEND MAIL");
+        //ici send in blue?
+
+        ApiClient defaultClient = Configuration.getDefaultApiClient(); //ok
+        ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key"); //ok
+        apiKey.setApiKey("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"); //ok
+
+        //    	SmtpApi apiInstance = new SmtpApi();
+
+        //    	ContactsApi apiContact = new ContactsApi();
+        CreateContact createContact = new CreateContact(); // CreateContact | Values to create a contact
+        createContact.email(to); //
+        AccountApi apiInstance = new AccountApi();
+        try {
+            GetAccount result = apiInstance.getAccount();
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling AccountApi#getAccount");
+            e.printStackTrace();
+        }
 
         // Prepare message using a Spring helper
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -78,6 +116,7 @@ public class MailService {
 
     @Async
     public void sendEmailFromTemplate(User user, String templateName, String titleKey) {
+        log.debug("ICI JE SUIS DANS TEMPLATE");
         if (user.getEmail() == null) {
             log.debug("Email doesn't exist for user '{}'", user.getLogin());
             return;

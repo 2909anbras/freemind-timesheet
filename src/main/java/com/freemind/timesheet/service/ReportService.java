@@ -16,6 +16,7 @@ import com.freemind.timesheet.repository.ProjectRepository;
 import com.freemind.timesheet.repository.UserRepository;
 import com.freemind.timesheet.service.dto.ReportDTO;
 import com.freemind.timesheet.web.rest.ReportRessource;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -88,7 +89,7 @@ public class ReportService {
         this.projectRepository = projectRepository;
     }
 
-    public File makeFullReport(ReportDTO report) {
+    public byte[] makeFullReport(ReportDTO report) throws IOException {
         Workbook wb = new XSSFWorkbook();
         Map<String, CellStyle> styles = createStyles(wb);
         for (LocalDate date : report.getDates()) {
@@ -105,8 +106,15 @@ public class ReportService {
         }
         // Write the output to a file
         String file = this.createPath("test");
-        File f = this.fillFile(wb, file);
-        return f;
+        //        File f = this.fillFile(wb, file);
+        return tobytes(wb);
+    }
+
+    private byte[] tobytes(Workbook wb) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        wb.write(output);
+        output.close();
+        return output.toByteArray();
     }
 
     private void initSheetData(LocalDate date) { //for each sheet
@@ -116,19 +124,19 @@ public class ReportService {
     }
 
     private String createPath(String word) {
-        String file = System.getProperty("user.home");
-        return file + "\\Downloads\\" + "timesheet " + " " + word + ".xls";
+        //        String file = System.getProperty("user.home");
+        return "timesheet " + " " + word + ".xlsx";
     }
 
     private File fillFile(Workbook wb, String file) {
-        if (wb instanceof XSSFWorkbook) file += "x";
+        //        if (wb instanceof XSSFWorkbook) file += "x";
         File f = null;
         FileOutputStream out;
         try {
             out = new FileOutputStream(file);
             try {
                 wb.write(out);
-                wb.close();
+                //                wb.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -336,7 +336,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     report.customersId = tmpCust;
     this.getProjectsForReport();
 
-    this.reportService.create(report).subscribe(res => console.log(res.body));
+    this.reportService.create(report).subscribe((res: any) => console.log(res.body));
 
     // if (this.currentEmployee) {
     //   this.timesheetService.create(this.dateCopy, this.currentEmployee.id).subscribe(res => console.log(res));

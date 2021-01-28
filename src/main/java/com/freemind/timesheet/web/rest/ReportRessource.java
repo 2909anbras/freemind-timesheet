@@ -11,14 +11,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.Date;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,23 +61,72 @@ public class ReportRessource {
         AuthoritiesConstants.INSPECTOR +
         "\")"
     )
+    //    public ResponseEntity  createFullReport(@Valid @RequestBody ReportDTO report, HttpServletResponse response) throws IOException {
+    //        log.debug("REPORTDTO : {}", report);
+    //        XSSFWorkbook wb = (XSSFWorkbook) this.reportService.makeFullReport(report);
+    //        response.setHeader("Content-Disposition","attachment; filename="+createPath("test"));
+    //        writeToOutputStream(response,wb);
+    //        OutputStream out = response.getOutputStream();
+    //        response.setContentType("application/vnd.ms-excel");
+    ////        byte[] byteArray = ((HSSFWorkbook)wb).getBytes();
+    ////        out.write(byteArray);
+    ////        out.flush();
+    ////        out.close();
+    //        return ResponseEntity.ok().build();
+    //    }
+    //
+    //    private String createPath(String word) {
+    //        String file = System.getProperty("user.home");
+    //        return file + "\\Downloads\\" + "timesheet " + " " + word + ".xlsx";
+    //    }
+    //    private void writeToOutputStream(HttpServletResponse response,XSSFWorkbook wb){
+    //
+    //        ServletOutputStream out ;
+    //        try {
+    //            out = response.getOutputStream();
+    //            wb.write(out);
+    //            wb.close();
+    //            out.close();
+    //        } catch (IOException e) {
+    //            e.printStackTrace();
+    //        }
+    //    }
+
     public void createFullReport(@Valid @RequestBody ReportDTO report, HttpServletResponse response) throws IOException {
         log.debug("REPORTDTO : {}", report);
 
-        File outputFile = this.reportService.makeFullReport(report);
-
-        log.debug("FILEEXIST:{}", outputFile.exists());
-        log.debug("ISFILE:{}", outputFile.isFile());
-        log.debug("ISFILE:{}", outputFile.getName());
-
-        FileInputStream stream = new FileInputStream(outputFile);
-        response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-disposition", "attachment; filename=" + outputFile.getName());
-        IOUtils.copy(stream, response.getOutputStream());
-        stream.close();
-        outputFile.delete();
+        try {
+            //            Workbook book = new XSSFWorkbook();
+            byte[] output = this.reportService.makeFullReport(report);
+            serveXlsxBrowser(response, output, "timesheet test.xlsx");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+    public void serveXlsxBrowser(HttpServletResponse response, byte[] file, String fileName) throws IOException {
+        response.setContentType("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
+        response.addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        response.getOutputStream().write(file);
+        response.getOutputStream().flush();
+    }
+    //    public void createFullReport(@Valid @RequestBody ReportDTO report, HttpServletResponse response) throws IOException {
+    //        log.debug("REPORTDTO : {}", report);
+    //
+    //        File outputFile = this.reportService.makeFullReport(report);
+    //
+    //        log.debug("FILEEXIST:{}", outputFile.exists());
+    //        log.debug("ISFILE:{}", outputFile.isFile());
+    //        log.debug("ISFILE:{}", outputFile.getName());
+    //
+    //        FileInputStream stream = new FileInputStream(outputFile);
+    //        response.setContentType("application/vnd.ms-excel");
+    //        response.setHeader("Content-disposition", "attachment; filename=" + outputFile.getName());
+    //        IOUtils.copy(stream, response.getOutputStream());
+    //        stream.close();
+    //    }
 }
+//}
 //byte[] byteArray =  FileUtils.readFileToByteArray(outputFile);
 //String contentType = outputFile.getName().contains(".xls")
 //? "application/vnd.ms-excel.sheet.macroEnabled.12"

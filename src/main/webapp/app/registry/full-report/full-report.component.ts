@@ -4,7 +4,7 @@ import { JhiLanguageService } from 'ng-jhipster';
 import { SessionStorageService } from 'ngx-webstorage';
 import { HttpResponse } from '@angular/common/http';
 import { Directive, ElementRef, Renderer2, Input } from '@angular/core';
-
+import * as fileSaver from 'file-saver';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { Subscription, combineLatest } from 'rxjs';
 
@@ -180,14 +180,21 @@ export class FullReportComponent implements OnInit {
     this.userHidden = !this.userHidden;
   }
   public makeReport(): void {
-    //id? ou object? id pour request, ça sera plus propre.
     this.fillReport();
     this.reportService.create(this.report).subscribe((response: any) => {
       console.log(response);
-      let mediatype = 'application/vnd.ms-excel;charset=UTF-8';
-      const data = new Blob();
-      var blob = new Blob([response._body], { type: 'application/vnd.ms-excel' });
+      // const mediatype = 'application/vnd.ms-excel;charset=UTF-8';
+      // var blob = new Blob(["\ufeff",response.end],{type: mediatype});
+      // const blob = new Blob([this.s2ab((response))], {type: ''});
+      fileSaver.saveAs(response, 'timesheet' + '.xlsx');
     });
+  }
+
+  private s2ab(s: any): any {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
+    return buf;
   }
 
   private fillReport(): void {
@@ -200,8 +207,6 @@ export class FullReportComponent implements OnInit {
   }
 
   private fillCustomers(): void {
-    //toujours qu'une company
-    //récupérer tous les customers de la company
     this.reportCustomers = [];
     this.reportCustomers = this.customerFilter.transform(this.showCompanies[0].customers, this.searchCustomer, this.searchCustomerState);
     this.report.customersId = this.reportCustomers.map(c => c.id!);
@@ -209,7 +214,6 @@ export class FullReportComponent implements OnInit {
 
   private fillProjects(): void {
     this.reportProjects = [];
-    //dans la liste de customer on récupère tous les projects qui sont dans le filtre
     let bool: boolean;
     this.searchProjectState === 'All' ? null : this.searchProjectState === 'Enable' ? (bool = true) : (bool = false);
     console.log(this.reportCustomers);
@@ -243,8 +247,6 @@ export class FullReportComponent implements OnInit {
 
   private fillUsers(): void {
     this.reportUsers = [];
-    //à partir des users, filtrer avec les arguments du filtre
-    //et voir si présents dans les jobs.
     let bool: boolean;
     this.searchUserState === 'All' ? null : this.searchUserState === 'Enable' ? (bool = true) : (bool = false);
     const tmp: IUser[] = [];

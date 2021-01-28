@@ -26,7 +26,7 @@
                 </a>
             </li>
 
-            <li *jhiHasAnyAuthority="['ROLE_CUSTOMER_ADMIN']" ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <li *jhiHasAnyAuthority="['ROLE_CUSTOMER_ADMIN','ROLE_ADMIN']" ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                 <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="admin_hr-menu">
                     <span>
                         <fa-icon icon="wrench"></fa-icon>
