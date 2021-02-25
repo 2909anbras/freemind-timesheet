@@ -52,30 +52,14 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: badgerfreemind@gmail.com
-    password: FREEMIND
+    username: freemindtimesheet@gmail.com
+    password: Fr33m!nd00
     protocol: smtp
     tls: true
     properties.mail.smtp:
       auth: true
       starttls.enable: true
       ssl.trust: smtp.gmail.com
-  #  mail:
-  #  host: smtp.gmail.com
-  #  port: 587
-  #  username: anthony.bras@freemind-group.com
-  #  password:
-  #  protocol: smtp
-  #  tls: true
-  #  properties.mail.smtp:
-  #    auth: true
-  #    starttls.enable: true
-  #    ssl.trust: smtp.gmail.com
-
-  #    host: localhost
-  #    port: 25
-  #    username:
-  #    password:
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:
