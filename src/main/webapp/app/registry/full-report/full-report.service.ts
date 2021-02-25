@@ -24,6 +24,7 @@ export class FullReportService {
     };
     return this.http.post<any>(this.resourceUrl, report, HTTPOptions).pipe(
       map((res: any) => {
+        console.log(res);
         return new Blob([res], { type: 'application/vnd.ms-excel' });
       })
     );

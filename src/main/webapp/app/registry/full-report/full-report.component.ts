@@ -186,16 +186,16 @@ export class FullReportComponent implements OnInit {
       // const mediatype = 'application/vnd.ms-excel;charset=UTF-8';
       // var blob = new Blob(["\ufeff",response.end],{type: mediatype});
       // const blob = new Blob([this.s2ab((response))], {type: ''});
-      fileSaver.saveAs(response, 'timesheet' + '.xlsx');
+      fileSaver.saveAs(response, 'timesheetFONCTIONNERAIT.xlsx');
     });
   }
 
-  private s2ab(s: any): any {
-    const buf = new ArrayBuffer(s.length);
-    const view = new Uint8Array(buf);
-    for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
-    return buf;
-  }
+  // private s2ab(s: any): any {
+  //   const buf = new ArrayBuffer(s.length);
+  //   const view = new Uint8Array(buf);
+  //   for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
+  //   return buf;
+  // }
 
   private fillReport(): void {
     this.report.companiesId = this.showCompanies.map(c => c.id!);

@@ -177,11 +177,6 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     return jobs;
   }
 
-  private getAllCompanies(): void {
-    //admin
-    //appel service
-  }
-
   private getAllEmployeesByCompany(): void {
     //admin && customer admin
     this.currentEmployee?.companyId
@@ -337,10 +332,6 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.getProjectsForReport();
 
     this.reportService.create(report).subscribe((res: any) => console.log(res.body));
-
-    // if (this.currentEmployee) {
-    //   this.timesheetService.create(this.dateCopy, this.currentEmployee.id).subscribe(res => console.log(res));
-    // }
   }
 
   private getJobsForReport(): number[] {
