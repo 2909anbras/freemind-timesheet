@@ -11,7 +11,7 @@ import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 
 import { AppUserService } from '../app-user/app-user.service';
-import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
+import { IAppUser } from 'app/shared/model/app-user.model'; // AppUser
 
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { CompanyService } from './company.service';

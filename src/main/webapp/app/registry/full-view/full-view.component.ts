@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { JhiEventManager } from 'ng-jhipster';
-import { JhiLanguageService } from 'ng-jhipster';
-import { SessionStorageService } from 'ngx-webstorage';
+// import { JhiLanguageService } from 'ng-jhipster';
+// import { SessionStorageService } from 'ngx-webstorage';
 import { HttpResponse } from '@angular/common/http';
-import { Directive, ElementRef, Renderer2, Input } from '@angular/core';
+// import { Directive, ElementRef, Renderer2, Input } from '@angular/core';
 
-import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
-import { Subscription, combineLatest } from 'rxjs';
+// import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
+// import { Subscription, combineLatest } from 'rxjs';
 import { ICompany } from 'app/shared/model/company.model';
 import { CompanyService } from 'app/entities/company/company.service';
-import { ICustomer } from 'app/shared/model/customer.model';
+// import { ICustomer } from 'app/shared/model/customer.model';
 
 import { AppUserService } from 'app/entities/app-user/app-user.service';
 import { IAppUser } from 'app/shared/model/app-user.model';
 import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
-import { IProject } from 'app/shared/model/project.model';
+// import { IProject } from 'app/shared/model/project.model';
 @Component({
   selector: 'jhi-full-view',
   templateUrl: './full-view.component.html',

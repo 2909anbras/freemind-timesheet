@@ -1,4 +1,4 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component } from '@angular/core'; // , ElementRef
 // import { Renderer } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -54,7 +54,7 @@ export class LoginPageComponent {
           // previousState was set in the authExpiredInterceptor before being redirected to login modal.
           // since login is successful, go to stored previousState and clear previousState
           const redirect = this.stateStorageService.getUrl();
-          //TODO Check if the redirect would be login again and route to home
+          // TODO Check if the redirect would be login again and route to home
           if (redirect) {
             this.stateStorageService.storeUrl('');
             this.router.navigateByUrl(redirect);

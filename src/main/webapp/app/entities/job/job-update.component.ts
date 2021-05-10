@@ -64,8 +64,8 @@ export class JobUpdateComponent implements OnInit {
 
     this.activatedRoute.data.subscribe(({ job }) => {
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
-        //by job Company!
-        //users by company if admin
+        // by job Company!
+        // users by company if admin
         this.isAdmin = true;
         this.projectService.query().subscribe((res: HttpResponse<IProject[]>) => {
           this.projects = res.body || [];
@@ -99,11 +99,11 @@ export class JobUpdateComponent implements OnInit {
   }
 
   updateForm(job: IJob): void {
-    //convert appusers to users for the patch
+    // convert appusers to users for the patch
     const tmp = [];
     if (job.appUsers)
       for (let i = 0; i < job.appUsers.length; i++) {
-        if (this.users.find(x => job.appUsers![i].id === x.id)) tmp.push(this.users.find(x => job.appUsers![i].id === x.id));
+        if (this.users.find(x => job.appUsers[i].id === x.id)) tmp.push(this.users.find(x => job.appUsers[i].id === x.id));
       }
     this.editForm.patchValue({
       id: job.id,
@@ -135,7 +135,7 @@ export class JobUpdateComponent implements OnInit {
   }
 
   private createFromForm(): IJob {
-    //convert users to appUsers
+    // convert users to appUsers
     console.log(this.editForm.get(['users'])!.value);
     const tmp = [];
     for (const u of this.editForm.get(['users'])!.value) {
@@ -151,7 +151,7 @@ export class JobUpdateComponent implements OnInit {
       endDate: this.editForm.get(['endDate'])!.value,
       enable: this.editForm.get(['enable'])!.value,
       projectId: this.editForm.get(['projectId'])!.value,
-      //change users by appUsers
+      // change users by appUsers
       appUsers: tmp,
     };
   }

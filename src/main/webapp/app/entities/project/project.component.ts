@@ -13,7 +13,7 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { ProjectService } from './project.service';
 import { ProjectDeleteDialogComponent } from './project-delete-dialog.component';
 
-import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
+import { IAppUser } from 'app/shared/model/app-user.model'; // , AppUser
 import { AppUserService } from '../app-user/app-user.service';
 
 @Component({

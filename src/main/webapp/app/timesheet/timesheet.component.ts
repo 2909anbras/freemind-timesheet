@@ -4,7 +4,7 @@ import { JhiEventManager } from 'ng-jhipster';
 import { HttpResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { TimesheetService } from 'app/timesheet/timesheet.service';
-import { Moment } from 'moment';
+// import { Moment } from 'moment';
 import * as moment from 'moment';
 
 import { CompanyService } from 'app/entities/company/company.service';
@@ -19,7 +19,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { ICompany } from 'app/shared/model/company.model';
 import { ICustomer } from 'app/shared/model/customer.model';
 import { IJob } from 'app/shared/model/job.model';
-import { IProject, Project } from 'app/shared/model/project.model';
+import { IProject } from 'app/shared/model/project.model';
 import { IAppUser } from 'app/shared/model/app-user.model';
 import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
@@ -66,7 +66,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   date: Date = new Date();
   dateCopy: Date = new Date();
-  nbrOfColumns = 0; //on init prend le nombre de jour dans le mois.
+  nbrOfColumns = 0; // on init prend le nombre de jour dans le mois.
   monthName = '';
   months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -178,7 +178,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   private getAllEmployeesByCompany(): void {
-    //admin && customer admin
+    // admin && customer admin
     this.currentEmployee?.companyId
       ? this.userService.findAllByCompany(this.currentEmployee.companyId).subscribe((res: HttpResponse<IUser[]>) => {
           res.body ? (this.employees = res.body) : null;
@@ -275,9 +275,9 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
     const date: Date = new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1);
     let perf: any = null;
     let a: any;
-    //add some pour améliorer perf. If some alors foreach
+    // add some pour améliorer perf. If some alors foreach
     if (job.performances) {
-      //vérifier que id corresponde à current.(si current)
+      // vérifier que id corresponde à current.(si current)
       for (const p of job?.performances) {
         if (p.date) {
           a = new Date(p.date.toString());
@@ -314,7 +314,7 @@ export class TimesheetComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public IsDisable(i: number): boolean {
-    const bool = true;
+    // const bool = true;
     return !(new Date() < new Date(this.dateCopy.getFullYear(), this.dateCopy.getMonth(), i + 1));
   }
 

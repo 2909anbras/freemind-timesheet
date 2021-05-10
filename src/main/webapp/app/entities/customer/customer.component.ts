@@ -14,7 +14,7 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { CustomerService } from './customer.service';
 import { CustomerDeleteDialogComponent } from './customer-delete-dialog.component';
 import { AppUserService } from '../app-user/app-user.service';
-import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
+import { IAppUser } from 'app/shared/model/app-user.model'; // , AppUser
 
 @Component({
   selector: 'jhi-customer',
@@ -77,7 +77,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
                   account.companyId
                 )
                 .subscribe(
-                  //currentUser.companyId => assigner company à User par la suite. Second step du jour.
+                  // currentUser.companyId => assigner company à User par la suite. Second step du jour.
                   (res: HttpResponse<ICustomer[]>) => {
                     console.log(res.body);
                     this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate), () => this.onError();

@@ -1,4 +1,4 @@
-import { AppUser, IAppUser } from '../../shared/model/app-user.model';
+import { IAppUser } from '../../shared/model/app-user.model';
 import { IJob } from 'app/shared/model/job.model';
 
 export interface IUser extends IAppUser {

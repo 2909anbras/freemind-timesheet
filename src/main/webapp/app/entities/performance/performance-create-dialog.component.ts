@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
-import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
-import { numberRangeValidator } from 'app/shared/form-validations/numberRangeValidator.directive';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms'; // , FormControl
+// import { numberRangeValidator } from 'app/shared/form-validations/numberRangeValidator.directive';
 
 import { ICustomer } from 'app/shared/model/customer.model';
 import { IProject } from 'app/shared/model/project.model';
@@ -34,7 +34,7 @@ export class PerformanceCreateDialogComponent implements OnInit {
   min = 0;
   max = 10;
   createForm: FormGroup = this.fb.group({
-    hours: ['', [Validators.required, Validators.min(0), Validators.max(16)]], //,[numberRangeValidator(this.min, this.max)]
+    hours: ['', [Validators.required, Validators.min(0), Validators.max(16)]], // ,[numberRangeValidator(this.min, this.max)]
     description: ['', []],
   });
   constructor(

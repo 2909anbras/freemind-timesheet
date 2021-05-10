@@ -1,28 +1,28 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; //  ChangeDetectionStrategy
 import { JhiEventManager } from 'ng-jhipster';
-import { JhiLanguageService } from 'ng-jhipster';
-import { SessionStorageService } from 'ngx-webstorage';
+// import { JhiLanguageService } from 'ng-jhipster';
+// import { SessionStorageService } from 'ngx-webstorage';
 import { HttpResponse } from '@angular/common/http';
-import { Directive, ElementRef, Renderer2, Input } from '@angular/core';
+// import { Directive, ElementRef, Renderer2, Input } from '@angular/core';
 import * as fileSaver from 'file-saver';
-import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
-import { Subscription, combineLatest } from 'rxjs';
+// import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
+// import { Subscription, combineLatest } from 'rxjs';
 
 import { IAppUser } from 'app/shared/model/app-user.model';
 import { Account } from 'app/core/user/account.model';
 import { IProject } from 'app/shared/model/project.model';
-import { Report, IReport } from 'app/shared/model/report.model';
+import { Report } from 'app/shared/model/report.model';
 import { ICompany } from 'app/shared/model/company.model';
 import { CompanyService } from 'app/entities/company/company.service';
-import { ICustomer, Customer } from 'app/shared/model/customer.model';
-import { IJob, Job } from 'app/shared/model/job.model';
-import { IUser, User } from 'app/core/user/user.model';
+import { ICustomer } from 'app/shared/model/customer.model';
+import { IJob } from 'app/shared/model/job.model';
+import { IUser } from 'app/core/user/user.model';
 
 import { JobFilterPipe } from 'app/shared/pipe/filter/jobFilterPipe';
 import { ProjectFilterPipe } from 'app/shared/pipe/filter/projectFilterPipe';
 import { CustomerFilterPipe } from 'app/shared/pipe/filter/customerFilterPipe';
 import { CompanyFilterPipe } from 'app/shared/pipe/filter/companyFilterPipe';
-import { KeyvaluePipe } from 'app/shared/pipe/filter/keyvaluePipe';
+// import { KeyvaluePipe } from 'app/shared/pipe/filter/keyvaluePipe';
 import { UserFilterPipe } from 'app/shared/pipe/filter/userFilterPipe';
 
 import { UserService } from 'app/core/user/user.service';
@@ -30,7 +30,7 @@ import { AppUserService } from 'app/entities/app-user/app-user.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { FullReportService } from './full-report.service';
 import { TimesheetService } from 'app/timesheet/timesheet.service';
-import { Moment } from 'moment';
+// import { Moment } from 'moment';
 
 @Component({
   selector: 'jhi-full-report',
@@ -186,7 +186,7 @@ export class FullReportComponent implements OnInit {
       // const mediatype = 'application/vnd.ms-excel;charset=UTF-8';
       // var blob = new Blob(["\ufeff",response.end],{type: mediatype});
       // const blob = new Blob([this.s2ab((response))], {type: ''});
-      fileSaver.saveAs(response, 'timesheetFONCTIONNERAIT.xlsx');
+      fileSaver.saveAs(response, 'timesheet.xlsx');
     });
   }
 
@@ -262,6 +262,6 @@ export class FullReportComponent implements OnInit {
     if (this.searchUserState !== 'All') {
       this.reportUsers = [...this.reportUsers.filter(u => u.activated === bool)];
     }
-    this.report.usersId = this.reportUsers.map(c => c.id!);
+    this.report.usersId = this.reportUsers.map(c => c.id);
   }
 }

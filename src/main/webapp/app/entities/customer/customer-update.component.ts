@@ -9,7 +9,7 @@ import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 
 import { AppUserService } from '../app-user/app-user.service';
-import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
+import { IAppUser } from 'app/shared/model/app-user.model'; // , AppUser
 
 import { ICustomer, Customer } from 'app/shared/model/customer.model';
 import { CustomerService } from './customer.service';

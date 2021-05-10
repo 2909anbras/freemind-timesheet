@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { RequestOptions } from 'http';
+// import { Observable } from 'rxjs';
+// import { RequestOptions } from 'http';
 import { SERVER_API_URL } from 'app/app.constants';
 import { IReport } from 'app/shared/model/report.model';
 type EntityResponseType = HttpResponse<IReport>;
@@ -30,4 +30,3 @@ export class FullReportService {
     );
   }
 }
-// return this.http.post<IReport>(this.resourceUrl, report, { observe: 'response' });

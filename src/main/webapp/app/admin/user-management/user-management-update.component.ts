@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { companyRequired } from 'app/shared/form-validations/companyRequired.directive';
+// import { companyRequired } from 'app/shared/form-validations/companyRequired.directive';
 
 import { HttpResponse } from '@angular/common/http';
 
@@ -105,7 +105,8 @@ export class UserManagementUpdateComponent implements OnInit {
       //   jobs: [],
       //   phone: [],
       // });
-      this.jobService.query().subscribe((res: HttpResponse<IJob[]>) => (this.jobs = res.body || [])); //by company
+
+      this.jobService.query().subscribe((res: HttpResponse<IJob[]>) => (this.jobs = res.body || [])); // by company
 
       if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) this.getAllCompanies();
 
@@ -137,6 +138,7 @@ export class UserManagementUpdateComponent implements OnInit {
   }
 
   companyRequired(): any {
+    // eslint-disable-next-line
     return (ctl: FormControl) => {
       this.isAdmin ? { companyRequired: false } : { companyRequired: true };
     };
@@ -229,7 +231,9 @@ export class UserManagementUpdateComponent implements OnInit {
 
   private setUserAuthorities(authorities: string[] | undefined): string[] | undefined {
     if (authorities?.some(e => e === 'ROLE_ADMIN')) {
-      return ['ROLE_ADMIN', 'ROLE_CUSTOMER_ADMIN', 'ROLE_USER']; //add inspector when refresh
+      // add inspector when refresh
+
+      return ['ROLE_ADMIN', 'ROLE_CUSTOMER_ADMIN', 'ROLE_USER'];
     } else if (authorities?.some(e => e === 'ROLE_CUSTOMER_ADMIN')) {
       return ['ROLE_CUSTOMER_ADMIN', 'ROLE_USER'];
     } else return authorities;

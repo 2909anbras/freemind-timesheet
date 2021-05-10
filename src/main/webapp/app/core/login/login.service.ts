@@ -16,7 +16,7 @@ export class LoginService {
   }
 
   logout(): void {
-    //return boolean subscribe et pop up.
+    // return boolean subscribe et pop up.
     this.authServerProvider.logout().subscribe(null, null, () => this.accountService.authenticate(null));
   }
 }

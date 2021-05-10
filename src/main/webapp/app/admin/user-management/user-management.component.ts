@@ -15,8 +15,6 @@ import { UserService } from 'app/core/user/user.service';
 import { User, IUser } from 'app/core/user/user.model';
 import { UserManagementDeleteDialogComponent } from './user-management-delete-dialog.component';
 
-//donc, ajouter iappuser
-
 @Component({
   selector: 'jhi-user-mgmt',
   templateUrl: './user-management.component.html',

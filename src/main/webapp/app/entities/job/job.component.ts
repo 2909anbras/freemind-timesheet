@@ -6,7 +6,7 @@ import { JhiEventManager } from 'ng-jhipster';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { IJob } from 'app/shared/model/job.model';
-import { IAppUser, AppUser } from 'app/shared/model/app-user.model';
+import { IAppUser } from 'app/shared/model/app-user.model'; // , AppUser
 import { AppUserService } from '../app-user/app-user.service';
 import { Account } from 'app/core/user/account.model';
 import { AccountService } from 'app/core/auth/account.service';
