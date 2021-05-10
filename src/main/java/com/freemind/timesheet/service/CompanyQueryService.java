@@ -2,6 +2,9 @@ package com.freemind.timesheet.service;
 
 import com.freemind.timesheet.domain.*; // for static metamodels
 import com.freemind.timesheet.domain.Company;
+import com.freemind.timesheet.domain.Model_.AppUser_;
+import com.freemind.timesheet.domain.Model_.Company_;
+import com.freemind.timesheet.domain.Model_.Customer_;
 import com.freemind.timesheet.repository.CompanyRepository;
 import com.freemind.timesheet.service.dto.CompanyCriteria;
 import com.freemind.timesheet.service.dto.CompanyDTO;

@@ -2,6 +2,10 @@ package com.freemind.timesheet.service;
 
 import com.freemind.timesheet.domain.*; // for static metamodels
 import com.freemind.timesheet.domain.Customer;
+import com.freemind.timesheet.domain.Model_.AppUser_;
+import com.freemind.timesheet.domain.Model_.Company_;
+import com.freemind.timesheet.domain.Model_.Customer_;
+import com.freemind.timesheet.domain.Model_.Project_;
 import com.freemind.timesheet.repository.CustomerRepository;
 import com.freemind.timesheet.service.dto.CustomerCriteria;
 import com.freemind.timesheet.service.dto.CustomerDTO;
@@ -107,8 +111,8 @@ public class CustomerQueryService extends QueryService<Customer> {
             if (criteria.getCompanyId() != null) {
                 specification =
                     specification.and(
-                        buildSpecification(criteria.getCompanyId(), root -> root.join(Customer_.companies, JoinType.LEFT).get(Company_.id))
-                    );
+                        buildSpecification(criteria.getCompanyId(), root -> root.join(Customer_.company, JoinType.LEFT).get(Company_.id))
+                    ); //error?
             }
         }
         return specification;

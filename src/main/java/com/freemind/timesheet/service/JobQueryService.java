@@ -2,6 +2,10 @@ package com.freemind.timesheet.service;
 
 import com.freemind.timesheet.domain.*; // for static metamodels
 import com.freemind.timesheet.domain.Job;
+import com.freemind.timesheet.domain.Model_.AppUser_;
+import com.freemind.timesheet.domain.Model_.Customer_;
+import com.freemind.timesheet.domain.Model_.Job_;
+import com.freemind.timesheet.domain.Model_.Project_;
 import com.freemind.timesheet.repository.JobRepository;
 import com.freemind.timesheet.service.dto.JobCriteria;
 import com.freemind.timesheet.service.dto.JobDTO;
